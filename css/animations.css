@@ -327,7 +327,7 @@ body.transitioning {
     content: '';
     position: absolute;
     inset: 0;
-    background: var(--color-forest);
+    background: var(--color-earth);
     transform: translateY(101%);
     transition: transform 0.4s var(--ease-out);
     z-index: -1;

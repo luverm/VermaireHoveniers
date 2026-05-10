@@ -191,6 +191,8 @@
        ========================================================================== */
     const sections = document.querySelectorAll('section[id]');
 
+    const sideRailDots = document.querySelectorAll('.side-rail-dot');
+
     function setActiveLink() {
         const scrollPos = window.scrollY + 200;
         sections.forEach(section => {
@@ -198,10 +200,13 @@
             const bottom = top + section.offsetHeight;
             const id = section.getAttribute('id');
             const link = document.querySelector(`.nav-link[href="#${id}"]`);
+            const dot = document.querySelector(`.side-rail-dot[data-section="${id}"]`);
 
             if (scrollPos >= top && scrollPos < bottom) {
                 navLinks.forEach(l => l.classList.remove('active'));
+                sideRailDots.forEach(d => d.classList.remove('active'));
                 if (link) link.classList.add('active');
+                if (dot) dot.classList.add('active');
             }
         });
     }
