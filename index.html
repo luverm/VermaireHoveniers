@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Vermaire Hoveniers - Uw professionele hoveniersbedrijf in Wemeldinge, Zeeland. Specialist in tuinontwerp, tuinaanleg, tuinonderhoud en beplanting. Vraag een vrijblijvende offerte aan.">
     <meta name="keywords" content="hovenier, tuinaanleg, tuinontwerp, tuinonderhoud, beplanting, Wemeldinge, Zeeland, Vermaire Hoveniers">
-    <meta name="author" content="Vermaire Hoveniers">
     <meta property="og:title" content="Vermaire Hoveniers - Uw tuin, onze passie">
     <meta property="og:description" content="Professionele hoveniersdiensten in Zeeland. Van ontwerp tot onderhoud, wij creëren uw droomtuin.">
     <meta property="og:type" content="website">
@@ -13,36 +12,16 @@
     <title>Vermaire Hoveniers | Uw tuin, onze passie | Hovenier Wemeldinge, Zeeland</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" href="css/animations.css">
     <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
 </head>
 <body>
-    <!-- Custom Cursor -->
-    <div class="cursor" id="cursor"></div>
-    <div class="cursor-follower" id="cursorFollower"></div>
-
-    <!-- Loading Screen -->
-    <div class="loader" id="loader">
-        <div class="loader-content">
-            <svg class="loader-leaf" viewBox="0 0 100 100" fill="none">
-                <path d="M50 10 C 30 30, 20 50, 30 75 C 40 90, 60 90, 70 75 C 80 50, 70 30, 50 10 Z M 50 20 L 50 85" stroke="currentColor" stroke-width="2" fill="none"/>
-                <path d="M50 35 L 35 45 M50 50 L 35 60 M50 65 L 35 75 M50 35 L 65 45 M50 50 L 65 60 M50 65 L 65 75" stroke="currentColor" stroke-width="1.5"/>
-            </svg>
-            <div class="loader-text">
-                <span>V</span><span>E</span><span>R</span><span>M</span><span>A</span><span>I</span><span>R</span><span>E</span>
-            </div>
-            <div class="loader-bar">
-                <div class="loader-bar-fill" id="loaderBarFill"></div>
-            </div>
-        </div>
-    </div>
-
     <!-- Navigation -->
     <nav class="nav" id="nav">
         <div class="nav-container">
-            <a href="#home" class="nav-logo" data-cursor="hover">
+            <a href="#home" class="nav-logo">
                 <svg class="logo-icon" viewBox="0 0 60 60" fill="none">
                     <path d="M30 8 C 18 18, 12 32, 18 48 C 24 56, 36 56, 42 48 C 48 32, 42 18, 30 8 Z" stroke="currentColor" stroke-width="1.5" fill="none"/>
                     <path d="M30 16 L 30 52 M30 28 L 22 36 M30 28 L 38 36 M30 38 L 22 46 M30 38 L 38 46" stroke="currentColor" stroke-width="1.2"/>
@@ -54,18 +33,14 @@
             </a>
 
             <ul class="nav-menu" id="navMenu">
-                <li><a href="#home" class="nav-link" data-cursor="hover"><span>01</span>Home</a></li>
-                <li><a href="#diensten" class="nav-link" data-cursor="hover"><span>02</span>Diensten</a></li>
-                <li><a href="#werkwijze" class="nav-link" data-cursor="hover"><span>03</span>Werkwijze</a></li>
-                <li><a href="#projecten" class="nav-link" data-cursor="hover"><span>04</span>Projecten</a></li>
-                <li><a href="#over-ons" class="nav-link" data-cursor="hover"><span>05</span>Over Ons</a></li>
-                <li><a href="#contact" class="nav-link" data-cursor="hover"><span>06</span>Contact</a></li>
+                <li><a href="#diensten" class="nav-link">Diensten</a></li>
+                <li><a href="#werkwijze" class="nav-link">Werkwijze</a></li>
+                <li><a href="#projecten" class="nav-link">Projecten</a></li>
+                <li><a href="#over-ons" class="nav-link">Over Ons</a></li>
+                <li><a href="#contact" class="nav-link">Contact</a></li>
             </ul>
 
-            <a href="#contact" class="nav-cta" data-cursor="hover">
-                <span class="nav-cta-text">Gratis Offerte</span>
-                <span class="nav-cta-arrow">→</span>
-            </a>
+            <a href="#contact" class="nav-cta">Offerte aanvragen</a>
 
             <button class="nav-toggle" id="navToggle" aria-label="Menu">
                 <span></span>
@@ -75,54 +50,46 @@
         </div>
     </nav>
 
-    <!-- Hero Section -->
+    <!-- Hero -->
     <section id="home" class="hero">
         <div class="hero-bg">
-            <div class="hero-bg-image" data-parallax="0.3"></div>
+            <div class="hero-bg-image"></div>
             <div class="hero-bg-overlay"></div>
-            <div class="hero-particles" id="heroParticles"></div>
         </div>
 
         <div class="hero-content">
-            <div class="hero-tagline" data-reveal>
+            <div class="hero-tagline">
                 <span class="hero-tagline-line"></span>
-                <span class="hero-tagline-text">Hoveniers sinds 2021 · Zeeland</span>
+                <span>Hoveniers in Zeeland · Sinds 2021</span>
             </div>
 
             <h1 class="hero-title">
-                <span class="hero-title-line" data-reveal-text>
-                    <span>Uw tuin,</span>
-                </span>
-                <span class="hero-title-line hero-title-italic" data-reveal-text>
-                    <span><em>onze passie</em></span>
-                </span>
+                Uw tuin, <em>onze passie</em>
             </h1>
 
-            <p class="hero-description" data-reveal>
-                Wij creëren tuinen waar u trots op bent. Van een verfijnd ontwerp tot zorgvuldig onderhoud —
-                Vermaire Hoveniers brengt uw groene oase tot leven met oog voor detail en passie voor groen.
+            <p class="hero-description">
+                Van een verfijnd ontwerp tot zorgvuldig onderhoud — wij brengen uw groene oase tot leven
+                met oog voor detail en passie voor groen.
             </p>
 
-            <div class="hero-actions" data-reveal>
-                <a href="#contact" class="btn btn-primary" data-cursor="hover">
-                    <span class="btn-text">Vrijblijvende Offerte</span>
+            <div class="hero-actions">
+                <a href="#contact" class="btn btn-primary">
+                    <span>Vrijblijvende offerte</span>
                     <span class="btn-icon">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
                     </span>
                 </a>
-                <a href="#diensten" class="btn btn-secondary" data-cursor="hover">
-                    <span class="btn-text">Onze Diensten</span>
-                </a>
+                <a href="#diensten" class="btn btn-secondary">Onze diensten</a>
             </div>
 
-            <div class="hero-stats" data-reveal>
+            <div class="hero-stats">
                 <div class="hero-stat">
                     <div class="hero-stat-number" data-counter="150">0</div>
                     <div class="hero-stat-label">Tuinen aangelegd</div>
                 </div>
                 <div class="hero-stat">
                     <div class="hero-stat-number" data-counter="98">0</div>
-                    <div class="hero-stat-label">% Tevreden klanten</div>
+                    <div class="hero-stat-label">Tevreden klanten</div>
                 </div>
                 <div class="hero-stat">
                     <div class="hero-stat-number" data-counter="5">0</div>
@@ -130,52 +97,24 @@
                 </div>
             </div>
         </div>
-
-        <div class="hero-scroll" data-reveal>
-            <span>Scroll</span>
-            <div class="hero-scroll-line"></div>
-        </div>
-
-        <div class="hero-marquee">
-            <div class="marquee-track">
-                <span>Tuinontwerp</span><span class="marquee-dot">●</span>
-                <span>Tuinaanleg</span><span class="marquee-dot">●</span>
-                <span>Tuinonderhoud</span><span class="marquee-dot">●</span>
-                <span>Beplanting</span><span class="marquee-dot">●</span>
-                <span>Bestrating</span><span class="marquee-dot">●</span>
-                <span>Schuttingen</span><span class="marquee-dot">●</span>
-                <span>Tuinontwerp</span><span class="marquee-dot">●</span>
-                <span>Tuinaanleg</span><span class="marquee-dot">●</span>
-                <span>Tuinonderhoud</span><span class="marquee-dot">●</span>
-                <span>Beplanting</span><span class="marquee-dot">●</span>
-                <span>Bestrating</span><span class="marquee-dot">●</span>
-                <span>Schuttingen</span><span class="marquee-dot">●</span>
-            </div>
-        </div>
     </section>
 
-    <!-- Intro / Welcome Section -->
+    <!-- Intro -->
     <section class="intro">
         <div class="container">
             <div class="intro-grid">
-                <div class="intro-label" data-reveal>
+                <div class="intro-label section-label" data-reveal>
                     <span class="label-line"></span>
-                    <span>Welkom bij Vermaire Hoveniers</span>
+                    <span>Welkom</span>
                 </div>
-                <h2 class="intro-title" data-reveal-text-mask>
+                <h2 class="intro-title" data-reveal>
                     Wij geloven dat <em>elke tuin</em> een verhaal vertelt. Wij helpen u dat verhaal tot leven te brengen — met vakmanschap, creativiteit en oprechte aandacht voor uw groene ruimte.
                 </h2>
-                <div class="intro-meta" data-reveal>
-                    <a href="#over-ons" class="intro-link" data-cursor="hover">
-                        Ons verhaal
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
-                    </a>
-                </div>
             </div>
         </div>
     </section>
 
-    <!-- Services Section -->
+    <!-- Services -->
     <section id="diensten" class="services">
         <div class="container">
             <div class="section-header">
@@ -183,73 +122,65 @@
                     <span class="label-line"></span>
                     <span>Onze Diensten</span>
                 </div>
-                <h2 class="section-title" data-reveal-text-mask>
+                <h2 class="section-title" data-reveal>
                     Alles voor uw <em>droomtuin</em>
                 </h2>
                 <p class="section-description" data-reveal>
-                    Van het eerste schetsontwerp tot het laatste blaadje — wij bieden een compleet pakket aan hoveniersdiensten,
-                    afgestemd op uw wensen, uw stijl en uw budget.
+                    Van het eerste ontwerp tot het laatste blaadje — wij bieden een compleet pakket aan
+                    hoveniersdiensten, afgestemd op uw wensen en budget.
                 </p>
             </div>
 
             <div class="services-grid">
-                <article class="service-card" data-reveal-card data-cursor="hover">
+                <article class="service-card" data-reveal-card>
                     <div class="service-card-number">01</div>
                     <div class="service-card-icon">
-                        <svg viewBox="0 0 60 60" fill="none" stroke="currentColor" stroke-width="1.2">
+                        <svg viewBox="0 0 60 60" fill="none" stroke="currentColor" stroke-width="1.5">
                             <path d="M10 50 L 30 15 L 50 50 Z"/>
                             <path d="M20 50 L 30 35 L 40 50"/>
-                            <circle cx="30" cy="15" r="3" fill="currentColor"/>
-                            <path d="M5 55 L 55 55"/>
+                            <circle cx="30" cy="15" r="2.5" fill="currentColor"/>
                         </svg>
                     </div>
                     <h3 class="service-card-title">Tuinontwerp</h3>
                     <p class="service-card-description">
                         Een doordacht ontwerp is de basis van elke succesvolle tuin. Wij vertalen uw wensen
-                        naar een persoonlijk plan met visualisaties, beplantingsplan en materiaalkeuze.
+                        naar een persoonlijk plan op maat.
                     </p>
                     <ul class="service-card-features">
                         <li>3D visualisaties</li>
                         <li>Beplantingsplan op maat</li>
-                        <li>Materiaal- en kleuradvies</li>
+                        <li>Materiaaladvies</li>
                     </ul>
-                    <div class="service-card-arrow">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
-                    </div>
                 </article>
 
-                <article class="service-card" data-reveal-card data-cursor="hover">
+                <article class="service-card" data-reveal-card>
                     <div class="service-card-number">02</div>
                     <div class="service-card-icon">
-                        <svg viewBox="0 0 60 60" fill="none" stroke="currentColor" stroke-width="1.2">
+                        <svg viewBox="0 0 60 60" fill="none" stroke="currentColor" stroke-width="1.5">
                             <path d="M10 45 Q 30 30, 50 45"/>
                             <path d="M10 50 L 50 50"/>
                             <path d="M15 45 L 15 35 L 25 35 L 25 45"/>
                             <path d="M35 45 L 35 30 L 45 30 L 45 45"/>
-                            <path d="M30 25 L 30 15 M25 20 L 30 15 L 35 20" />
                             <circle cx="20" cy="25" r="3"/>
                             <circle cx="40" cy="20" r="3"/>
                         </svg>
                     </div>
                     <h3 class="service-card-title">Tuinaanleg</h3>
                     <p class="service-card-description">
-                        Van schets naar werkelijkheid. Onze ervaren vakmensen leggen uw tuin aan met
-                        kwalitatieve materialen, oog voor detail en respect voor uw budget en planning.
+                        Van schets naar werkelijkheid. Onze vakmensen leggen uw tuin aan met
+                        kwaliteitsmaterialen en strakke planning.
                     </p>
                     <ul class="service-card-features">
                         <li>Complete renovatie</li>
                         <li>Kwaliteitsmaterialen</li>
-                        <li>Strakke planning</li>
+                        <li>Heldere planning</li>
                     </ul>
-                    <div class="service-card-arrow">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
-                    </div>
                 </article>
 
-                <article class="service-card" data-reveal-card data-cursor="hover">
+                <article class="service-card" data-reveal-card>
                     <div class="service-card-number">03</div>
                     <div class="service-card-icon">
-                        <svg viewBox="0 0 60 60" fill="none" stroke="currentColor" stroke-width="1.2">
+                        <svg viewBox="0 0 60 60" fill="none" stroke="currentColor" stroke-width="1.5">
                             <path d="M30 10 C 18 22, 14 35, 22 48 C 28 54, 32 54, 38 48 C 46 35, 42 22, 30 10 Z"/>
                             <path d="M30 18 L 30 50 M30 28 L 22 36 M30 28 L 38 36 M30 38 L 22 46 M30 38 L 38 46"/>
                         </svg>
@@ -257,106 +188,86 @@
                     <h3 class="service-card-title">Tuinonderhoud</h3>
                     <p class="service-card-description">
                         Een tuin verdient continue zorg. Met onze onderhoudspakketten houden wij uw tuin
-                        het hele jaar door op zijn mooist — wekelijks, maandelijks of seizoensgebonden.
+                        het hele jaar door op zijn mooist.
                     </p>
                     <ul class="service-card-features">
                         <li>Snoeien & maaien</li>
                         <li>Bemesting & verzorging</li>
                         <li>Onkruidbestrijding</li>
                     </ul>
-                    <div class="service-card-arrow">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
-                    </div>
                 </article>
 
-                <article class="service-card" data-reveal-card data-cursor="hover">
+                <article class="service-card" data-reveal-card>
                     <div class="service-card-number">04</div>
                     <div class="service-card-icon">
-                        <svg viewBox="0 0 60 60" fill="none" stroke="currentColor" stroke-width="1.2">
+                        <svg viewBox="0 0 60 60" fill="none" stroke="currentColor" stroke-width="1.5">
                             <circle cx="20" cy="20" r="6"/>
                             <circle cx="40" cy="22" r="5"/>
                             <circle cx="25" cy="38" r="4"/>
                             <circle cx="42" cy="40" r="6"/>
                             <path d="M20 26 L 20 50 M40 27 L 40 50 M25 42 L 25 50 M42 46 L 42 50"/>
-                            <path d="M5 50 L 55 50"/>
-                            <path d="M16 16 L 18 18 M22 18 L 24 16 M36 18 L 38 20 M42 20 L 44 18"/>
                         </svg>
                     </div>
                     <h3 class="service-card-title">Beplanting</h3>
                     <p class="service-card-description">
                         Het juiste groen op de juiste plek. Wij selecteren beplanting die past bij uw
-                        bodem, lichtval en stijl — voor een tuin die door de seizoenen heen blijft verrassen.
+                        bodem, lichtval en stijl.
                     </p>
                     <ul class="service-card-features">
                         <li>Vaste planten & heesters</li>
                         <li>Bomen & hagen</li>
                         <li>Seizoensbloemen</li>
                     </ul>
-                    <div class="service-card-arrow">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
-                    </div>
                 </article>
 
-                <article class="service-card" data-reveal-card data-cursor="hover">
+                <article class="service-card" data-reveal-card>
                     <div class="service-card-number">05</div>
                     <div class="service-card-icon">
-                        <svg viewBox="0 0 60 60" fill="none" stroke="currentColor" stroke-width="1.2">
+                        <svg viewBox="0 0 60 60" fill="none" stroke="currentColor" stroke-width="1.5">
                             <rect x="8" y="20" width="14" height="14"/>
                             <rect x="22" y="20" width="14" height="14"/>
                             <rect x="36" y="20" width="14" height="14"/>
                             <rect x="15" y="34" width="14" height="14"/>
                             <rect x="29" y="34" width="14" height="14"/>
-                            <rect x="8" y="48" width="14" height="6"/>
-                            <rect x="22" y="48" width="14" height="6"/>
-                            <rect x="36" y="48" width="14" height="6"/>
-                            <path d="M5 8 Q 15 14, 25 12 Q 35 10, 45 14 Q 50 16, 55 14"/>
                         </svg>
                     </div>
                     <h3 class="service-card-title">Bestrating</h3>
                     <p class="service-card-description">
-                        Terrassen, paden en opritten die jarenlang meegaan. Wij werken met hoogwaardige
-                        natuursteen, klinkers en betonproducten — vakkundig gelegd voor een blijvend resultaat.
+                        Terrassen, paden en opritten die jarenlang meegaan — vakkundig gelegd met
+                        hoogwaardige natuursteen en klinkers.
                     </p>
                     <ul class="service-card-features">
                         <li>Terrassen & paden</li>
                         <li>Opritten</li>
                         <li>Natuursteen & klinkers</li>
                     </ul>
-                    <div class="service-card-arrow">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
-                    </div>
                 </article>
 
-                <article class="service-card" data-reveal-card data-cursor="hover">
+                <article class="service-card" data-reveal-card>
                     <div class="service-card-number">06</div>
                     <div class="service-card-icon">
-                        <svg viewBox="0 0 60 60" fill="none" stroke="currentColor" stroke-width="1.2">
+                        <svg viewBox="0 0 60 60" fill="none" stroke="currentColor" stroke-width="1.5">
                             <path d="M10 15 L 10 50 M18 15 L 18 50 M26 15 L 26 50 M34 15 L 34 50 M42 15 L 42 50 M50 15 L 50 50"/>
                             <path d="M5 20 L 55 20 M5 40 L 55 40"/>
-                            <path d="M10 12 L 10 15 M18 12 L 18 15 M26 12 L 26 15 M34 12 L 34 15 M42 12 L 42 15 M50 12 L 50 15"/>
-                            <path d="M5 53 L 55 53"/>
                         </svg>
                     </div>
                     <h3 class="service-card-title">Schuttingen & Vlonders</h3>
                     <p class="service-card-description">
-                        Privacy en sfeer met stijl. Wij plaatsen schuttingen, pergola's en houten vlonders
-                        van duurzame materialen — strak afgewerkt en perfect passend bij uw tuin.
+                        Privacy en sfeer met stijl. Schuttingen, pergola's en houten vlonders van
+                        duurzame materialen — strak afgewerkt.
                     </p>
                     <ul class="service-card-features">
                         <li>Hardhouten schuttingen</li>
                         <li>Vlonders & pergola's</li>
                         <li>Maatwerk constructies</li>
                     </ul>
-                    <div class="service-card-arrow">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
-                    </div>
                 </article>
             </div>
 
             <div class="services-cta" data-reveal>
-                <p>Niet zeker welke dienst u nodig heeft? Wij denken graag met u mee.</p>
-                <a href="#contact" class="btn btn-outline" data-cursor="hover">
-                    <span class="btn-text">Plan een gratis adviesgesprek</span>
+                <p>Niet zeker welke dienst u nodig heeft? Wij denken graag mee.</p>
+                <a href="#contact" class="btn btn-outline">
+                    <span>Plan een gratis adviesgesprek</span>
                     <span class="btn-icon">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
                     </span>
@@ -365,191 +276,153 @@
         </div>
     </section>
 
-    <!-- Showcase / Image Reveal Section -->
-    <section class="showcase">
-        <div class="showcase-bg" data-parallax="0.4"></div>
-        <div class="container">
-            <div class="showcase-content">
-                <h2 class="showcase-title" data-reveal-text-mask>
-                    Tuinen die <em>verwonderen</em>.<br>
-                    Resultaten die <em>blijven</em>.
-                </h2>
-                <p class="showcase-text" data-reveal>
-                    Elk project is een unieke samenwerking tussen u en ons team.
-                    Wij vertalen uw visie naar een tuin die past bij uw leven, uw woning en uw wensen.
-                </p>
-            </div>
-        </div>
-    </section>
-
-    <!-- Werkwijze / Process Section -->
+    <!-- Process -->
     <section id="werkwijze" class="process">
         <div class="container">
             <div class="section-header">
                 <div class="section-label" data-reveal>
                     <span class="label-line"></span>
-                    <span>Onze Werkwijze</span>
+                    <span>Werkwijze</span>
                 </div>
-                <h2 class="section-title" data-reveal-text-mask>
+                <h2 class="section-title" data-reveal>
                     Van eerste idee tot <em>laatste bloesem</em>
                 </h2>
                 <p class="section-description" data-reveal>
-                    Wij geloven in transparantie en duidelijke communicatie. Onze werkwijze in vier stappen
-                    zorgt ervoor dat u op elk moment weet waar u aan toe bent.
+                    Onze werkwijze in vier stappen zorgt ervoor dat u op elk moment weet waar u aan toe bent.
                 </p>
             </div>
 
             <div class="process-grid">
                 <div class="process-step" data-reveal-card>
-                    <div class="process-step-number">01</div>
-                    <div class="process-step-line"></div>
+                    <div class="process-step-number">Stap 01</div>
                     <h3 class="process-step-title">Kennismaking</h3>
                     <p class="process-step-text">
-                        Wij komen graag bij u langs voor een vrijblijvend gesprek. We bespreken uw wensen,
-                        bekijken uw tuin en luisteren naar wat u écht wilt.
+                        Wij komen vrijblijvend langs voor een gesprek. We bespreken uw wensen en bekijken uw tuin.
                     </p>
                 </div>
 
                 <div class="process-step" data-reveal-card>
-                    <div class="process-step-number">02</div>
-                    <div class="process-step-line"></div>
+                    <div class="process-step-number">Stap 02</div>
                     <h3 class="process-step-title">Ontwerp & Offerte</h3>
                     <p class="process-step-text">
-                        U ontvangt een persoonlijk ontwerp en een heldere offerte. Geen verborgen kosten,
-                        wel ruimte voor uw feedback en aanpassingen.
+                        U ontvangt een persoonlijk ontwerp en een heldere offerte zonder verborgen kosten.
                     </p>
                 </div>
 
                 <div class="process-step" data-reveal-card>
-                    <div class="process-step-number">03</div>
-                    <div class="process-step-line"></div>
+                    <div class="process-step-number">Stap 03</div>
                     <h3 class="process-step-title">Realisatie</h3>
                     <p class="process-step-text">
-                        Ons vakkundige team gaat aan de slag. Wij werken volgens planning, communiceren
-                        proactief en leveren een tuin waar u trots op bent.
+                        Ons team gaat aan de slag — volgens planning, proactief en met oog voor detail.
                     </p>
                 </div>
 
                 <div class="process-step" data-reveal-card>
-                    <div class="process-step-number">04</div>
-                    <h3 class="process-step-title">Onderhoud & Nazorg</h3>
+                    <div class="process-step-number">Stap 04</div>
+                    <h3 class="process-step-title">Onderhoud</h3>
                     <p class="process-step-text">
                         Met onze onderhoudspakketten blijft uw tuin jaar in jaar uit op zijn best.
-                        Wij staan altijd voor u klaar — ook na de oplevering.
                     </p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Projects / Portfolio Section -->
+    <!-- Projects -->
     <section id="projecten" class="projects">
         <div class="container">
             <div class="section-header">
                 <div class="section-label" data-reveal>
                     <span class="label-line"></span>
-                    <span>Onze Projecten</span>
+                    <span>Projecten</span>
                 </div>
-                <h2 class="section-title" data-reveal-text-mask>
+                <h2 class="section-title" data-reveal>
                     Een greep uit ons <em>portfolio</em>
                 </h2>
                 <p class="section-description" data-reveal>
                     Ontdek hoe we tuinen door heel Zeeland tot leven hebben gebracht.
-                    Van strakke moderne tuinen tot natuurlijke borders vol biodiversiteit.
                 </p>
             </div>
 
             <div class="projects-filters" data-reveal>
-                <button class="filter-btn active" data-filter="all" data-cursor="hover">Alle projecten</button>
-                <button class="filter-btn" data-filter="modern" data-cursor="hover">Modern</button>
-                <button class="filter-btn" data-filter="natural" data-cursor="hover">Natuurlijk</button>
-                <button class="filter-btn" data-filter="onderhoud" data-cursor="hover">Onderhoud</button>
-                <button class="filter-btn" data-filter="bestrating" data-cursor="hover">Bestrating</button>
+                <button class="filter-btn active" data-filter="all">Alle projecten</button>
+                <button class="filter-btn" data-filter="modern">Modern</button>
+                <button class="filter-btn" data-filter="natural">Natuurlijk</button>
+                <button class="filter-btn" data-filter="onderhoud">Onderhoud</button>
+                <button class="filter-btn" data-filter="bestrating">Bestrating</button>
             </div>
 
             <div class="projects-grid" id="projectsGrid">
-                <article class="project-card project-card-large" data-category="modern" data-cursor="hover">
+                <article class="project-card project-card-large" data-category="modern">
                     <div class="project-image" style="background-image: url('https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?w=1200&q=85');"></div>
                     <div class="project-overlay">
                         <div class="project-meta">
-                            <span class="project-category">Moderne Tuin</span>
+                            <span class="project-category">Moderne tuin</span>
                             <span class="project-year">2025</span>
                         </div>
-                        <h3 class="project-title">Strakke Stadstuin · Goes</h3>
-                        <p class="project-description">Complete renovatie met natuursteen terras en architectonische beplanting.</p>
-                        <div class="project-link">Bekijk project <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M13 5l7 7-7 7"/></svg></div>
+                        <h3 class="project-title">Strakke stadstuin · Goes</h3>
                     </div>
                 </article>
 
-                <article class="project-card" data-category="natural" data-cursor="hover">
-                    <div class="project-image" style="background-image: url('https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=800&q=80');"></div>
+                <article class="project-card" data-category="natural">
+                    <div class="project-image" style="background-image: url('https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=800&q=85');"></div>
                     <div class="project-overlay">
                         <div class="project-meta">
                             <span class="project-category">Natuurtuin</span>
                             <span class="project-year">2025</span>
                         </div>
-                        <h3 class="project-title">Borders vol Biodiversiteit · Middelburg</h3>
-                        <p class="project-description">Vaste planten en bloemen die bijen en vlinders aantrekken.</p>
-                        <div class="project-link">Bekijk project <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M13 5l7 7-7 7"/></svg></div>
+                        <h3 class="project-title">Borders · Middelburg</h3>
                     </div>
                 </article>
 
-                <article class="project-card" data-category="bestrating" data-cursor="hover">
+                <article class="project-card" data-category="bestrating">
                     <div class="project-image" style="background-image: url('https://images.unsplash.com/photo-1598902108854-10e335adac99?w=800&q=85');"></div>
                     <div class="project-overlay">
                         <div class="project-meta">
                             <span class="project-category">Bestrating</span>
                             <span class="project-year">2024</span>
                         </div>
-                        <h3 class="project-title">Natuurstenen Terras · Vlissingen</h3>
-                        <p class="project-description">Tijdloos terras met natuursteen en geïntegreerde verlichting.</p>
-                        <div class="project-link">Bekijk project <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M13 5l7 7-7 7"/></svg></div>
+                        <h3 class="project-title">Natuurstenen terras · Vlissingen</h3>
                     </div>
                 </article>
 
-                <article class="project-card" data-category="onderhoud" data-cursor="hover">
-                    <div class="project-image" style="background-image: url('https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=800&q=80');"></div>
+                <article class="project-card" data-category="onderhoud">
+                    <div class="project-image" style="background-image: url('https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=800&q=85');"></div>
                     <div class="project-overlay">
                         <div class="project-meta">
                             <span class="project-category">Onderhoud</span>
                             <span class="project-year">Doorlopend</span>
                         </div>
-                        <h3 class="project-title">Jaaronderhoud Villa · Domburg</h3>
-                        <p class="project-description">Wekelijks onderhoud van een uitgebreide villatuin met vijver.</p>
-                        <div class="project-link">Bekijk project <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M13 5l7 7-7 7"/></svg></div>
+                        <h3 class="project-title">Villatuin · Domburg</h3>
                     </div>
                 </article>
 
-                <article class="project-card project-card-wide" data-category="modern" data-cursor="hover">
+                <article class="project-card project-card-wide" data-category="modern">
                     <div class="project-image" style="background-image: url('https://images.unsplash.com/photo-1601985705806-5b9a71f6004f?w=1200&q=85');"></div>
                     <div class="project-overlay">
                         <div class="project-meta">
-                            <span class="project-category">Modern Design</span>
+                            <span class="project-category">Modern design</span>
                             <span class="project-year">2024</span>
                         </div>
-                        <h3 class="project-title">Architectonische Achtertuin · Zierikzee</h3>
-                        <p class="project-description">Een minimalistische tuin met strakke lijnen, hardhouten vlonder en sierlijke beplanting.</p>
-                        <div class="project-link">Bekijk project <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M13 5l7 7-7 7"/></svg></div>
+                        <h3 class="project-title">Architectonische achtertuin · Zierikzee</h3>
                     </div>
                 </article>
 
-                <article class="project-card" data-category="natural" data-cursor="hover">
+                <article class="project-card" data-category="natural">
                     <div class="project-image" style="background-image: url('https://images.unsplash.com/photo-1453831362806-3d5577f014a4?w=800&q=85');"></div>
                     <div class="project-overlay">
                         <div class="project-meta">
                             <span class="project-category">Natuurtuin</span>
                             <span class="project-year">2024</span>
                         </div>
-                        <h3 class="project-title">Boomgaard Renovatie · Wemeldinge</h3>
-                        <p class="project-description">Herstel van een oude boomgaard met fruitbomen en wilde bloemen.</p>
-                        <div class="project-link">Bekijk project <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M13 5l7 7-7 7"/></svg></div>
+                        <h3 class="project-title">Boomgaard · Wemeldinge</h3>
                     </div>
                 </article>
             </div>
 
             <div class="projects-cta" data-reveal>
-                <a href="#contact" class="btn btn-primary" data-cursor="hover">
-                    <span class="btn-text">Start uw project</span>
+                <a href="#contact" class="btn btn-primary">
+                    <span>Start uw project</span>
                     <span class="btn-icon">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
                     </span>
@@ -558,45 +431,41 @@
         </div>
     </section>
 
-    <!-- About Section -->
+    <!-- About -->
     <section id="over-ons" class="about">
         <div class="container">
             <div class="about-grid">
                 <div class="about-images">
-                    <div class="about-image about-image-main" data-parallax="0.15">
+                    <div class="about-image about-image-main">
                         <img src="https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=800&q=80" alt="Tuin van Vermaire Hoveniers" loading="lazy">
                     </div>
-                    <div class="about-image about-image-secondary" data-parallax="-0.15">
+                    <div class="about-image about-image-secondary">
                         <img src="https://images.unsplash.com/photo-1591857177580-dc82b9ac4e1e?w=600&q=80" alt="Vakman aan het werk" loading="lazy">
                     </div>
                     <div class="about-badge">
-                        <div class="about-badge-circle">
-                            <span>Sinds<br>2021</span>
-                        </div>
+                        <span>Sinds<br>2021</span>
                     </div>
                 </div>
 
                 <div class="about-content">
                     <div class="section-label" data-reveal>
                         <span class="label-line"></span>
-                        <span>Over Vermaire Hoveniers</span>
+                        <span>Over Vermaire</span>
                     </div>
 
-                    <h2 class="section-title" data-reveal-text-mask>
+                    <h2 class="section-title" data-reveal>
                         Vakmanschap met <em>passie voor groen</em>
                     </h2>
 
                     <p class="about-text" data-reveal>
                         Wat begon met kleine tuinprojecten voor familie en vrienden, is uitgegroeid tot een
-                        professioneel hoveniersbedrijf met een groeiende klantenkring door heel Zeeland.
-                        Onze drijfveer is altijd hetzelfde gebleven: het creëren van tuinen waar mensen écht
-                        van genieten.
+                        professioneel hoveniersbedrijf met klanten door heel Zeeland. Onze drijfveer is altijd
+                        hetzelfde gebleven: het creëren van tuinen waar mensen écht van genieten.
                     </p>
 
                     <p class="about-text" data-reveal>
-                        Bij Vermaire Hoveniers geloven we dat een tuin meer is dan een stuk grond. Het is een
-                        verlengstuk van uw woning, een plek om tot rust te komen, te spelen of te ontvangen.
-                        Daarom werken wij met aandacht voor detail, persoonlijk advies en oprechte betrokkenheid.
+                        Bij Vermaire Hoveniers werken wij met aandacht voor detail, persoonlijk advies en
+                        oprechte betrokkenheid bij elk project.
                     </p>
 
                     <div class="about-values" data-reveal>
@@ -608,7 +477,7 @@
                             </div>
                             <div class="about-value-text">
                                 <h4>Vakmanschap</h4>
-                                <p>Jarenlange ervaring en oog voor detail</p>
+                                <p>Ervaring en oog voor detail</p>
                             </div>
                         </div>
                         <div class="about-value">
@@ -619,7 +488,7 @@
                             </div>
                             <div class="about-value-text">
                                 <h4>Passie</h4>
-                                <p>Liefde voor groen in elk project</p>
+                                <p>Liefde voor groen</p>
                             </div>
                         </div>
                         <div class="about-value">
@@ -631,7 +500,7 @@
                             </div>
                             <div class="about-value-text">
                                 <h4>Betrouwbaar</h4>
-                                <p>Afspraak is afspraak, kwaliteit is gegarandeerd</p>
+                                <p>Afspraak is afspraak</p>
                             </div>
                         </div>
                         <div class="about-value">
@@ -639,12 +508,11 @@
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                                     <circle cx="12" cy="12" r="3"/>
                                     <path d="M12 2 L 12 6 M12 18 L 12 22 M2 12 L 6 12 M18 12 L 22 12"/>
-                                    <path d="M5 5 L 8 8 M16 16 L 19 19 M5 19 L 8 16 M16 8 L 19 5"/>
                                 </svg>
                             </div>
                             <div class="about-value-text">
                                 <h4>Duurzaam</h4>
-                                <p>Groene oplossingen met respect voor natuur</p>
+                                <p>Respect voor de natuur</p>
                             </div>
                         </div>
                     </div>
@@ -653,141 +521,82 @@
         </div>
     </section>
 
-    <!-- Testimonials Section -->
+    <!-- Testimonials -->
     <section class="testimonials">
         <div class="container">
-            <div class="section-header section-header-light">
+            <div class="section-header">
                 <div class="section-label" data-reveal>
                     <span class="label-line"></span>
-                    <span>Wat onze klanten zeggen</span>
+                    <span>Klanten</span>
                 </div>
-                <h2 class="section-title" data-reveal-text-mask>
-                    <em>Tevreden klanten</em>, ons grootste compliment
+                <h2 class="section-title" data-reveal>
+                    Wat onze klanten <em>zeggen</em>
                 </h2>
             </div>
 
-            <div class="testimonials-track" id="testimonialsTrack">
-                <article class="testimonial">
-                    <div class="testimonial-stars">
-                        <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
-                    </div>
+            <div class="testimonials-track">
+                <article class="testimonial" data-reveal-card>
+                    <div class="testimonial-stars"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
                     <blockquote class="testimonial-quote">
-                        "Vermaire Hoveniers heeft onze achtertuin compleet getransformeerd. Van een verwaarloosd
-                        stuk grond naar een prachtige oase. Het hele proces verliep professioneel, met heldere
-                        communicatie en oog voor detail. Een aanrader!"
+                        "Vermaire Hoveniers heeft onze achtertuin compleet getransformeerd. Professioneel,
+                        heldere communicatie en oog voor detail. Een aanrader!"
                     </blockquote>
                     <div class="testimonial-author">
                         <div class="testimonial-avatar">JK</div>
-                        <div class="testimonial-meta">
-                            <span class="testimonial-name">Jeroen K.</span>
+                        <div>
+                            <div class="testimonial-name">Jeroen K.</div>
                             <span class="testimonial-location">Goes</span>
                         </div>
                     </div>
                 </article>
 
-                <article class="testimonial">
-                    <div class="testimonial-stars">
-                        <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
-                    </div>
+                <article class="testimonial" data-reveal-card>
+                    <div class="testimonial-stars"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
                     <blockquote class="testimonial-quote">
-                        "Wij krijgen al jaren onderhoud van Vermaire Hoveniers en zijn keer op keer onder de indruk.
-                        Vakkundig, betrouwbaar en altijd vriendelijk. Onze tuin staat er nog nooit zo mooi bij."
+                        "Wij krijgen al jaren onderhoud van Vermaire Hoveniers. Vakkundig, betrouwbaar en
+                        altijd vriendelijk. Onze tuin staat er nog nooit zo mooi bij."
                     </blockquote>
                     <div class="testimonial-author">
                         <div class="testimonial-avatar">MV</div>
-                        <div class="testimonial-meta">
-                            <span class="testimonial-name">Marja V.</span>
+                        <div>
+                            <div class="testimonial-name">Marja V.</div>
                             <span class="testimonial-location">Middelburg</span>
                         </div>
                     </div>
                 </article>
 
-                <article class="testimonial">
-                    <div class="testimonial-stars">
-                        <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
-                    </div>
+                <article class="testimonial" data-reveal-card>
+                    <div class="testimonial-stars"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
                     <blockquote class="testimonial-quote">
-                        "Het ontwerp van onze nieuwe tuin overtrof onze verwachtingen. De jongens denken écht mee
-                        en komen met creatieve oplossingen. Ook het werk zelf is netjes en op tijd opgeleverd.
-                        Wij zijn dolblij met het resultaat."
+                        "Het ontwerp overtrof onze verwachtingen. Ze denken écht mee, komen met creatieve
+                        oplossingen en leveren netjes en op tijd op."
                     </blockquote>
                     <div class="testimonial-author">
                         <div class="testimonial-avatar">PS</div>
-                        <div class="testimonial-meta">
-                            <span class="testimonial-name">Peter S.</span>
+                        <div>
+                            <div class="testimonial-name">Peter S.</div>
                             <span class="testimonial-location">Vlissingen</span>
                         </div>
                     </div>
                 </article>
-
-                <article class="testimonial">
-                    <div class="testimonial-stars">
-                        <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
-                    </div>
-                    <blockquote class="testimonial-quote">
-                        "Een fantastisch team! Ze hebben ons geholpen met zowel het ontwerp als de aanleg van
-                        onze voortuin. Het resultaat is een echte eyecatcher waar we elke dag van genieten.
-                        Top vakmanschap en eerlijke prijzen."
-                    </blockquote>
-                    <div class="testimonial-author">
-                        <div class="testimonial-avatar">LB</div>
-                        <div class="testimonial-meta">
-                            <span class="testimonial-name">Linda B.</span>
-                            <span class="testimonial-location">Zierikzee</span>
-                        </div>
-                    </div>
-                </article>
-
-                <article class="testimonial">
-                    <div class="testimonial-stars">
-                        <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
-                    </div>
-                    <blockquote class="testimonial-quote">
-                        "Wij vroegen om een natuurlijke tuin met veel biodiversiteit en kregen precies dat.
-                        Het bloeit, het zoemt, en onze kinderen vinden er elke dag iets nieuws. Bedankt
-                        Vermaire Hoveniers!"
-                    </blockquote>
-                    <div class="testimonial-author">
-                        <div class="testimonial-avatar">AD</div>
-                        <div class="testimonial-meta">
-                            <span class="testimonial-name">Anouk D.</span>
-                            <span class="testimonial-location">Wemeldinge</span>
-                        </div>
-                    </div>
-                </article>
-            </div>
-
-            <div class="testimonials-controls" data-reveal>
-                <button class="testimonial-btn" id="testimonialPrev" data-cursor="hover" aria-label="Vorige">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-                </button>
-                <div class="testimonial-progress">
-                    <div class="testimonial-progress-fill" id="testimonialProgress"></div>
-                </div>
-                <button class="testimonial-btn" id="testimonialNext" data-cursor="hover" aria-label="Volgende">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
-                </button>
             </div>
         </div>
     </section>
 
-    <!-- FAQ Section -->
+    <!-- FAQ -->
     <section id="faq" class="faq">
         <div class="container">
             <div class="faq-grid">
                 <div class="faq-header">
                     <div class="section-label" data-reveal>
                         <span class="label-line"></span>
-                        <span>Veelgestelde Vragen</span>
+                        <span>Veelgestelde vragen</span>
                     </div>
-                    <h2 class="section-title" data-reveal-text-mask>
+                    <h2 class="section-title" data-reveal>
                         Antwoorden op uw <em>vragen</em>
                     </h2>
-                    <p class="section-description" data-reveal>
-                        Geen antwoord op uw vraag? Neem gerust contact met ons op — we helpen u graag verder.
-                    </p>
-                    <a href="#contact" class="btn btn-outline btn-small" data-cursor="hover">
-                        <span class="btn-text">Stel uw vraag</span>
+                    <a href="#contact" class="btn btn-outline">
+                        <span>Stel uw vraag</span>
                         <span class="btn-icon">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
                         </span>
@@ -801,7 +610,7 @@
                             <span class="faq-icon"></span>
                         </summary>
                         <div class="faq-answer">
-                            <p>Afhankelijk van uw tuin en het seizoen is regelmatig onderhoud aan te raden, gemiddeld 4 keer per jaar. Voor grotere tuinen of tuinen met veel beplanting kan dit oplopen tot maandelijks onderhoud. We stellen graag een onderhoudsplan op dat past bij úw situatie.</p>
+                            <p>Afhankelijk van uw tuin en het seizoen is regelmatig onderhoud aan te raden, gemiddeld 4 keer per jaar. Voor grotere tuinen kan dit oplopen tot maandelijks onderhoud.</p>
                         </div>
                     </details>
 
@@ -811,7 +620,7 @@
                             <span class="faq-icon"></span>
                         </summary>
                         <div class="faq-answer">
-                            <p>Wij zijn gevestigd in Wemeldinge en actief in heel Zeeland — van Zierikzee tot Vlissingen, van Goes tot Middelburg. Twijfelt u of uw woonplaats binnen ons werkgebied valt? Neem dan even contact op, we komen graag bij u langs.</p>
+                            <p>Wij zijn gevestigd in Wemeldinge en actief in heel Zeeland — van Zierikzee tot Vlissingen, van Goes tot Middelburg.</p>
                         </div>
                     </details>
 
@@ -821,37 +630,37 @@
                             <span class="faq-icon"></span>
                         </summary>
                         <div class="faq-answer">
-                            <p>De prijs van een tuinontwerp hangt af van de grootte van uw tuin en de complexiteit van uw wensen. Een eerste kennismaking is altijd gratis en vrijblijvend. Daarna ontvangt u een heldere offerte zonder verborgen kosten.</p>
+                            <p>De prijs hangt af van de grootte van uw tuin en de complexiteit van uw wensen. Een eerste kennismaking is altijd gratis en vrijblijvend.</p>
                         </div>
                     </details>
 
                     <details class="faq-item" data-reveal-card>
                         <summary class="faq-question">
-                            <span>Hoe lang duurt het aanleggen van een tuin?</span>
+                            <span>Hoe lang duurt een tuinaanleg?</span>
                             <span class="faq-icon"></span>
                         </summary>
                         <div class="faq-answer">
-                            <p>De doorlooptijd is afhankelijk van het project. Een gemiddelde achtertuin kan in 1 tot 3 weken worden aangelegd. Bij grotere projecten of complexe ontwerpen kan dit langer duren. Wij stellen altijd een duidelijke planning op zodat u weet waar u aan toe bent.</p>
+                            <p>Een gemiddelde achtertuin kan in 1 tot 3 weken worden aangelegd. Bij grotere projecten kan dit langer duren — wij stellen altijd een duidelijke planning op.</p>
                         </div>
                     </details>
 
                     <details class="faq-item" data-reveal-card>
                         <summary class="faq-question">
-                            <span>Geven jullie garantie op het werk?</span>
+                            <span>Geven jullie garantie?</span>
                             <span class="faq-icon"></span>
                         </summary>
                         <div class="faq-answer">
-                            <p>Absoluut. Wij staan voor de kwaliteit van ons werk. Op aanleg en bestrating geven wij garantie volgens de richtlijnen van de Vereniging van Hoveniers en Groenvoorzieners. Op beplanting hanteren we een aanslaggarantie binnen het eerste seizoen.</p>
+                            <p>Absoluut. Op aanleg en bestrating geven wij garantie volgens de richtlijnen van de Vereniging van Hoveniers en Groenvoorzieners. Op beplanting hanteren we een aanslaggarantie binnen het eerste seizoen.</p>
                         </div>
                     </details>
 
                     <details class="faq-item" data-reveal-card>
                         <summary class="faq-question">
-                            <span>Kunnen jullie ook duurzame tuinen ontwerpen?</span>
+                            <span>Kunnen jullie duurzame tuinen ontwerpen?</span>
                             <span class="faq-icon"></span>
                         </summary>
                         <div class="faq-answer">
-                            <p>Zeker — duurzaamheid is een belangrijk onderdeel van onze werkwijze. Wij adviseren u graag over inheemse beplanting, waterbesparende oplossingen, klimaatadaptieve tuinen en biodiversiteit. Een groene tuin die goed is voor uzelf én voor de natuur.</p>
+                            <p>Zeker. Wij adviseren u graag over inheemse beplanting, waterbesparende oplossingen, klimaatadaptieve tuinen en biodiversiteit.</p>
                         </div>
                     </details>
                 </div>
@@ -859,61 +668,48 @@
         </div>
     </section>
 
-    <!-- Contact / CTA Section -->
+    <!-- Contact -->
     <section id="contact" class="contact">
-        <div class="contact-bg-pattern"></div>
         <div class="container">
             <div class="contact-grid">
                 <div class="contact-info">
-                    <div class="section-label section-label-light" data-reveal>
+                    <div class="section-label" data-reveal>
                         <span class="label-line"></span>
                         <span>Contact</span>
                     </div>
 
-                    <h2 class="contact-title" data-reveal-text-mask>
+                    <h2 class="contact-title" data-reveal>
                         Klaar voor uw <em>droomtuin</em>?
                     </h2>
 
                     <p class="contact-description" data-reveal>
                         Neem vrijblijvend contact op voor een persoonlijk advies of een gratis offerte.
-                        Wij komen graag bij u langs om uw wensen te bespreken.
+                        Wij komen graag bij u langs.
                     </p>
 
                     <div class="contact-methods" data-reveal>
-                        <a href="tel:+31623293274" class="contact-method" data-cursor="hover">
+                        <a href="tel:+31623293274" class="contact-method">
                             <div class="contact-method-icon">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                                     <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
                                 </svg>
                             </div>
-                            <div class="contact-method-text">
-                                <span class="contact-method-label">Bel ons</span>
-                                <span class="contact-method-value">+31 6 23 29 32 74</span>
+                            <div>
+                                <div class="contact-method-label">Bel ons</div>
+                                <div class="contact-method-value">+31 6 23 29 32 74</div>
                             </div>
                         </a>
 
-                        <a href="https://wa.me/31623293274" class="contact-method" data-cursor="hover" target="_blank" rel="noopener">
-                            <div class="contact-method-icon">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                                    <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
-                                </svg>
-                            </div>
-                            <div class="contact-method-text">
-                                <span class="contact-method-label">WhatsApp</span>
-                                <span class="contact-method-value">Direct contact</span>
-                            </div>
-                        </a>
-
-                        <a href="mailto:info@vermairehoveniers.nl" class="contact-method" data-cursor="hover">
+                        <a href="mailto:info@vermairehoveniers.nl" class="contact-method">
                             <div class="contact-method-icon">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                                     <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
                                     <path d="M22 6l-10 7L2 6"/>
                                 </svg>
                             </div>
-                            <div class="contact-method-text">
-                                <span class="contact-method-label">E-mail</span>
-                                <span class="contact-method-value">info@vermairehoveniers.nl</span>
+                            <div>
+                                <div class="contact-method-label">E-mail</div>
+                                <div class="contact-method-value">info@vermairehoveniers.nl</div>
                             </div>
                         </a>
 
@@ -924,15 +720,15 @@
                                     <circle cx="12" cy="10" r="3"/>
                                 </svg>
                             </div>
-                            <div class="contact-method-text">
-                                <span class="contact-method-label">Werkgebied</span>
-                                <span class="contact-method-value">Wemeldinge & heel Zeeland</span>
+                            <div>
+                                <div class="contact-method-label">Werkgebied</div>
+                                <div class="contact-method-value">Wemeldinge & heel Zeeland</div>
                             </div>
                         </div>
                     </div>
 
                     <div class="contact-socials" data-reveal>
-                        <a href="https://instagram.com/vermairehoveniers" class="contact-social" data-cursor="hover" target="_blank" rel="noopener" aria-label="Instagram">
+                        <a href="https://instagram.com/vermairehoveniers" class="contact-social" target="_blank" rel="noopener" aria-label="Instagram">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                                 <rect x="3" y="3" width="18" height="18" rx="5"/>
                                 <circle cx="12" cy="12" r="4"/>
@@ -945,30 +741,27 @@
 
                 <div class="contact-form-wrapper" data-reveal>
                     <form class="contact-form" id="contactForm" novalidate>
-                        <h3 class="contact-form-title">Vraag een vrijblijvende offerte aan</h3>
+                        <h3 class="contact-form-title">Vraag een offerte aan</h3>
                         <p class="contact-form-subtitle">Wij nemen binnen 24 uur contact met u op.</p>
 
                         <div class="form-row">
                             <div class="form-field">
                                 <label for="name">Naam *</label>
                                 <input type="text" id="name" name="name" required>
-                                <span class="form-line"></span>
                             </div>
                             <div class="form-field">
                                 <label for="phone">Telefoon</label>
                                 <input type="tel" id="phone" name="phone">
-                                <span class="form-line"></span>
                             </div>
                         </div>
 
                         <div class="form-field">
                             <label for="email">E-mailadres *</label>
                             <input type="email" id="email" name="email" required>
-                            <span class="form-line"></span>
                         </div>
 
                         <div class="form-field">
-                            <label for="service">Waar kunnen wij u mee helpen?</label>
+                            <label for="service">Welke dienst?</label>
                             <select id="service" name="service">
                                 <option value="">Selecteer een dienst...</option>
                                 <option value="ontwerp">Tuinontwerp</option>
@@ -979,25 +772,22 @@
                                 <option value="schuttingen">Schuttingen & Vlonders</option>
                                 <option value="anders">Iets anders</option>
                             </select>
-                            <span class="form-line"></span>
                         </div>
 
                         <div class="form-field">
-                            <label for="message">Vertel ons over uw tuin</label>
-                            <textarea id="message" name="message" rows="4"></textarea>
-                            <span class="form-line"></span>
+                            <label for="message">Bericht</label>
+                            <textarea id="message" name="message" rows="3"></textarea>
                         </div>
 
-                        <button type="submit" class="btn btn-primary btn-block" data-cursor="hover">
-                            <span class="btn-text">Verzend Aanvraag</span>
+                        <button type="submit" class="btn btn-primary btn-block">
+                            <span>Verzend aanvraag</span>
                             <span class="btn-icon">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
                             </span>
                         </button>
 
                         <p class="form-note">
-                            Door dit formulier in te dienen gaat u akkoord met de verwerking van uw gegevens
-                            voor het beantwoorden van uw vraag.
+                            Door dit formulier in te dienen gaat u akkoord met de verwerking van uw gegevens.
                         </p>
 
                         <div class="form-success" id="formSuccess">
@@ -1006,8 +796,8 @@
                                     <path d="M5 13l4 4L19 7"/>
                                 </svg>
                             </div>
-                            <h4>Bedankt voor uw aanvraag!</h4>
-                            <p>We nemen binnen 24 uur contact met u op.</p>
+                            <h4>Bedankt!</h4>
+                            <p>We nemen binnen 24 uur contact op.</p>
                         </div>
                     </form>
                 </div>
@@ -1032,31 +822,29 @@
                     </div>
                     <p class="footer-tagline">Uw tuin, onze passie.</p>
                     <p class="footer-description">
-                        Professionele hoveniersdiensten in Zeeland. Van ontwerp tot onderhoud —
-                        wij creëren tuinen waar u trots op bent.
+                        Professionele hoveniersdiensten in Zeeland. Van ontwerp tot onderhoud.
                     </p>
                 </div>
 
                 <div class="footer-column">
                     <h4 class="footer-heading">Diensten</h4>
                     <ul class="footer-links">
-                        <li><a href="#diensten" data-cursor="hover">Tuinontwerp</a></li>
-                        <li><a href="#diensten" data-cursor="hover">Tuinaanleg</a></li>
-                        <li><a href="#diensten" data-cursor="hover">Tuinonderhoud</a></li>
-                        <li><a href="#diensten" data-cursor="hover">Beplanting</a></li>
-                        <li><a href="#diensten" data-cursor="hover">Bestrating</a></li>
-                        <li><a href="#diensten" data-cursor="hover">Schuttingen & Vlonders</a></li>
+                        <li><a href="#diensten">Tuinontwerp</a></li>
+                        <li><a href="#diensten">Tuinaanleg</a></li>
+                        <li><a href="#diensten">Tuinonderhoud</a></li>
+                        <li><a href="#diensten">Beplanting</a></li>
+                        <li><a href="#diensten">Bestrating</a></li>
                     </ul>
                 </div>
 
                 <div class="footer-column">
                     <h4 class="footer-heading">Bedrijf</h4>
                     <ul class="footer-links">
-                        <li><a href="#over-ons" data-cursor="hover">Over Ons</a></li>
-                        <li><a href="#werkwijze" data-cursor="hover">Werkwijze</a></li>
-                        <li><a href="#projecten" data-cursor="hover">Projecten</a></li>
-                        <li><a href="#faq" data-cursor="hover">Veelgestelde Vragen</a></li>
-                        <li><a href="#contact" data-cursor="hover">Contact</a></li>
+                        <li><a href="#over-ons">Over Ons</a></li>
+                        <li><a href="#werkwijze">Werkwijze</a></li>
+                        <li><a href="#projecten">Projecten</a></li>
+                        <li><a href="#faq">FAQ</a></li>
+                        <li><a href="#contact">Contact</a></li>
                     </ul>
                 </div>
 
@@ -1065,19 +853,15 @@
                     <ul class="footer-contact">
                         <li>
                             <span class="footer-label">Telefoon</span>
-                            <a href="tel:+31623293274" data-cursor="hover">+31 6 23 29 32 74</a>
+                            <a href="tel:+31623293274">+31 6 23 29 32 74</a>
                         </li>
                         <li>
                             <span class="footer-label">E-mail</span>
-                            <a href="mailto:info@vermairehoveniers.nl" data-cursor="hover">info@vermairehoveniers.nl</a>
+                            <a href="mailto:info@vermairehoveniers.nl">info@vermairehoveniers.nl</a>
                         </li>
                         <li>
                             <span class="footer-label">Adres</span>
-                            <span>Wemeldinge<br>Zeeland, Nederland</span>
-                        </li>
-                        <li>
-                            <span class="footer-label">Volg ons</span>
-                            <a href="https://instagram.com/vermairehoveniers" data-cursor="hover" target="_blank" rel="noopener">@vermairehoveniers</a>
+                            <span>Wemeldinge, Zeeland</span>
                         </li>
                     </ul>
                 </div>
@@ -1086,26 +870,19 @@
             <div class="footer-bottom">
                 <p class="footer-copy">© 2026 Vermaire Hoveniers · Alle rechten voorbehouden</p>
                 <div class="footer-legal">
-                    <a href="#" data-cursor="hover">Privacybeleid</a>
-                    <a href="#" data-cursor="hover">Algemene Voorwaarden</a>
-                    <a href="#" data-cursor="hover">Cookies</a>
+                    <a href="#">Privacybeleid</a>
+                    <a href="#">Algemene Voorwaarden</a>
                 </div>
-                <a href="#home" class="footer-back-top" data-cursor="hover">
+                <a href="#home" class="footer-back-top">
                     <span>Naar boven</span>
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
                 </a>
             </div>
         </div>
-
-        <div class="footer-marquee">
-            <div class="footer-marquee-track">
-                VERMAIRE HOVENIERS · UW TUIN, ONZE PASSIE · VERMAIRE HOVENIERS · UW TUIN, ONZE PASSIE · VERMAIRE HOVENIERS · UW TUIN, ONZE PASSIE ·
-            </div>
-        </div>
     </footer>
 
-    <!-- Floating WhatsApp Button -->
-    <a href="https://wa.me/31623293274" class="float-whatsapp" data-cursor="hover" target="_blank" rel="noopener" aria-label="WhatsApp">
+    <!-- Floating WhatsApp -->
+    <a href="https://wa.me/31623293274" class="float-whatsapp" target="_blank" rel="noopener" aria-label="WhatsApp">
         <svg viewBox="0 0 24 24" fill="currentColor">
             <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
         </svg>
@@ -1113,19 +890,6 @@
 
     <!-- Progress Bar -->
     <div class="progress-bar" id="progressBar"></div>
-
-    <!-- Side Rail (unifying visual) -->
-    <aside class="side-rail" aria-hidden="true">
-        <div class="side-rail-line"></div>
-        <div class="side-rail-dots">
-            <a href="#home" class="side-rail-dot" data-section="home"><span>Home</span></a>
-            <a href="#diensten" class="side-rail-dot" data-section="diensten"><span>Diensten</span></a>
-            <a href="#werkwijze" class="side-rail-dot" data-section="werkwijze"><span>Werkwijze</span></a>
-            <a href="#projecten" class="side-rail-dot" data-section="projecten"><span>Projecten</span></a>
-            <a href="#over-ons" class="side-rail-dot" data-section="over-ons"><span>Over Ons</span></a>
-            <a href="#contact" class="side-rail-dot" data-section="contact"><span>Contact</span></a>
-        </div>
-    </aside>
 
     <script src="js/main.js"></script>
 </body>
