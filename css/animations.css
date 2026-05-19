@@ -72,13 +72,3 @@ img[loading="lazy"] {
 }
 
 img[loading="lazy"].loaded { opacity: 1; }
-
-/* Filter fade-out */
-.project-card {
-    transition: opacity 0.3s ease, transform 0.3s ease;
-}
-
-.project-card.fade-out {
-    opacity: 0;
-    transform: scale(0.95);
-}
