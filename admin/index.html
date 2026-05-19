@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Admin Portaal · Vermaire Hoveniers</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/admin.css">
+    <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+</head>
+<body>
+
+    <!-- LOGIN -->
+    <div class="login" id="loginView">
+        <div class="login-card">
+            <div class="login-logo">
+                <svg viewBox="0 0 60 60" fill="none">
+                    <path d="M30 8 C 18 18, 12 32, 18 48 C 24 56, 36 56, 42 48 C 48 32, 42 18, 30 8 Z" stroke="currentColor" stroke-width="1.5"/>
+                    <path d="M30 16 L 30 52 M30 28 L 22 36 M30 28 L 38 36 M30 38 L 22 46 M30 38 L 38 46" stroke="currentColor" stroke-width="1.2"/>
+                </svg>
+                <div class="login-logo-text">
+                    <span class="login-logo-name">Vermaire</span>
+                    <span class="login-logo-sub">Hoveniers</span>
+                </div>
+            </div>
+
+            <h1>Admin Portaal</h1>
+            <p class="sub">Log in om aanvragen en contactpogingen te beheren.</p>
+
+            <div class="alert hidden" id="loginError"></div>
+
+            <form id="loginForm">
+                <div class="field">
+                    <label for="email">E-mailadres</label>
+                    <input type="email" id="email" autocomplete="username" required>
+                </div>
+                <div class="field">
+                    <label for="password">Wachtwoord</label>
+                    <input type="password" id="password" autocomplete="current-password" required>
+                </div>
+                <button type="submit" class="btn btn-block" id="loginBtn">Inloggen</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- APP -->
+    <div id="appView" class="hidden">
+        <header class="topbar">
+            <div class="topbar-inner">
+                <div class="topbar-brand">
+                    <svg viewBox="0 0 60 60" fill="none">
+                        <path d="M30 8 C 18 18, 12 32, 18 48 C 24 56, 36 56, 42 48 C 48 32, 42 18, 30 8 Z" stroke="currentColor" stroke-width="1.5"/>
+                        <path d="M30 16 L 30 52 M30 28 L 22 36 M30 28 L 38 36 M30 38 L 22 46 M30 38 L 38 46" stroke="currentColor" stroke-width="1.2"/>
+                    </svg>
+                    <div class="topbar-brand-text">
+                        <span class="topbar-brand-name">Admin Portaal</span>
+                        <span class="topbar-brand-sub">Vermaire Hoveniers</span>
+                    </div>
+                </div>
+                <div class="topbar-user">
+                    <span class="topbar-email" id="userEmail"></span>
+                    <button class="btn btn-ghost btn-sm" id="logoutBtn">Uitloggen</button>
+                </div>
+            </div>
+        </header>
+
+        <main class="wrap">
+            <div class="page-head">
+                <h1>Aanvragen &amp; contactpogingen</h1>
+                <p>Alle berichten die via de website binnenkomen.</p>
+            </div>
+
+            <div class="stats" id="stats">
+                <div class="stat is-new"><div class="stat-num" id="statNew">–</div><div class="stat-label">Nieuw</div></div>
+                <div class="stat"><div class="stat-num" id="statContacted">–</div><div class="stat-label">Gecontacteerd</div></div>
+                <div class="stat"><div class="stat-num" id="statDone">–</div><div class="stat-label">Afgerond</div></div>
+                <div class="stat"><div class="stat-num" id="statTotal">–</div><div class="stat-label">Totaal</div></div>
+            </div>
+
+            <div class="toolbar">
+                <div class="filters" id="filters">
+                    <button class="filter active" data-filter="all">Alle</button>
+                    <button class="filter" data-filter="nieuw">Nieuw</button>
+                    <button class="filter" data-filter="gecontacteerd">Gecontacteerd</button>
+                    <button class="filter" data-filter="afgerond">Afgerond</button>
+                    <button class="filter" data-filter="gearchiveerd">Gearchiveerd</button>
+                </div>
+                <input type="search" class="search" id="search" placeholder="Zoek op naam, e-mail, bericht…">
+            </div>
+
+            <div class="table-card">
+                <div id="tableState" class="loading">
+                    <div class="spinner"></div>
+                    Aanvragen laden…
+                </div>
+                <table id="table" class="hidden">
+                    <thead>
+                        <tr>
+                            <th>Naam</th>
+                            <th class="col-hide-sm">Dienst</th>
+                            <th class="col-hide-sm">Datum</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbody"></tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <!-- DETAIL DRAWER -->
+    <div class="drawer-overlay" id="drawerOverlay"></div>
+    <aside class="drawer" id="drawer" aria-hidden="true">
+        <div class="drawer-head">
+            <div>
+                <h2 id="dName">—</h2>
+                <span class="pill pill-nieuw" id="dPill">nieuw</span>
+            </div>
+            <button class="drawer-close" id="drawerClose" aria-label="Sluiten">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+            </button>
+        </div>
+        <div class="drawer-body">
+            <div class="detail-row">
+                <div class="detail-label">E-mail</div>
+                <div class="detail-value"><a id="dEmail" href="#">—</a></div>
+            </div>
+            <div class="detail-row">
+                <div class="detail-label">Telefoon</div>
+                <div class="detail-value"><a id="dPhone" href="#">—</a></div>
+            </div>
+            <div class="detail-row">
+                <div class="detail-label">Gevraagde dienst</div>
+                <div class="detail-value" id="dService">—</div>
+            </div>
+            <div class="detail-row">
+                <div class="detail-label">Ontvangen</div>
+                <div class="detail-value" id="dDate">—</div>
+            </div>
+            <div class="detail-row">
+                <div class="detail-label">Bericht</div>
+                <div class="detail-message" id="dMessage">—</div>
+            </div>
+        </div>
+        <div class="drawer-actions">
+            <a class="btn" id="dMailto" href="#">Beantwoorden</a>
+            <button class="btn btn-ghost" id="dArchive">Archiveren</button>
+        </div>
+    </aside>
+
+    <div class="toast" id="toast"></div>
+    <p class="adminlink"><a href="../index.html">← Terug naar website</a></p>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+    <script src="../js/admin.js"></script>
+</body>
+</html>

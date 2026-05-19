@@ -1,13 +1,12 @@
 /* ==========================================================================
-   VERMAIRE HOVENIERS - ANIMATIONS
-   Scroll-triggered animations & micro-interactions
+   VERMAIRE HOVENIERS - ANIMATIONS (simplified)
    ========================================================================== */
 
-/* Reveal animations - initial states */
+/* Reveal on scroll */
 [data-reveal] {
     opacity: 0;
-    transform: translateY(30px);
-    transition: opacity 1s var(--ease-out), transform 1s var(--ease-out);
+    transform: translateY(20px);
+    transition: opacity 0.8s var(--ease), transform 0.8s var(--ease);
 }
 
 [data-reveal].in-view {
@@ -15,49 +14,10 @@
     transform: translateY(0);
 }
 
-/* Text reveal with mask */
-[data-reveal-text] {
-    overflow: hidden;
-}
-
-[data-reveal-text] span {
-    display: inline-block;
-    transform: translateY(110%);
-    transition: transform 1.2s var(--ease-out);
-}
-
-[data-reveal-text].in-view span {
-    transform: translateY(0);
-}
-
-/* Mask reveal text - line by line */
-[data-reveal-text-mask] {
-    --reveal-delay: 0;
-}
-
-[data-reveal-text-mask] .word-wrap {
-    display: inline-block;
-    overflow: hidden;
-    vertical-align: top;
-    margin-right: 0.25em;
-}
-
-[data-reveal-text-mask] .word {
-    display: inline-block;
-    transform: translateY(110%);
-    transition: transform 1s var(--ease-out);
-    transition-delay: calc(var(--word-index, 0) * 0.04s);
-}
-
-[data-reveal-text-mask].in-view .word {
-    transform: translateY(0);
-}
-
-/* Card reveal animation */
 [data-reveal-card] {
     opacity: 0;
-    transform: translateY(50px);
-    transition: opacity 1s var(--ease-out), transform 1s var(--ease-out);
+    transform: translateY(30px);
+    transition: opacity 0.8s var(--ease), transform 0.8s var(--ease);
 }
 
 [data-reveal-card].in-view {
@@ -65,420 +25,50 @@
     transform: translateY(0);
 }
 
-/* Stagger children */
-.services-grid [data-reveal-card]:nth-child(1) { transition-delay: 0s; }
-.services-grid [data-reveal-card]:nth-child(2) { transition-delay: 0.08s; }
-.services-grid [data-reveal-card]:nth-child(3) { transition-delay: 0.16s; }
-.services-grid [data-reveal-card]:nth-child(4) { transition-delay: 0.24s; }
-.services-grid [data-reveal-card]:nth-child(5) { transition-delay: 0.32s; }
-.services-grid [data-reveal-card]:nth-child(6) { transition-delay: 0.4s; }
-
-.process-grid [data-reveal-card]:nth-child(1) { transition-delay: 0s; }
-.process-grid [data-reveal-card]:nth-child(2) { transition-delay: 0.15s; }
-.process-grid [data-reveal-card]:nth-child(3) { transition-delay: 0.3s; }
-.process-grid [data-reveal-card]:nth-child(4) { transition-delay: 0.45s; }
-
+/* Staggered children */
+.services-grid [data-reveal-card]:nth-child(1),
+.process-grid [data-reveal-card]:nth-child(1),
 .faq-list [data-reveal-card]:nth-child(1) { transition-delay: 0s; }
-.faq-list [data-reveal-card]:nth-child(2) { transition-delay: 0.05s; }
-.faq-list [data-reveal-card]:nth-child(3) { transition-delay: 0.1s; }
-.faq-list [data-reveal-card]:nth-child(4) { transition-delay: 0.15s; }
-.faq-list [data-reveal-card]:nth-child(5) { transition-delay: 0.2s; }
-.faq-list [data-reveal-card]:nth-child(6) { transition-delay: 0.25s; }
 
-/* Parallax base */
-[data-parallax] {
-    will-change: transform;
-}
+.services-grid [data-reveal-card]:nth-child(2),
+.process-grid [data-reveal-card]:nth-child(2),
+.faq-list [data-reveal-card]:nth-child(2) { transition-delay: 0.08s; }
 
-/* Hero entrance animations */
-.hero-tagline {
-    transition-delay: 0.2s;
-}
+.services-grid [data-reveal-card]:nth-child(3),
+.process-grid [data-reveal-card]:nth-child(3),
+.faq-list [data-reveal-card]:nth-child(3) { transition-delay: 0.16s; }
 
-.hero-title-line:nth-child(1) span {
-    transition-delay: 0.3s;
-}
+.services-grid [data-reveal-card]:nth-child(4),
+.process-grid [data-reveal-card]:nth-child(4),
+.faq-list [data-reveal-card]:nth-child(4) { transition-delay: 0.24s; }
 
-.hero-title-line:nth-child(2) span {
-    transition-delay: 0.4s;
-}
+.services-grid [data-reveal-card]:nth-child(5),
+.faq-list [data-reveal-card]:nth-child(5) { transition-delay: 0.32s; }
 
-.hero-description {
-    transition-delay: 0.6s;
-}
+.services-grid [data-reveal-card]:nth-child(6),
+.faq-list [data-reveal-card]:nth-child(6) { transition-delay: 0.4s; }
 
-.hero-actions {
-    transition-delay: 0.8s;
-}
-
-.hero-stats {
-    transition-delay: 1s;
-}
-
-.hero-scroll {
-    transition-delay: 1.2s;
-}
-
-/* Hero title masked */
-.hero-title-line {
-    overflow: hidden;
-}
-
-.hero-title-line span {
-    display: inline-block;
-    transform: translateY(110%);
-    opacity: 0;
-    transition: transform 1.4s var(--ease-out), opacity 0.8s var(--ease-out);
-}
-
-.hero-title-line.in-view span,
-body.hero-loaded .hero-title-line span {
-    transform: translateY(0);
-    opacity: 1;
-}
-
-/* Hero entrance class trigger */
-body.hero-loaded .hero-tagline,
-body.hero-loaded .hero-description,
-body.hero-loaded .hero-actions,
-body.hero-loaded .hero-stats,
-body.hero-loaded .hero-scroll {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-body:not(.hero-loaded) .hero-tagline,
-body:not(.hero-loaded) .hero-description,
-body:not(.hero-loaded) .hero-actions,
-body:not(.hero-loaded) .hero-stats,
-body:not(.hero-loaded) .hero-scroll {
-    opacity: 0;
-    transform: translateY(30px);
-}
-
+/* Hero entrance — content fades in on load */
 .hero-tagline,
+.hero-title,
 .hero-description,
 .hero-actions,
-.hero-stats,
-.hero-scroll {
-    transition: opacity 1s var(--ease-out), transform 1s var(--ease-out);
-}
-
-/* About images animation */
-.about-image-main {
-    transform: translateX(-30px);
+.hero-stats {
     opacity: 0;
-    transition: all 1.2s var(--ease-out);
+    transform: translateY(20px);
+    transition: opacity 1s var(--ease), transform 1s var(--ease);
 }
 
-.about-image-main.in-view {
-    transform: translateX(0);
-    opacity: 1;
-}
+body.loaded .hero-tagline { opacity: 1; transform: translateY(0); transition-delay: 0.1s; }
+body.loaded .hero-title { opacity: 1; transform: translateY(0); transition-delay: 0.2s; }
+body.loaded .hero-description { opacity: 1; transform: translateY(0); transition-delay: 0.35s; }
+body.loaded .hero-actions { opacity: 1; transform: translateY(0); transition-delay: 0.5s; }
+body.loaded .hero-stats { opacity: 1; transform: translateY(0); transition-delay: 0.65s; }
 
-.about-image-secondary {
-    transform: translateX(30px) translateY(30px);
+/* Lazy image fade */
+img[loading="lazy"] {
     opacity: 0;
-    transition: all 1.2s var(--ease-out) 0.2s;
-}
-
-.about-image-secondary.in-view {
-    transform: translateX(0) translateY(0);
-    opacity: 1;
-}
-
-.about-badge {
-    transform: scale(0) rotate(-30deg);
-    opacity: 0;
-    transition: all 0.8s var(--ease-elastic) 0.6s;
-}
-
-.about-badge.in-view {
-    transform: scale(1) rotate(0);
-    opacity: 1;
-}
-
-/* Hover Effects */
-.service-card {
-    transition: transform 0.4s var(--ease-out);
-}
-
-@media (hover: hover) {
-    .service-card:hover {
-        transform: translateY(-4px);
-    }
-}
-
-/* Image hover zoom for projects */
-.project-card {
-    will-change: transform;
-}
-
-/* Smooth transitions */
-.nav-cta::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 0;
-    height: 0;
-    background: var(--color-earth);
-    border-radius: 50%;
-    transform: translate(-50%, -50%);
-    transition: width 0.6s var(--ease-out), height 0.6s var(--ease-out);
-    z-index: 0;
-}
-
-.nav-cta:hover::before {
-    width: 300px;
-    height: 300px;
-}
-
-.nav-cta-text,
-.nav-cta-arrow {
-    position: relative;
-    z-index: 1;
-}
-
-/* Logo hover */
-.nav-logo:hover .logo-icon {
-    animation: logoSpin 0.8s var(--ease-out);
-}
-
-@keyframes logoSpin {
-    0% { transform: rotate(0); }
-    50% { transform: rotate(-15deg) scale(1.1); }
-    100% { transform: rotate(0); }
-}
-
-/* Scroll-triggered fade for sections */
-.section-fade {
-    opacity: 0;
-    transition: opacity 1s var(--ease-out);
-}
-
-.section-fade.in-view {
-    opacity: 1;
-}
-
-/* Counter animation */
-.hero-stat-number {
-    font-variant-numeric: tabular-nums;
-}
-
-/* Background images use parallax via JS (transform is set inline) */
-/* Subtle zoom applied through CSS scale on a wrapper pseudo */
-
-/* Smooth focus animations */
-.form-field input:focus,
-.form-field textarea:focus,
-.form-field select:focus {
-    animation: focusGlow 0.3s ease-out;
-}
-
-@keyframes focusGlow {
-    0% { transform: translateY(0); }
-    50% { transform: translateY(-1px); }
-    100% { transform: translateY(0); }
-}
-
-/* Page transition smoothness */
-body {
-    transition: opacity 0.3s ease;
-}
-
-body.transitioning {
-    opacity: 0.8;
-}
-
-/* Button ripple effect */
-.btn {
-    position: relative;
-    isolation: isolate;
-}
-
-.btn::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 0;
-    height: 0;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.2);
-    transform: translate(-50%, -50%);
-    transition: width 0.5s var(--ease-out), height 0.5s var(--ease-out);
-    pointer-events: none;
-}
-
-.btn:active::after {
-    width: 300px;
-    height: 300px;
-    transition: width 0s, height 0s;
-}
-
-/* Filter button transitions */
-.filter-btn {
-    overflow: hidden;
-    position: relative;
-}
-
-.filter-btn::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: var(--color-earth);
-    transform: translateY(101%);
-    transition: transform 0.4s var(--ease-out);
-    z-index: -1;
-}
-
-.filter-btn:hover::before {
-    transform: translateY(0);
-}
-
-.filter-btn.active::before {
-    transform: translateY(0);
-}
-
-/* Process step animation */
-.process-step-number {
-    transition: color 0.4s var(--ease-out), transform 0.4s var(--ease-out);
-}
-
-.process-step:hover .process-step-number {
-    transform: translateX(5px);
-}
-
-/* Smooth section transitions */
-section {
-    position: relative;
-}
-
-/* Image lazy load fade-in */
-img {
     transition: opacity 0.6s ease;
 }
 
-img[loading="lazy"] {
-    opacity: 0;
-}
-
-img[loading="lazy"].loaded {
-    opacity: 1;
-}
-
-/* Magnetic button effect */
-.btn-magnetic {
-    transition: transform 0.3s cubic-bezier(0.23, 1, 0.32, 1);
-}
-
-/* Staggered nav items */
-.nav-link {
-    transition: color var(--transition-fast);
-}
-
-.nav-link span {
-    transition: opacity var(--transition-fast), transform var(--transition-fast);
-}
-
-.nav-link:hover span {
-    opacity: 1;
-    transform: translateY(-4px);
-}
-
-/* Float animation for decorative elements */
-@keyframes gentleFloat {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
-}
-
-.float-anim {
-    animation: gentleFloat 4s ease-in-out infinite;
-}
-
-/* Underline draw animation */
-.underline-draw {
-    position: relative;
-    display: inline-block;
-}
-
-.underline-draw::after {
-    content: '';
-    position: absolute;
-    bottom: -2px;
-    left: 0;
-    width: 0;
-    height: 1px;
-    background: currentColor;
-    transition: width 0.4s var(--ease-out);
-}
-
-.underline-draw:hover::after {
-    width: 100%;
-}
-
-/* Quotes float in testimonials */
-.testimonials::before {
-    animation: quoteFloat 6s ease-in-out infinite;
-}
-
-@keyframes quoteFloat {
-    0%, 100% { transform: translateY(0) rotate(0); }
-    50% { transform: translateY(-10px) rotate(2deg); }
-}
-
-/* Floating leaves animation for hero */
-@keyframes leafDrift {
-    0% {
-        transform: translateY(-10vh) translateX(0) rotate(0);
-        opacity: 0;
-    }
-    10% {
-        opacity: 0.4;
-    }
-    90% {
-        opacity: 0.4;
-    }
-    100% {
-        transform: translateY(110vh) translateX(100px) rotate(360deg);
-        opacity: 0;
-    }
-}
-
-.leaf-particle {
-    position: absolute;
-    width: 20px;
-    height: 20px;
-    color: var(--color-sage-light);
-    opacity: 0.4;
-    pointer-events: none;
-    animation: leafDrift linear infinite;
-}
-
-/* Smooth disabled states */
-.btn:disabled,
-.btn.disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-    pointer-events: none;
-}
-
-/* Section number indicator */
-.section-number {
-    font-family: var(--font-display);
-    font-size: 0.875rem;
-    color: var(--color-earth);
-    letter-spacing: 0.2em;
-    margin-bottom: var(--space-sm);
-}
-
-/* Word-by-word reveal helper */
-.word {
-    display: inline-block;
-}
-
-.word-wrap {
-    display: inline-block;
-    overflow: hidden;
-}
+img[loading="lazy"].loaded { opacity: 1; }
