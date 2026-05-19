@@ -85,12 +85,9 @@
     }
 
     const SERVICE_LABEL = {
-        ontwerp: 'Tuinontwerp',
-        aanleg: 'Tuinaanleg',
-        onderhoud: 'Tuinonderhoud',
         beplanting: 'Beplanting',
-        bestrating: 'Bestrating',
-        schuttingen: 'Schuttingen & Vlonders',
+        groenadvies: 'Groenadvies',
+        onderhoud: 'Onderhoud',
         anders: 'Iets anders',
     };
     const serviceLabel = (s) => (s ? SERVICE_LABEL[s] || s : '—');
