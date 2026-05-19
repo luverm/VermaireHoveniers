@@ -165,7 +165,7 @@
     const formSuccess = document.getElementById('formSuccess');
 
     if (contactForm) {
-        contactForm.addEventListener('submit', (e) => {
+        contactForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const data = Object.fromEntries(new FormData(contactForm));
 
@@ -180,13 +180,27 @@
             span.textContent = 'Bezig met verzenden...';
             btn.disabled = true;
 
-            setTimeout(() => {
+            try {
+                const res = await fetch('/api/contact', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data),
+                });
+
+                if (!res.ok) {
+                    const payload = await res.json().catch(() => ({}));
+                    throw new Error(payload.error || 'Verzenden mislukt.');
+                }
+
                 formSuccess.classList.add('active');
                 contactForm.reset();
+                setTimeout(() => formSuccess.classList.remove('active'), 6000);
+            } catch (err) {
+                alert(err.message + ' U kunt ons ook direct bellen op +31 6 23 29 32 74.');
+            } finally {
                 span.textContent = orig;
                 btn.disabled = false;
-                setTimeout(() => formSuccess.classList.remove('active'), 5000);
-            }, 1000);
+            }
         });
     }
 
