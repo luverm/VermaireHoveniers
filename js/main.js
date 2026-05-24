@@ -16,11 +16,9 @@
 
     /* Navigation scroll state */
     const nav = document.getElementById('nav');
-    const navToggle = document.getElementById('navToggle');
-    const navMenu = document.getElementById('navMenu');
-    const navLinks = document.querySelectorAll('.nav-link');
     const progressBar = document.getElementById('progressBar');
     const sections = document.querySelectorAll('section[id]');
+    const menuLinks = document.querySelectorAll('.menu-link');
 
     function onScroll() {
         const y = window.scrollY;
@@ -32,15 +30,15 @@
         const pct = docHeight > 0 ? (y / docHeight) * 100 : 0;
         progressBar.style.width = Math.min(pct, 100) + '%';
 
-        // Active nav link
+        // Highlight active link in the menu drawer
         const scrollPos = y + 150;
         sections.forEach(section => {
             const top = section.offsetTop;
             const bottom = top + section.offsetHeight;
             const id = section.getAttribute('id');
-            const link = document.querySelector(`.nav-link[href="#${id}"]`);
+            const link = document.querySelector(`.menu-link[href="#${id}"]`);
             if (scrollPos >= top && scrollPos < bottom) {
-                navLinks.forEach(l => l.classList.remove('active'));
+                menuLinks.forEach(l => l.classList.remove('active'));
                 if (link) link.classList.add('active');
             }
         });
@@ -48,22 +46,47 @@
 
     window.addEventListener('scroll', onScroll, { passive: true });
 
-    /* Mobile menu */
-    if (navToggle) {
-        navToggle.addEventListener('click', () => {
-            navToggle.classList.toggle('active');
-            navMenu.classList.toggle('active');
-            document.body.style.overflow = navMenu.classList.contains('active') ? 'hidden' : '';
-        });
+    /* Slide-in menu drawer */
+    const hamburger = document.getElementById('hamburger');
+    const menuDrawer = document.getElementById('menuDrawer');
+    const menuBackdrop = document.getElementById('menuBackdrop');
+    const menuClose = document.getElementById('menuClose');
+
+    function openMenu() {
+        hamburger.setAttribute('aria-expanded', 'true');
+        hamburger.setAttribute('aria-label', 'Sluit menu');
+        menuDrawer.classList.add('open');
+        menuDrawer.setAttribute('aria-hidden', 'false');
+        menuBackdrop.classList.add('open');
+        document.body.classList.add('menu-open');
     }
 
-    document.querySelectorAll('.nav-link').forEach(link => {
-        link.addEventListener('click', () => {
-            navToggle.classList.remove('active');
-            navMenu.classList.remove('active');
-            document.body.style.overflow = '';
+    function closeMenu() {
+        hamburger.setAttribute('aria-expanded', 'false');
+        hamburger.setAttribute('aria-label', 'Open menu');
+        menuDrawer.classList.remove('open');
+        menuDrawer.setAttribute('aria-hidden', 'true');
+        menuBackdrop.classList.remove('open');
+        document.body.classList.remove('menu-open');
+    }
+
+    if (hamburger && menuDrawer && menuBackdrop) {
+        hamburger.addEventListener('click', () => {
+            if (hamburger.getAttribute('aria-expanded') === 'true') closeMenu();
+            else openMenu();
         });
-    });
+
+        menuBackdrop.addEventListener('click', closeMenu);
+        menuClose?.addEventListener('click', closeMenu);
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && menuDrawer.classList.contains('open')) closeMenu();
+        });
+
+        menuDrawer.querySelectorAll('a[href^="#"]').forEach(a => {
+            a.addEventListener('click', closeMenu);
+        });
+    }
 
     /* Smooth scroll for anchor links with offset */
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
