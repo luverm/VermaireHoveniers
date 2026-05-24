@@ -64,6 +64,8 @@
 
 html {
     scroll-behavior: smooth;
+    color-scheme: light;
+    background-color: #ffffff;
 }
 
 body {
@@ -71,7 +73,7 @@ body {
     font-size: 16px;
     line-height: 1.6;
     color: var(--text);
-    background: var(--bg);
+    background-color: #ffffff;
     overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -112,8 +114,8 @@ em { font-style: normal; font-weight: 300; color: var(--accent); }
     z-index: 100;
     padding: var(--space-sm) 0;
     transition: all var(--t);
-    background: var(--white);
-    border-bottom: 1px solid var(--border);
+    background-color: #ffffff;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
 }
 
 .nav.scrolled {
