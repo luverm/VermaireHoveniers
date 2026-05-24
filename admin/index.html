@@ -24,7 +24,7 @@
             </div>
 
             <h1>Admin Portaal</h1>
-            <p class="sub">Log in om aanvragen en contactpogingen te beheren.</p>
+            <p class="sub">Log in om aanvragen, projecten en site-info te beheren.</p>
 
             <div class="alert hidden" id="loginError"></div>
 
@@ -55,53 +55,167 @@
                     <button class="btn btn-ghost btn-sm" id="logoutBtn">Uitloggen</button>
                 </div>
             </div>
+            <nav class="tabs" role="tablist">
+                <button class="tab active" data-view="aanvragen" role="tab">Aanvragen</button>
+                <button class="tab" data-view="projecten" role="tab">Projecten</button>
+                <button class="tab" data-view="settings" role="tab">Site Info</button>
+            </nav>
         </header>
 
         <main class="wrap">
-            <div class="page-head">
-                <h1>Aanvragen &amp; contactpogingen</h1>
-                <p>Alle berichten die via de website binnenkomen.</p>
-            </div>
-
-            <div class="stats" id="stats">
-                <div class="stat is-new"><div class="stat-num" id="statNew">–</div><div class="stat-label">Nieuw</div></div>
-                <div class="stat"><div class="stat-num" id="statContacted">–</div><div class="stat-label">Gecontacteerd</div></div>
-                <div class="stat"><div class="stat-num" id="statDone">–</div><div class="stat-label">Afgerond</div></div>
-                <div class="stat"><div class="stat-num" id="statTotal">–</div><div class="stat-label">Totaal</div></div>
-            </div>
-
-            <div class="toolbar">
-                <div class="filters" id="filters">
-                    <button class="filter active" data-filter="all">Alle</button>
-                    <button class="filter" data-filter="nieuw">Nieuw</button>
-                    <button class="filter" data-filter="gecontacteerd">Gecontacteerd</button>
-                    <button class="filter" data-filter="afgerond">Afgerond</button>
-                    <button class="filter" data-filter="gearchiveerd">Gearchiveerd</button>
+            <!-- AANVRAGEN VIEW -->
+            <section class="view active" data-view-content="aanvragen">
+                <div class="page-head">
+                    <h1>Aanvragen &amp; contactpogingen</h1>
+                    <p>Alle berichten die via de website binnenkomen.</p>
                 </div>
-                <input type="search" class="search" id="search" placeholder="Zoek op naam, e-mail, bericht…">
-            </div>
 
-            <div class="table-card">
-                <div id="tableState" class="loading">
+                <div class="stats" id="stats">
+                    <div class="stat is-new"><div class="stat-num" id="statNew">–</div><div class="stat-label">Nieuw</div></div>
+                    <div class="stat"><div class="stat-num" id="statContacted">–</div><div class="stat-label">Gecontacteerd</div></div>
+                    <div class="stat"><div class="stat-num" id="statDone">–</div><div class="stat-label">Afgerond</div></div>
+                    <div class="stat"><div class="stat-num" id="statTotal">–</div><div class="stat-label">Totaal</div></div>
+                </div>
+
+                <div class="toolbar">
+                    <div class="filters" id="filters">
+                        <button class="filter active" data-filter="all">Alle</button>
+                        <button class="filter" data-filter="nieuw">Nieuw</button>
+                        <button class="filter" data-filter="gecontacteerd">Gecontacteerd</button>
+                        <button class="filter" data-filter="afgerond">Afgerond</button>
+                        <button class="filter" data-filter="gearchiveerd">Gearchiveerd</button>
+                    </div>
+                    <input type="search" class="search" id="search" placeholder="Zoek op naam, e-mail, bericht…">
+                </div>
+
+                <div class="table-card">
+                    <div id="tableState" class="loading">
+                        <div class="spinner"></div>
+                        Aanvragen laden…
+                    </div>
+                    <table id="table" class="hidden">
+                        <thead>
+                            <tr>
+                                <th>Naam</th>
+                                <th class="col-hide-sm">Dienst</th>
+                                <th class="col-hide-sm">Datum</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- PROJECTEN VIEW -->
+            <section class="view" data-view-content="projecten">
+                <div class="page-head row">
+                    <div>
+                        <h1>Projecten</h1>
+                        <p>Voeg projecten toe, beheer foto's en zichtbaarheid.</p>
+                    </div>
+                    <button class="btn" id="newProjectBtn">
+                        <span>+ Nieuw project</span>
+                    </button>
+                </div>
+
+                <div id="projectsState" class="loading">
                     <div class="spinner"></div>
-                    Aanvragen laden…
+                    Projecten laden…
                 </div>
-                <table id="table" class="hidden">
-                    <thead>
-                        <tr>
-                            <th>Naam</th>
-                            <th class="col-hide-sm">Dienst</th>
-                            <th class="col-hide-sm">Datum</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tbody"></tbody>
-                </table>
-            </div>
+                <div id="projectsList" class="projects-grid hidden"></div>
+            </section>
+
+            <!-- SETTINGS VIEW -->
+            <section class="view" data-view-content="settings">
+                <div class="page-head">
+                    <h1>Site Info</h1>
+                    <p>Pas teksten, statistieken en contactgegevens op de website aan.</p>
+                </div>
+
+                <form id="settingsForm" class="settings-form">
+                    <div class="settings-state loading" id="settingsState">
+                        <div class="spinner"></div>
+                        Instellingen laden…
+                    </div>
+
+                    <div class="settings-body hidden" id="settingsBody">
+                        <fieldset class="settings-group">
+                            <legend>Hero</legend>
+                            <div class="settings-field">
+                                <label for="set-hero_description">Hero beschrijving</label>
+                                <textarea id="set-hero_description" data-key="hero_description" rows="3"></textarea>
+                                <p class="settings-hint">De tekst onder de grote titel op de homepage.</p>
+                            </div>
+                        </fieldset>
+
+                        <fieldset class="settings-group">
+                            <legend>Statistieken</legend>
+                            <div class="settings-row">
+                                <div class="settings-field">
+                                    <label for="set-stat1_number">Getal 1</label>
+                                    <input type="text" id="set-stat1_number" data-key="stat1_number" inputmode="numeric">
+                                </div>
+                                <div class="settings-field grow">
+                                    <label for="set-stat1_label">Label 1</label>
+                                    <input type="text" id="set-stat1_label" data-key="stat1_label">
+                                </div>
+                            </div>
+                            <div class="settings-row">
+                                <div class="settings-field">
+                                    <label for="set-stat2_number">Getal 2</label>
+                                    <input type="text" id="set-stat2_number" data-key="stat2_number" inputmode="numeric">
+                                </div>
+                                <div class="settings-field grow">
+                                    <label for="set-stat2_label">Label 2</label>
+                                    <input type="text" id="set-stat2_label" data-key="stat2_label">
+                                </div>
+                            </div>
+                        </fieldset>
+
+                        <fieldset class="settings-group">
+                            <legend>Over ons</legend>
+                            <div class="settings-field">
+                                <label for="set-about_paragraph1">Alinea 1</label>
+                                <textarea id="set-about_paragraph1" data-key="about_paragraph1" rows="4"></textarea>
+                            </div>
+                            <div class="settings-field">
+                                <label for="set-about_paragraph2">Alinea 2</label>
+                                <textarea id="set-about_paragraph2" data-key="about_paragraph2" rows="3"></textarea>
+                            </div>
+                        </fieldset>
+
+                        <fieldset class="settings-group">
+                            <legend>Contact</legend>
+                            <div class="settings-field">
+                                <label for="set-contact_phone">Telefoon</label>
+                                <input type="text" id="set-contact_phone" data-key="contact_phone">
+                            </div>
+                            <div class="settings-field">
+                                <label for="set-contact_email">E-mailadres</label>
+                                <input type="email" id="set-contact_email" data-key="contact_email">
+                            </div>
+                            <div class="settings-field">
+                                <label for="set-contact_area">Werkgebied</label>
+                                <input type="text" id="set-contact_area" data-key="contact_area">
+                            </div>
+                            <div class="settings-field">
+                                <label for="set-footer_tagline">Footer slogan</label>
+                                <input type="text" id="set-footer_tagline" data-key="footer_tagline">
+                            </div>
+                        </fieldset>
+
+                        <div class="settings-actions">
+                            <button type="submit" class="btn" id="saveSettingsBtn">Opslaan</button>
+                            <span class="settings-saved hidden" id="settingsSaved">Opgeslagen ✓</span>
+                        </div>
+                    </div>
+                </form>
+            </section>
         </main>
     </div>
 
-    <!-- DETAIL DRAWER -->
+    <!-- AANVRAAG DETAIL DRAWER -->
     <div class="drawer-overlay" id="drawerOverlay"></div>
     <aside class="drawer" id="drawer" aria-hidden="true">
         <div class="drawer-head">
@@ -141,8 +255,63 @@
         </div>
     </aside>
 
+    <!-- PROJECT EDITOR DRAWER -->
+    <div class="drawer-overlay" id="projDrawerOverlay"></div>
+    <aside class="drawer drawer-wide" id="projDrawer" aria-hidden="true">
+        <div class="drawer-head">
+            <div>
+                <span class="drawer-eyebrow">Project</span>
+                <h2 id="pdHeading">Nieuw project</h2>
+            </div>
+            <button class="drawer-close" id="pdClose" aria-label="Sluiten">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+            </button>
+        </div>
+        <div class="drawer-body">
+            <form id="projForm">
+                <div class="settings-field">
+                    <label for="pf-title">Titel *</label>
+                    <input type="text" id="pf-title" required>
+                </div>
+                <div class="settings-field">
+                    <label for="pf-location">Locatie</label>
+                    <input type="text" id="pf-location" placeholder="Bv. Wemeldinge">
+                </div>
+                <div class="settings-field">
+                    <label for="pf-description">Korte beschrijving</label>
+                    <textarea id="pf-description" rows="4" placeholder="Vertel kort wat we hebben gedaan…"></textarea>
+                </div>
+                <div class="settings-field">
+                    <label class="check-label">
+                        <input type="checkbox" id="pf-published" checked>
+                        <span>Zichtbaar op de website</span>
+                    </label>
+                </div>
+
+                <div class="photo-section">
+                    <div class="photo-section-head">
+                        <h3>Foto's</h3>
+                        <label class="btn btn-ghost btn-sm" for="pf-files">+ Foto's toevoegen</label>
+                        <input type="file" id="pf-files" accept="image/*" multiple hidden>
+                    </div>
+                    <p class="photo-hint">Sleep om de volgorde te wijzigen. De eerste foto wordt eerst getoond.</p>
+                    <div class="photo-grid" id="photoGrid"></div>
+                    <div class="photo-uploading hidden" id="photoUploading">
+                        <div class="spinner"></div> <span id="photoUploadingText">Bezig met uploaden…</span>
+                    </div>
+                </div>
+
+                <div class="alert hidden" id="pdError"></div>
+            </form>
+        </div>
+        <div class="drawer-actions">
+            <button class="btn" id="pdSave">Opslaan</button>
+            <button class="btn btn-ghost btn-danger" id="pdDelete">Verwijderen</button>
+        </div>
+    </aside>
+
     <div class="toast" id="toast"></div>
-    <p class="adminlink"><a href="../index.html">← Terug naar website</a></p>
+    <p class="adminlink"><a href="../">← Terug naar website</a></p>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
     <script src="../js/admin.js"></script>

@@ -1,0 +1,286 @@
+/* ==========================================================================
+   PROJECTS PAGE
+   ========================================================================== */
+
+.page-hero {
+    padding: 9rem 0 3rem;
+    background: var(--bg);
+}
+
+@media (max-width: 768px) {
+    .page-hero { padding: 7rem 0 2rem; }
+}
+
+.page-hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-family: var(--font-display);
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: var(--space-md);
+}
+
+.page-hero-title {
+    font-family: var(--font-display);
+    font-size: clamp(2.25rem, 5.5vw, 4rem);
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    margin-bottom: var(--space-md);
+}
+
+.page-hero-title em {
+    font-style: normal;
+    font-weight: 300;
+    color: var(--accent);
+}
+
+.page-hero-lead {
+    font-size: 1.05rem;
+    line-height: 1.65;
+    color: var(--text-muted);
+    max-width: 56ch;
+}
+
+/* Projects section */
+.projects-section {
+    padding: 1rem 0 var(--section);
+    background: var(--bg);
+}
+
+.proj-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+}
+
+@media (max-width: 880px) {
+    .proj-grid { grid-template-columns: 1fr; gap: 1.5rem; }
+}
+
+/* Loading + empty state */
+.proj-loading,
+.proj-empty {
+    grid-column: 1 / -1;
+    padding: 4rem 1.5rem;
+    text-align: center;
+    color: var(--text-muted);
+}
+
+.proj-loading-spinner {
+    width: 32px;
+    height: 32px;
+    border: 2px solid rgba(13, 40, 24, 0.1);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    margin: 0 auto 1rem;
+    animation: proj-spin 0.7s linear infinite;
+}
+
+@keyframes proj-spin { to { transform: rotate(360deg); } }
+
+.proj-empty h3 {
+    font-family: var(--font-display);
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 0.5rem;
+}
+
+/* Project card */
+.proj-card {
+    background: #fff;
+    border: 1px solid rgba(13, 40, 24, 0.08);
+    border-radius: 16px;
+    overflow: hidden;
+    transition: transform 0.4s var(--ease), box-shadow 0.4s var(--ease);
+    display: flex;
+    flex-direction: column;
+}
+
+.proj-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 50px rgba(13, 40, 24, 0.1);
+}
+
+/* Slider */
+.proj-slider {
+    position: relative;
+    aspect-ratio: 4 / 3;
+    background: var(--green-50);
+    overflow: hidden;
+}
+
+.proj-track {
+    display: flex;
+    height: 100%;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+}
+
+.proj-track::-webkit-scrollbar { display: none; }
+
+.proj-slide {
+    flex: 0 0 100%;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    scroll-snap-align: center;
+    user-select: none;
+    -webkit-user-drag: none;
+}
+
+/* Slider controls */
+.proj-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.95);
+    border: none;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity var(--t), background var(--t), transform var(--t);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 2;
+}
+
+.proj-arrow:hover { background: #fff; transform: translateY(-50%) scale(1.05); }
+.proj-arrow:disabled { opacity: 0 !important; cursor: default; pointer-events: none; }
+
+.proj-slider:hover .proj-arrow:not(:disabled),
+.proj-slider:focus-within .proj-arrow:not(:disabled) { opacity: 1; }
+
+@media (hover: none) {
+    .proj-arrow { opacity: 0.9; }
+}
+
+.proj-arrow.prev { left: 10px; }
+.proj-arrow.next { right: 10px; }
+.proj-arrow svg { width: 18px; height: 18px; }
+
+.proj-counter {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: rgba(13, 40, 24, 0.55);
+    color: #fff;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-family: var(--font-display);
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    z-index: 2;
+}
+
+.proj-dots {
+    position: absolute;
+    bottom: 12px;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    z-index: 2;
+}
+
+.proj-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.55);
+    border: none;
+    cursor: pointer;
+    transition: width var(--t), background var(--t);
+    padding: 0;
+}
+
+.proj-dot.active {
+    width: 22px;
+    background: #fff;
+}
+
+/* No-photo placeholder */
+.proj-empty-photo {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.proj-empty-photo svg { width: 36px; height: 36px; opacity: 0.5; }
+
+/* Card info */
+.proj-info { padding: 1.5rem 1.5rem 1.75rem; }
+
+.proj-meta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: var(--font-display);
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.6rem;
+}
+
+.proj-meta svg { width: 12px; height: 12px; }
+
+.proj-title {
+    font-family: var(--font-display);
+    font-size: 1.4rem;
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.6rem;
+    color: var(--text);
+}
+
+.proj-desc {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--text-muted);
+    margin: 0;
+}
+
+/* CTA section */
+.page-cta {
+    padding: var(--section) 0;
+    background: var(--bg-alt);
+}
+
+.page-cta-inner {
+    text-align: center;
+}
+
+.page-cta-title {
+    font-family: var(--font-display);
+    font-size: clamp(1.75rem, 4vw, 2.75rem);
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.03em;
+    margin-bottom: var(--space-md);
+}
+
+.page-cta-title em { font-style: normal; font-weight: 300; color: var(--accent); }

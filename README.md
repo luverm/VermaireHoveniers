@@ -1,16 +1,18 @@
 # Vermaire Hoveniers
 
-Website + contactformulier-API + admin portaal voor klantaanvragen en
-contactpogingen. Statische site met serverless functies, klaar voor
-**Vercel** + **Supabase**.
+Website + contactformulier-API + admin portaal. Statische site met serverless
+functies, klaar voor **Vercel** + **Supabase**.
 
 ```
-index.html            Publieke website
-admin/index.html       Admin portaal  (/admin)
-api/contact.js         POST  — slaat een aanvraag op (service role, RLS-bypass)
-api/config.js          GET   — geeft publieke Supabase-config aan de admin
-css/, js/, assets/      Front-end
-supabase/schema.sql     Database-schema + Row Level Security
+index.html               Publieke homepage
+projecten/index.html     Publieke projectenpagina (foto-sliders per project)
+admin/index.html         Admin portaal  (/admin)
+api/contact.js           POST  — slaat een aanvraag op (service role, RLS-bypass)
+api/config.js            GET   — geeft publieke Supabase-config aan de admin
+api/site-settings.js     GET   — geeft de bewerkbare site-teksten terug
+api/projects.js          GET   — geeft alle zichtbare projecten + foto-URL's terug
+css/, js/, assets/        Front-end
+supabase/schema.sql       Database-schema, RLS-policies, storage-bucket
 ```
 
 ## 1. Supabase opzetten
@@ -39,10 +41,14 @@ supabase/schema.sql     Database-schema + Row Level Security
 
 Resultaat:
 
-| Pad        | Wat                                             |
-|------------|-------------------------------------------------|
-| `/`        | De website. Het contactformulier post naar `/api/contact`. |
-| `/admin`   | Inlogscherm → dashboard met alle aanvragen.     |
+| Pad          | Wat                                                          |
+|--------------|--------------------------------------------------------------|
+| `/`          | De website. Contactformulier post naar `/api/contact`.       |
+| `/projecten` | Lijst met projecten + foto-sliders, gevuld vanuit Supabase.  |
+| `/admin`     | Inlogscherm → drie tabbladen:                                |
+|              | • **Aanvragen** — beheer van inkomende berichten             |
+|              | • **Projecten** — voeg projecten toe, upload foto's, sorteer |
+|              | • **Site Info** — pas hero-tekst, statistieken, "Over ons" en contactgegevens aan |
 
 ## 3. Lokaal draaien (optioneel)
 

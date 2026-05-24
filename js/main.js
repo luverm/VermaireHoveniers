@@ -2,7 +2,7 @@
    VERMAIRE HOVENIERS - SIMPLIFIED JS
    ========================================================================== */
 
-(function() {
+(async function() {
     'use strict';
 
     /* Loaded class for hero entrance */
@@ -13,6 +13,39 @@
     if (document.readyState === 'complete') {
         document.body.classList.add('loaded');
     }
+
+    /* ----------------------------------------------------------------------
+       Site settings (CMS) — fetch & apply BEFORE observers register so the
+       hero counters animate to the configured number. Falls back silently
+       to the hardcoded HTML if /api/site-settings is unavailable.
+       ---------------------------------------------------------------------- */
+    async function loadSettings() {
+        try {
+            const ctrl = new AbortController();
+            const t = setTimeout(() => ctrl.abort(), 2500);
+            const res = await fetch('/api/site-settings', { signal: ctrl.signal });
+            clearTimeout(t);
+            if (!res.ok) return null;
+            const { settings } = await res.json();
+            return settings || null;
+        } catch { return null; }
+    }
+
+    function applySettings(settings) {
+        if (!settings) return;
+        document.querySelectorAll('[data-cms]').forEach((el) => {
+            const key = el.getAttribute('data-cms');
+            const v = settings[key];
+            if (v != null && v !== '') el.textContent = v;
+        });
+        document.querySelectorAll('[data-cms-counter]').forEach((el) => {
+            const key = el.getAttribute('data-cms-counter');
+            const v = settings[key];
+            if (v != null && v !== '') el.setAttribute('data-counter', String(v));
+        });
+    }
+
+    applySettings(await loadSettings());
 
     /* Navigation scroll state */
     const nav = document.getElementById('nav');

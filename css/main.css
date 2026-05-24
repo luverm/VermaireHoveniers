@@ -364,6 +364,10 @@ em { font-style: normal; font-weight: 300; color: var(--accent); }
 .menu-drawer.open .menu-link:nth-child(3) { transition-delay: 0.24s; }
 .menu-drawer.open .menu-link:nth-child(4) { transition-delay: 0.30s; }
 .menu-drawer.open .menu-link:nth-child(5) { transition-delay: 0.36s; }
+.menu-drawer.open .menu-link:nth-child(6) { transition-delay: 0.42s; }
+
+.menu-link.active { color: var(--accent); }
+.menu-link.active .menu-link-num { font-weight: 700; }
 
 .menu-link:hover,
 .menu-link:focus-visible {
@@ -612,10 +616,15 @@ body.menu-open {
 
 .hero-bg-image {
     position: absolute;
-    inset: 0;
+    /* slight outset so the blur edge doesn't show as a soft border */
+    inset: -20px;
     background-image: url('../assets/hero.jpg');
     background-size: cover;
     background-position: center 30%;
+    filter: blur(4px);
+    -webkit-filter: blur(4px);
+    transform: scale(1.02);
+    will-change: filter;
 }
 
 @media (max-width: 768px) {
@@ -626,9 +635,9 @@ body.menu-open {
     position: absolute;
     inset: 0;
     background: linear-gradient(180deg,
-        rgba(13, 40, 24, 0.35) 0%,
-        rgba(13, 40, 24, 0.55) 55%,
-        rgba(13, 40, 24, 0.85) 100%
+        rgba(13, 40, 24, 0.45) 0%,
+        rgba(13, 40, 24, 0.6) 55%,
+        rgba(13, 40, 24, 0.88) 100%
     );
 }
 

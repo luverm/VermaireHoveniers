@@ -55,24 +55,25 @@
             <nav class="menu-nav" aria-label="Hoofdnavigatie">
                 <a href="#diensten" class="menu-link"><span class="menu-link-num">01</span><span class="menu-link-text">Diensten</span></a>
                 <a href="#werkwijze" class="menu-link"><span class="menu-link-num">02</span><span class="menu-link-text">Werkwijze</span></a>
-                <a href="#over-ons" class="menu-link"><span class="menu-link-num">03</span><span class="menu-link-text">Over Ons</span></a>
-                <a href="#faq" class="menu-link"><span class="menu-link-num">04</span><span class="menu-link-text">Veelgestelde Vragen</span></a>
-                <a href="#contact" class="menu-link"><span class="menu-link-num">05</span><span class="menu-link-text">Contact</span></a>
+                <a href="projecten/" class="menu-link"><span class="menu-link-num">03</span><span class="menu-link-text">Projecten</span></a>
+                <a href="#over-ons" class="menu-link"><span class="menu-link-num">04</span><span class="menu-link-text">Over Ons</span></a>
+                <a href="#faq" class="menu-link"><span class="menu-link-num">05</span><span class="menu-link-text">Veelgestelde Vragen</span></a>
+                <a href="#contact" class="menu-link"><span class="menu-link-num">06</span><span class="menu-link-text">Contact</span></a>
             </nav>
 
             <div class="menu-contact">
                 <span class="menu-label">Direct contact</span>
                 <a href="tel:+31623293274" class="menu-contact-item">
                     <span class="menu-contact-kind">Telefoon</span>
-                    <span class="menu-contact-value">+31 6 23 29 32 74</span>
+                    <span class="menu-contact-value" data-cms="contact_phone">+31 6 23 29 32 74</span>
                 </a>
                 <a href="mailto:info@vermairehoveniers.nl" class="menu-contact-item">
                     <span class="menu-contact-kind">E-mail</span>
-                    <span class="menu-contact-value">info@vermairehoveniers.nl</span>
+                    <span class="menu-contact-value" data-cms="contact_email">info@vermairehoveniers.nl</span>
                 </a>
                 <div class="menu-contact-item">
                     <span class="menu-contact-kind">Werkgebied</span>
-                    <span class="menu-contact-value">Wemeldinge &amp; heel Zeeland</span>
+                    <span class="menu-contact-value" data-cms="contact_area">Wemeldinge &amp; heel Zeeland</span>
                 </div>
             </div>
 
@@ -114,7 +115,7 @@
                 Uw tuin, <em>onze passie</em>
             </h1>
 
-            <p class="hero-description">
+            <p class="hero-description" data-cms="hero_description">
                 Wij verzorgen uw tuin met aandacht en vakmanschap — van beplanting tot
                 groenadvies en onderhoud. Uw groen, in vertrouwde handen.
             </p>
@@ -131,12 +132,12 @@
 
             <div class="hero-stats">
                 <div class="hero-stat">
-                    <div class="hero-stat-number"><span data-counter="30">0</span><span class="stat-suffix">+</span></div>
-                    <div class="hero-stat-label">Tevreden klanten</div>
+                    <div class="hero-stat-number"><span data-counter="30" data-cms-counter="stat1_number">0</span><span class="stat-suffix">+</span></div>
+                    <div class="hero-stat-label" data-cms="stat1_label">Tevreden klanten</div>
                 </div>
                 <div class="hero-stat">
-                    <div class="hero-stat-number"><span data-counter="6">0</span></div>
-                    <div class="hero-stat-label">Jaar ervaring</div>
+                    <div class="hero-stat-number"><span data-counter="6" data-cms-counter="stat2_number">0</span></div>
+                    <div class="hero-stat-label" data-cms="stat2_label">Jaar ervaring</div>
                 </div>
             </div>
         </div>
@@ -324,13 +325,13 @@
                         Vakmanschap met <em>passie voor groen</em>
                     </h2>
 
-                    <p class="about-text" data-reveal>
+                    <p class="about-text" data-reveal data-cms="about_paragraph1">
                         Vermaire Hoveniers is gespecialiseerd in beplanting, groenadvies en
                         onderhoud. Geen aanleg — wel alle aandacht voor het groen dat uw
                         tuin tot leven brengt, met meer dan 6 jaar ervaring in heel Zeeland.
                     </p>
 
-                    <p class="about-text" data-reveal>
+                    <p class="about-text" data-reveal data-cms="about_paragraph2">
                         Wij werken met oog voor detail, persoonlijk advies en oprechte
                         betrokkenheid bij elke tuin die wij verzorgen.
                     </p>
@@ -481,7 +482,7 @@
                             </div>
                             <div>
                                 <div class="contact-method-label">Bel ons</div>
-                                <div class="contact-method-value">+31 6 23 29 32 74</div>
+                                <div class="contact-method-value" data-cms="contact_phone">+31 6 23 29 32 74</div>
                             </div>
                         </a>
 
@@ -494,7 +495,7 @@
                             </div>
                             <div>
                                 <div class="contact-method-label">E-mail</div>
-                                <div class="contact-method-value">info@vermairehoveniers.nl</div>
+                                <div class="contact-method-value" data-cms="contact_email">info@vermairehoveniers.nl</div>
                             </div>
                         </a>
 
@@ -507,7 +508,7 @@
                             </div>
                             <div>
                                 <div class="contact-method-label">Werkgebied</div>
-                                <div class="contact-method-value">Wemeldinge &amp; heel Zeeland</div>
+                                <div class="contact-method-value" data-cms="contact_area">Wemeldinge &amp; heel Zeeland</div>
                             </div>
                         </div>
                     </div>
@@ -600,7 +601,7 @@
                     <div class="footer-logo">
                         <img src="assets/logo.png" alt="Vermaire Hoveniers" class="brand-img">
                     </div>
-                    <p class="footer-tagline">Uw tuin, onze passie.</p>
+                    <p class="footer-tagline" data-cms="footer_tagline">Uw tuin, onze passie.</p>
                     <p class="footer-description">
                         Specialist in beplanting, groenadvies en onderhoud in heel Zeeland.
                     </p>
@@ -630,11 +631,11 @@
                     <ul class="footer-contact">
                         <li>
                             <span class="footer-label">Telefoon</span>
-                            <a href="tel:+31623293274">+31 6 23 29 32 74</a>
+                            <a href="tel:+31623293274" data-cms="contact_phone">+31 6 23 29 32 74</a>
                         </li>
                         <li>
                             <span class="footer-label">E-mail</span>
-                            <a href="mailto:info@vermairehoveniers.nl">info@vermairehoveniers.nl</a>
+                            <a href="mailto:info@vermairehoveniers.nl" data-cms="contact_email">info@vermairehoveniers.nl</a>
                         </li>
                         <li>
                             <span class="footer-label">Adres</span>
