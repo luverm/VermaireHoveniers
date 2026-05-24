@@ -52,22 +52,28 @@
     const menuBackdrop = document.getElementById('menuBackdrop');
     const menuClose = document.getElementById('menuClose');
 
+    let lockedScrollY = 0;
+
     function openMenu() {
+        lockedScrollY = window.scrollY;
+        document.body.style.top = `-${lockedScrollY}px`;
+        document.body.classList.add('menu-open');
         hamburger.setAttribute('aria-expanded', 'true');
         hamburger.setAttribute('aria-label', 'Sluit menu');
         menuDrawer.classList.add('open');
         menuDrawer.setAttribute('aria-hidden', 'false');
         menuBackdrop.classList.add('open');
-        document.body.classList.add('menu-open');
     }
 
-    function closeMenu() {
+    function closeMenu(restoreScroll = true) {
+        document.body.classList.remove('menu-open');
+        document.body.style.top = '';
+        if (restoreScroll) window.scrollTo(0, lockedScrollY);
         hamburger.setAttribute('aria-expanded', 'false');
         hamburger.setAttribute('aria-label', 'Open menu');
         menuDrawer.classList.remove('open');
         menuDrawer.setAttribute('aria-hidden', 'true');
         menuBackdrop.classList.remove('open');
-        document.body.classList.remove('menu-open');
     }
 
     if (hamburger && menuDrawer && menuBackdrop) {
@@ -84,12 +90,32 @@
         });
 
         menuDrawer.querySelectorAll('a[href^="#"]').forEach(a => {
-            a.addEventListener('click', closeMenu);
+            a.addEventListener('click', (e) => {
+                const href = a.getAttribute('href');
+                if (href && href !== '#') {
+                    e.preventDefault();
+                    const target = document.querySelector(href);
+                    closeMenu(false); // don't restore the old scroll — we're going somewhere new
+                    if (target) {
+                        // Wait one frame so the body lock is released before measuring/scrolling
+                        requestAnimationFrame(() => {
+                            const offset = 70;
+                            window.scrollTo({
+                                top: target.getBoundingClientRect().top + window.scrollY - offset,
+                                behavior: 'smooth'
+                            });
+                        });
+                    }
+                } else {
+                    closeMenu();
+                }
+            });
         });
     }
 
-    /* Smooth scroll for anchor links with offset */
+    /* Smooth scroll for anchor links with offset (skip menu links — handled separately) */
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        if (anchor.closest('#menuDrawer')) return;
         anchor.addEventListener('click', function(e) {
             const href = this.getAttribute('href');
             if (href === '#') return;
