@@ -134,40 +134,65 @@ em { font-style: normal; font-weight: 300; color: var(--accent); }
     gap: var(--space-lg);
 }
 
-.nav-logo {
-    display: flex;
+/* Brand wordmark — VERM[shears]IRE / HOVENIERS */
+.brand {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: stretch;
+    line-height: 0.95;
+    text-decoration: none;
+}
+
+.brand-wordmark {
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: 1.4rem;
+    letter-spacing: -0.04em;
+    display: inline-flex;
     align-items: center;
-    gap: 0.6rem;
     color: var(--white);
+    transition: color var(--t);
+    white-space: nowrap;
+}
+
+.nav.scrolled .brand-wordmark { color: var(--green-900); }
+
+.brand-shears {
+    width: 0.95em;
+    height: 0.95em;
+    color: var(--green-300);
+    flex-shrink: 0;
+    margin: 0 -0.06em -0.12em;
     transition: color var(--t);
 }
 
-.nav.scrolled .nav-logo { color: var(--text); }
+.nav.scrolled .brand-shears { color: var(--green-600); }
 
-.logo-icon {
-    width: 32px;
-    height: 32px;
-    flex-shrink: 0;
-}
-
-.logo-text { display: flex; flex-direction: column; line-height: 1; }
-
-.logo-name {
+.brand-sub {
     font-family: var(--font-display);
-    font-size: 1.15rem;
     font-weight: 700;
-    letter-spacing: -0.01em;
+    font-size: 0.58rem;
+    letter-spacing: 0.42em;
+    text-align: center;
+    color: var(--green-300);
+    margin-top: 4px;
+    padding-left: 0.42em; /* counter the trailing letter-spacing for visual center */
+    transition: color var(--t);
 }
 
-.logo-sub {
-    font-family: var(--font-display);
-    font-size: 0.6rem;
-    font-weight: 500;
-    letter-spacing: 0.3em;
-    text-transform: uppercase;
-    margin-top: 3px;
-    opacity: 0.7;
+.nav.scrolled .brand-sub { color: var(--green-600); }
+
+.footer .brand-wordmark { color: var(--white); }
+.footer .brand-shears { color: var(--green-300); }
+.footer .brand-sub { color: var(--green-300); }
+
+.nav-logo,
+.footer-logo {
+    align-items: stretch;
 }
+
+.nav-logo { transition: opacity var(--t); }
+.nav-logo:hover { opacity: 0.85; }
 
 .nav-menu {
     display: flex;
@@ -1134,9 +1159,8 @@ em { font-style: normal; font-weight: 300; color: var(--accent); }
 .footer-brand { max-width: 360px; }
 
 .footer-logo {
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
+    display: inline-flex;
+    flex-direction: column;
     color: var(--white);
     margin-bottom: var(--space-md);
 }
