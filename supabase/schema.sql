@@ -145,11 +145,7 @@ create policy "public_read_projects" on public.projects
 
 create policy "public_read_project_photos" on public.project_photos
     for select to anon using (
-        exists (
-            select 1 from public.projects
-            where public.projects.id = public.project_photos.project_id
-              and public.projects.published = true
-        )
+        project_id in (select id from public.projects where published = true)
     );
 
 create policy "public_read_site_settings" on public.site_settings
