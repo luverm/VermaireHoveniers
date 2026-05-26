@@ -1775,25 +1775,35 @@ body.loading { overflow: hidden; }
     pointer-events: none;
 }
 
+/* Stop the pulse during the fade-out so only the overlay opacity animates */
+.loader.done .loader-logo {
+    animation: none;
+    opacity: 1;
+    transform: scale(1);
+}
+
 .loader-logo {
     width: clamp(180px, 32vw, 320px);
     height: auto;
     display: block;
-    animation:
-        loaderIn 0.55s cubic-bezier(0.22, 1, 0.36, 1) both,
-        loaderPulse 1.9s 0.55s ease-in-out infinite;
     transform-origin: center;
+    backface-visibility: hidden;
     will-change: opacity, transform;
+    animation:
+        loaderIn 0.6s cubic-bezier(0.4, 0, 0.2, 1) both,
+        /* Pulse starts at opacity 1 / scale 1 — exactly where loaderIn ended.
+           No snap between the two animations. */
+        loaderPulse 2.4s 0.6s ease-in-out infinite;
 }
 
 @keyframes loaderIn {
-    from { opacity: 0; transform: scale(0.92); }
+    from { opacity: 0; transform: scale(0.94); }
     to   { opacity: 1; transform: scale(1); }
 }
 
 @keyframes loaderPulse {
-    0%, 100% { opacity: 0.7; transform: scale(0.99); }
-    50%      { opacity: 1;   transform: scale(1.03); }
+    0%, 100% { opacity: 1;    transform: scale(1); }
+    50%      { opacity: 0.82; transform: scale(0.97); }
 }
 
 @media (prefers-reduced-motion: reduce) {
