@@ -65,6 +65,21 @@
         settingsState: $('settingsState'), settingsBody: $('settingsBody'),
         settingsForm: $('settingsForm'), settingsSaved: $('settingsSaved'),
         saveSettingsBtn: $('saveSettingsBtn'),
+        // hero photo + crop modal
+        heroPhotoPreview: $('heroPhotoPreview'),
+        heroPhotoChange:  $('heroPhotoChange'),
+        heroPhotoReset:   $('heroPhotoReset'),
+        heroPhotoFile:    $('heroPhotoFile'),
+        cropOverlay: $('cropOverlay'),
+        cropModal:   $('cropModal'),
+        cropClose:   $('cropClose'),
+        cropCancel:  $('cropCancel'),
+        cropSave:    $('cropSave'),
+        cropStage:   $('cropStage'),
+        cropImage:   $('cropImage'),
+        cropZoom:    $('cropZoom'),
+        cropZoomIn:  $('cropZoomIn'),
+        cropZoomOut: $('cropZoomOut'),
         // misc
         toast: $('toast'),
     };
@@ -708,10 +723,11 @@
         el.settingsBody.classList.add('hidden');
         el.settingsSaved.classList.add('hidden');
 
+        const keys = [...SETTING_KEYS, 'hero_image_url'];
         const { data, error } = await supabase
             .from('site_settings')
             .select('key, value')
-            .in('key', SETTING_KEYS);
+            .in('key', keys);
 
         if (error) {
             el.settingsState.innerHTML = '<p>Kon instellingen niet laden: ' + esc(error.message) + '</p>';
@@ -723,6 +739,9 @@
             const input = document.querySelector(`[data-key="${key}"]`);
             if (input) input.value = map[key] || '';
         });
+
+        // Hero photo preview (custom URL from settings, or fallback to bundled default)
+        el.heroPhotoPreview.src = map.hero_image_url || '../assets/hero.jpg';
 
         el.settingsState.classList.add('hidden');
         el.settingsBody.classList.remove('hidden');
@@ -751,11 +770,228 @@
         setTimeout(() => el.settingsSaved.classList.add('hidden'), 3000);
     });
 
+    /* ==========================================================================
+       HERO PHOTO — pick → crop → upload → save URL in site_settings
+       ========================================================================== */
+
+    const crop = {
+        baseW: 0,    // width image is set to in CSS (covers stage)
+        baseH: 0,
+        zoom: 1,
+        posX: 0,
+        posY: 0,
+        dragging: false,
+        startX: 0,
+        startY: 0,
+        startPosX: 0,
+        startPosY: 0,
+    };
+
+    function openCropModal() {
+        el.cropOverlay.hidden = false;
+        el.cropModal.hidden = false;
+        // next frame so CSS transition fires
+        requestAnimationFrame(() => {
+            el.cropOverlay.classList.add('open');
+            el.cropModal.classList.add('open');
+            el.cropModal.setAttribute('aria-hidden', 'false');
+        });
+    }
+
+    function closeCropModal() {
+        el.cropOverlay.classList.remove('open');
+        el.cropModal.classList.remove('open');
+        el.cropModal.setAttribute('aria-hidden', 'true');
+        setTimeout(() => {
+            el.cropOverlay.hidden = true;
+            el.cropModal.hidden = true;
+            // clean up the object URL we created
+            if (el.cropImage.src && el.cropImage.src.startsWith('blob:')) {
+                URL.revokeObjectURL(el.cropImage.src);
+            }
+        }, 260);
+    }
+
+    function fitCropImage() {
+        const sw = el.cropStage.clientWidth;
+        const sh = el.cropStage.clientHeight;
+        const iw = el.cropImage.naturalWidth;
+        const ih = el.cropImage.naturalHeight;
+        if (!iw || !ih) return;
+        const scale = Math.max(sw / iw, sh / ih);
+        crop.baseW = iw * scale;
+        crop.baseH = ih * scale;
+        el.cropImage.style.width  = crop.baseW + 'px';
+        el.cropImage.style.height = crop.baseH + 'px';
+        crop.zoom = 1;
+        el.cropZoom.value = '1';
+        // Center
+        crop.posX = (sw - crop.baseW * crop.zoom) / 2;
+        crop.posY = (sh - crop.baseH * crop.zoom) / 2;
+        applyCropTransform();
+    }
+
+    function applyCropTransform() {
+        const sw = el.cropStage.clientWidth;
+        const sh = el.cropStage.clientHeight;
+        const dispW = crop.baseW * crop.zoom;
+        const dispH = crop.baseH * crop.zoom;
+        // clamp so the image always covers the stage
+        const minX = sw - dispW;
+        const minY = sh - dispH;
+        crop.posX = Math.max(minX, Math.min(0, crop.posX));
+        crop.posY = Math.max(minY, Math.min(0, crop.posY));
+        el.cropImage.style.transform =
+            `translate(${crop.posX}px, ${crop.posY}px) scale(${crop.zoom})`;
+    }
+
+    /* Drag (pointer events cover mouse + touch + pen) */
+    el.cropStage.addEventListener('pointerdown', (e) => {
+        crop.dragging = true;
+        crop.startX = e.clientX;
+        crop.startY = e.clientY;
+        crop.startPosX = crop.posX;
+        crop.startPosY = crop.posY;
+        el.cropStage.setPointerCapture(e.pointerId);
+    });
+    el.cropStage.addEventListener('pointermove', (e) => {
+        if (!crop.dragging) return;
+        crop.posX = crop.startPosX + (e.clientX - crop.startX);
+        crop.posY = crop.startPosY + (e.clientY - crop.startY);
+        applyCropTransform();
+    });
+    const endDrag = (e) => {
+        crop.dragging = false;
+        try { el.cropStage.releasePointerCapture(e.pointerId); } catch (_) {}
+    };
+    el.cropStage.addEventListener('pointerup',     endDrag);
+    el.cropStage.addEventListener('pointercancel', endDrag);
+
+    /* Zoom (slider + +/- buttons + wheel) */
+    el.cropZoom.addEventListener('input', () => {
+        const newZoom = Number(el.cropZoom.value);
+        zoomAround(newZoom, el.cropStage.clientWidth / 2, el.cropStage.clientHeight / 2);
+    });
+    el.cropZoomIn.addEventListener('click',  () => stepZoom( 0.15));
+    el.cropZoomOut.addEventListener('click', () => stepZoom(-0.15));
+    el.cropStage.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        stepZoom(e.deltaY > 0 ? -0.05 : 0.05, e.offsetX, e.offsetY);
+    }, { passive: false });
+
+    function stepZoom(delta, cx, cy) {
+        const newZoom = Math.max(1, Math.min(3, crop.zoom + delta));
+        if (cx == null) cx = el.cropStage.clientWidth / 2;
+        if (cy == null) cy = el.cropStage.clientHeight / 2;
+        zoomAround(newZoom, cx, cy);
+        el.cropZoom.value = String(newZoom);
+    }
+
+    function zoomAround(newZoom, cx, cy) {
+        // Keep the point under (cx,cy) stationary
+        const oldZoom = crop.zoom;
+        const k = newZoom / oldZoom;
+        crop.posX = cx - (cx - crop.posX) * k;
+        crop.posY = cy - (cy - crop.posY) * k;
+        crop.zoom = newZoom;
+        applyCropTransform();
+    }
+
+    /* "Wijzig foto" → file picker */
+    el.heroPhotoChange.addEventListener('click', () => el.heroPhotoFile.click());
+
+    el.heroPhotoFile.addEventListener('change', (e) => {
+        const file = e.target.files?.[0];
+        e.target.value = '';
+        if (!file) return;
+        // Reset previous src if blob
+        if (el.cropImage.src && el.cropImage.src.startsWith('blob:')) {
+            URL.revokeObjectURL(el.cropImage.src);
+        }
+        const url = URL.createObjectURL(file);
+        el.cropImage.onload = () => {
+            openCropModal();
+            // wait one frame so layout is settled
+            requestAnimationFrame(fitCropImage);
+        };
+        el.cropImage.src = url;
+    });
+
+    el.cropClose.addEventListener('click', closeCropModal);
+    el.cropCancel.addEventListener('click', closeCropModal);
+    el.cropOverlay.addEventListener('click', closeCropModal);
+
+    /* Save crop → render canvas → upload → store URL */
+    el.cropSave.addEventListener('click', async () => {
+        const sw = el.cropStage.clientWidth;
+        const sh = el.cropStage.clientHeight;
+        const dispW = crop.baseW * crop.zoom;
+        // displayed-pixel → natural-pixel ratio
+        const ratio = el.cropImage.naturalWidth / dispW;
+
+        const sx = -crop.posX * ratio;
+        const sy = -crop.posY * ratio;
+        const sWidth  = sw * ratio;
+        const sHeight = sh * ratio;
+
+        const outSize = 1000; // 1000×1000 output
+        const canvas = document.createElement('canvas');
+        canvas.width = outSize;
+        canvas.height = outSize;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(el.cropImage, sx, sy, sWidth, sHeight, 0, 0, outSize, outSize);
+
+        el.cropSave.disabled = true;
+        const orig = el.cropSave.textContent;
+        el.cropSave.textContent = 'Bezig met opslaan…';
+
+        try {
+            const blob = await new Promise((resolve) =>
+                canvas.toBlob((b) => resolve(b), 'image/jpeg', 0.88));
+            if (!blob) throw new Error('Kon de afbeelding niet exporteren.');
+
+            const name = `site/hero-${crypto.randomUUID()}.jpg`;
+            const { error: upErr } = await supabase.storage
+                .from(BUCKET)
+                .upload(name, blob, { contentType: 'image/jpeg', cacheControl: '31536000', upsert: false });
+            if (upErr) throw upErr;
+
+            const newUrl = supabase.storage.from(BUCKET).getPublicUrl(name).data.publicUrl;
+
+            const { error: setErr } = await supabase
+                .from('site_settings')
+                .upsert({ key: 'hero_image_url', value: newUrl }, { onConflict: 'key' });
+            if (setErr) throw setErr;
+
+            el.heroPhotoPreview.src = newUrl + '?v=' + Date.now(); // bust cache
+            toast('Hero foto opgeslagen.');
+            closeCropModal();
+        } catch (err) {
+            console.error('hero crop save error:', err);
+            toast('Opslaan mislukt: ' + (err.message || 'onbekende fout'));
+        } finally {
+            el.cropSave.disabled = false;
+            el.cropSave.textContent = orig;
+        }
+    });
+
+    /* "Herstel standaard" → wipe the setting, preview returns to bundled image */
+    el.heroPhotoReset.addEventListener('click', async () => {
+        if (!confirm('Hero foto terug naar de standaardfoto?')) return;
+        const { error } = await supabase
+            .from('site_settings')
+            .upsert({ key: 'hero_image_url', value: '' }, { onConflict: 'key' });
+        if (error) { toast('Herstellen mislukt.'); return; }
+        el.heroPhotoPreview.src = '../assets/hero.jpg';
+        toast('Hero foto teruggezet naar standaard.');
+    });
+
     /* ---------- global keyboard ---------- */
     document.addEventListener('keydown', (e) => {
         if (e.key !== 'Escape') return;
         if (el.drawer.classList.contains('open')) closeRequestDrawer();
         if (el.projDrawer.classList.contains('open')) closeProjectEditor();
+        if (el.cropModal.classList.contains('open')) closeCropModal();
     });
 
     boot();

@@ -147,6 +147,21 @@
                                 <textarea id="set-hero_description" data-key="hero_description" rows="3"></textarea>
                                 <p class="settings-hint">De tekst onder de grote titel op de homepage.</p>
                             </div>
+
+                            <div class="settings-field">
+                                <label>Hero foto</label>
+                                <div class="hero-photo-row">
+                                    <div class="hero-photo-preview">
+                                        <img id="heroPhotoPreview" alt="Huidige hero foto">
+                                    </div>
+                                    <div class="hero-photo-actions">
+                                        <button type="button" class="btn btn-ghost btn-sm" id="heroPhotoChange">Wijzig foto</button>
+                                        <button type="button" class="btn btn-ghost btn-sm btn-danger" id="heroPhotoReset">Herstel standaard</button>
+                                        <p class="settings-hint">Wordt op de homepage in een cirkel getoond. Vierkant uitsnijden, slepen + zoomen werkt in de bewerker.</p>
+                                    </div>
+                                </div>
+                                <input type="file" id="heroPhotoFile" accept="image/*" hidden>
+                            </div>
                         </fieldset>
 
                         <fieldset class="settings-group">
@@ -344,6 +359,33 @@
             <button class="btn btn-ghost btn-danger" id="pdDelete">Verwijderen</button>
         </div>
     </aside>
+
+    <!-- Image crop modal -->
+    <div class="crop-modal-overlay" id="cropOverlay" hidden></div>
+    <div class="crop-modal" id="cropModal" aria-hidden="true" role="dialog" hidden>
+        <div class="crop-modal-head">
+            <h3>Foto bijsnijden</h3>
+            <button type="button" class="crop-close" id="cropClose" aria-label="Sluiten">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+            </button>
+        </div>
+        <div class="crop-modal-body">
+            <p class="crop-hint">Sleep om te verplaatsen, schuif om in/uit te zoomen. Het vierkant wordt op de site als cirkel getoond.</p>
+            <div class="crop-stage" id="cropStage">
+                <img id="cropImage" alt="" draggable="false">
+                <div class="crop-mask" aria-hidden="true"></div>
+            </div>
+            <div class="crop-controls">
+                <button type="button" class="crop-zoom-btn" id="cropZoomOut" aria-label="Uitzoomen">−</button>
+                <input type="range" id="cropZoom" min="1" max="3" step="0.01" value="1" class="crop-zoom">
+                <button type="button" class="crop-zoom-btn" id="cropZoomIn" aria-label="Inzoomen">+</button>
+            </div>
+        </div>
+        <div class="crop-modal-actions">
+            <button type="button" class="btn btn-ghost" id="cropCancel">Annuleren</button>
+            <button type="button" class="btn" id="cropSave">Opslaan</button>
+        </div>
+    </div>
 
     <div class="toast" id="toast"></div>
     <p class="adminlink"><a href="../">← Terug naar website</a></p>
