@@ -16,6 +16,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" href="css/animations.css">
+    <link rel="stylesheet" href="css/projecten.css">
     <link rel="icon" type="image/png" sizes="192x192" href="assets/favicon-192.png">
     <link rel="icon" type="image/png" href="assets/favicon.png">
     <link rel="apple-touch-icon" href="assets/favicon-192.png">
@@ -188,8 +189,8 @@
                             <path d="M20 26 L 20 50 M40 27 L 40 50 M25 42 L 25 50 M42 46 L 42 50"/>
                         </svg>
                     </div>
-                    <h3 class="service-card-title">Beplanting</h3>
-                    <p class="service-card-description">
+                    <h3 class="service-card-title" data-cms="service1_title">Beplanting</h3>
+                    <p class="service-card-description" data-cms="service1_description">
                         Het juiste groen op de juiste plek. Wij selecteren en planten beplanting
                         die past bij uw bodem, lichtval en stijl.
                     </p>
@@ -210,8 +211,8 @@
                             <path d="M30 30 L 30 42"/>
                         </svg>
                     </div>
-                    <h3 class="service-card-title">Groenadvies</h3>
-                    <p class="service-card-description">
+                    <h3 class="service-card-title" data-cms="service2_title">Groenadvies</h3>
+                    <p class="service-card-description" data-cms="service2_description">
                         Het juiste advies bespaart u geld en zorgen. Wij adviseren over plantkeuze,
                         combinaties en duurzaam groen dat past bij uw tuin.
                     </p>
@@ -230,8 +231,8 @@
                             <path d="M30 18 L 30 50 M30 28 L 22 36 M30 28 L 38 36 M30 38 L 22 46 M30 38 L 38 46"/>
                         </svg>
                     </div>
-                    <h3 class="service-card-title">Onderhoud</h3>
-                    <p class="service-card-description">
+                    <h3 class="service-card-title" data-cms="service3_title">Onderhoud</h3>
+                    <p class="service-card-description" data-cms="service3_description">
                         Een tuin verdient continue zorg. Met onze onderhoudsbeurten houden wij
                         uw tuin het hele jaar door verzorgd en netjes.
                     </p>
@@ -299,16 +300,43 @@
         </div>
     </section>
 
+    <!-- Projects (recent) -->
+    <section id="projecten" class="home-projects">
+        <div class="container">
+            <div class="section-header section-header-row">
+                <div>
+                    <div class="section-label" data-reveal>
+                        <span class="label-line"></span>
+                        <span>Onze Projecten</span>
+                    </div>
+                    <h2 class="section-title" data-reveal>
+                        Een blik in <em>onze tuinen</em>
+                    </h2>
+                </div>
+                <a href="projecten/" class="section-link" data-reveal>
+                    <span>Alle projecten</span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+                </a>
+            </div>
+
+            <div class="proj-grid" id="homeProjectsGrid">
+                <div class="proj-loading">
+                    <div class="proj-loading-spinner"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- About -->
     <section id="over-ons" class="about">
         <div class="container">
             <div class="about-grid">
                 <div class="about-images">
                     <div class="about-image about-image-main">
-                        <img src="https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=800&q=80" alt="Tuin verzorgd door Vermaire Hoveniers" loading="lazy">
+                        <img src="https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=800&q=80" alt="Tuin verzorgd door Vermaire Hoveniers" loading="lazy" class="lazy-fade">
                     </div>
                     <div class="about-image about-image-secondary">
-                        <img src="https://images.unsplash.com/photo-1591857177580-dc82b9ac4e1e?w=600&q=80" alt="Vakman aan het werk" loading="lazy">
+                        <img src="https://images.unsplash.com/photo-1591857177580-dc82b9ac4e1e?w=600&q=80" alt="Vakman aan het werk" loading="lazy" class="lazy-fade">
                     </div>
                     <div class="about-badge">
                         <span>6 jaar<br>ervaring</span>
@@ -670,5 +698,6 @@
     <div class="progress-bar" id="progressBar"></div>
 
     <script src="js/main.js"></script>
+    <script src="js/projecten.js"></script>
 </body>
 </html>
