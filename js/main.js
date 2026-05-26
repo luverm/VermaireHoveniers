@@ -88,6 +88,22 @@
             const v = settings[key];
             if (v) el.setAttribute('src', v);
         });
+
+        // Sync tel: + wa.me links to the configured phone number
+        if (settings.contact_phone) {
+            // strip everything that isn't a digit
+            let digits = String(settings.contact_phone).replace(/\D/g, '');
+            // Dutch local 06… → international 31 6…
+            if (digits.startsWith('0')) digits = '31' + digits.slice(1);
+            if (digits) {
+                document.querySelectorAll('[data-cms-tel]').forEach((el) => {
+                    el.setAttribute('href', 'tel:+' + digits);
+                });
+                document.querySelectorAll('[data-cms-wa]').forEach((el) => {
+                    el.setAttribute('href', 'https://wa.me/' + digits);
+                });
+            }
+        }
     }
 
     applySettings(await loadSettings());
