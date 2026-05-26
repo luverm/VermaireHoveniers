@@ -1789,9 +1789,13 @@ body.loading { overflow: hidden; }
     transform-origin: center;
     backface-visibility: hidden;
     will-change: opacity, transform;
+    /* !important so the loader pulse survives the global
+       prefers-reduced-motion rule's animation-duration: 0.01ms !important */
     animation:
         loaderIn 0.35s cubic-bezier(0.4, 0, 0.2, 1) both,
-        loaderPulse 1.4s 0.35s ease-in-out infinite;
+        loaderPulse 1.4s 0.35s ease-in-out infinite !important;
+    animation-duration: 0.35s, 1.4s !important;
+    animation-iteration-count: 1, infinite !important;
 }
 
 @keyframes loaderIn {
@@ -1802,10 +1806,4 @@ body.loading { overflow: hidden; }
 @keyframes loaderPulse {
     0%, 100% { opacity: 1;   transform: scale(1); }
     50%      { opacity: 0.55; transform: scale(0.92); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-    .loader-logo {
-        animation: loaderIn 0.4s ease-out both;
-    }
 }
