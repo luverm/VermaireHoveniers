@@ -17,8 +17,8 @@
             return;
         }
 
-        const MIN_MS = 700;   // never flash for less than this
-        const MAX_MS = 4000;  // never hang past this
+        const MIN_MS = 1800; // always show at least one full pulse cycle
+        const MAX_MS = 4000; // never hang past this
 
         let ready = false;
         let minPassed = false;
