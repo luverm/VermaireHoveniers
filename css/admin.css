@@ -487,7 +487,8 @@ tbody td { padding: 0.9rem 1rem; font-size: 0.88rem; vertical-align: middle; }
     cursor: pointer;
     display: flex;
     flex-direction: column;
-    transition: transform var(--t), border-color var(--t), box-shadow var(--t);
+    position: relative;
+    transition: transform var(--t), border-color var(--t), box-shadow var(--t), opacity var(--t);
 }
 
 .proj-row:hover {
@@ -495,6 +496,32 @@ tbody td { padding: 0.9rem 1rem; font-size: 0.88rem; vertical-align: middle; }
     border-color: var(--green-600);
     box-shadow: 0 12px 28px rgba(13, 40, 24, 0.08);
 }
+
+.proj-row.dragging { opacity: 0.4; cursor: grabbing; }
+.proj-row.dragover { outline: 2px solid var(--green-600); outline-offset: -1px; }
+
+.proj-row-handle {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    z-index: 2;
+    background: rgba(255, 255, 255, 0.92);
+    color: var(--gray-600);
+    width: 26px;
+    height: 26px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    line-height: 1;
+    cursor: grab;
+    opacity: 0;
+    transition: opacity var(--t);
+    user-select: none;
+}
+.proj-row:hover .proj-row-handle { opacity: 1; }
+.proj-row-handle:active { cursor: grabbing; }
 
 .proj-row-cover {
     aspect-ratio: 4 / 3;

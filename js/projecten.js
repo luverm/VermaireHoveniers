@@ -5,15 +5,17 @@
 (function () {
     'use strict';
 
-    const grid = document.getElementById('projectsGrid');
-    if (!grid) return;
+    const fullGrid = document.getElementById('projectsGrid');     // /projecten
+    const homeGrid = document.getElementById('homeProjectsGrid'); // homepage section
+    const grids = [fullGrid, homeGrid].filter(Boolean);
+    if (!grids.length) return;
 
     const esc = (s) => String(s == null ? '' : s)
         .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
         .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 
-    function renderEmpty(msg) {
-        grid.innerHTML = `
+    function renderEmpty(target, msg) {
+        target.innerHTML = `
             <div class="proj-empty">
                 <h3>${esc(msg || 'Nog geen projecten')}</h3>
                 <p>Binnenkort vindt u hier ons werk terug.</p>
@@ -25,7 +27,7 @@
         const photos = hasPhotos ? p.photos : [];
 
         const slides = hasPhotos
-            ? photos.map((ph, i) => `<img class="proj-slide" src="${esc(ph.url)}" alt="${esc(ph.alt)}" loading="${i === 0 ? 'eager' : 'lazy'}">`).join('')
+            ? photos.map((ph) => `<img class="proj-slide" src="${esc(ph.url)}" alt="${esc(ph.alt)}" decoding="async">`).join('')
             : `<div class="proj-empty-photo">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4">
                     <rect x="3" y="5" width="18" height="14" rx="2"/>
@@ -120,6 +122,11 @@
         update();
     }
 
+    function renderInto(target, list) {
+        target.innerHTML = list.map(projectMarkup).join('');
+        target.querySelectorAll('.proj-card').forEach(initSlider);
+    }
+
     async function load() {
         try {
             const res = await fetch('/api/projects');
@@ -127,15 +134,15 @@
             const { projects } = await res.json();
 
             if (!projects || projects.length === 0) {
-                renderEmpty('Nog geen projecten');
+                grids.forEach((g) => renderEmpty(g, 'Nog geen projecten'));
                 return;
             }
 
-            grid.innerHTML = projects.map(projectMarkup).join('');
-            grid.querySelectorAll('.proj-card').forEach(initSlider);
+            if (fullGrid) renderInto(fullGrid, projects);
+            if (homeGrid) renderInto(homeGrid, projects.slice(0, 3)); // recent 3 op de home
         } catch (err) {
             console.error('[projecten] load failed:', err);
-            renderEmpty('Projecten konden niet geladen worden');
+            grids.forEach((g) => renderEmpty(g, 'Projecten konden niet geladen worden'));
         }
     }
 

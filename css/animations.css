@@ -2,27 +2,37 @@
    VERMAIRE HOVENIERS - ANIMATIONS (simplified)
    ========================================================================== */
 
-/* Reveal on scroll */
-[data-reveal] {
-    opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 0.8s var(--ease), transform 0.8s var(--ease);
-}
-
-[data-reveal].in-view {
-    opacity: 1;
-    transform: translateY(0);
-}
-
+/* Reveal on scroll — GPU-promoted, shorter on desktop for snappier feel */
+[data-reveal],
 [data-reveal-card] {
     opacity: 0;
-    transform: translateY(30px);
-    transition: opacity 0.8s var(--ease), transform 0.8s var(--ease);
+    transform: translate3d(0, 24px, 0);
+    transition:
+        opacity 0.55s var(--ease),
+        transform 0.55s var(--ease);
+    will-change: opacity, transform;
 }
 
+[data-reveal].in-view,
 [data-reveal-card].in-view {
     opacity: 1;
-    transform: translateY(0);
+    transform: translate3d(0, 0, 0);
+}
+
+/* Once the reveal is done we no longer need will-change */
+[data-reveal].in-view,
+[data-reveal-card].in-view {
+    will-change: auto;
+}
+
+@media (min-width: 1025px) {
+    [data-reveal],
+    [data-reveal-card] {
+        transform: translate3d(0, 16px, 0);
+        transition:
+            opacity 0.45s var(--ease),
+            transform 0.45s var(--ease);
+    }
 }
 
 /* Staggered children */
@@ -66,9 +76,10 @@ body.loaded .hero-actions { opacity: 1; transform: translateY(0); transition-del
 body.loaded .hero-stats { opacity: 1; transform: translateY(0); transition-delay: 0.65s; }
 
 /* Lazy image fade */
-img[loading="lazy"] {
+/* Opt-in fade-in for images. Add class="lazy-fade" to use. */
+img.lazy-fade {
     opacity: 0;
     transition: opacity 0.6s ease;
 }
 
-img[loading="lazy"].loaded { opacity: 1; }
+img.lazy-fade.loaded { opacity: 1; }

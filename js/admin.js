@@ -25,6 +25,9 @@
         'hero_description',
         'stat1_number', 'stat1_label',
         'stat2_number', 'stat2_label',
+        'service1_title', 'service1_description',
+        'service2_title', 'service2_description',
+        'service3_title', 'service3_description',
         'about_paragraph1', 'about_paragraph2',
         'contact_phone', 'contact_email', 'contact_area',
         'footer_tagline',
@@ -372,7 +375,8 @@
         el.projectsList.innerHTML = projects.map((p) => {
             const cover = p.photos[0] ? publicUrl(p.photos[0].storage_path) : null;
             return `
-                <div class="proj-row" data-id="${p.id}">
+                <div class="proj-row" data-id="${p.id}" draggable="true">
+                    <span class="proj-row-handle" aria-hidden="true" title="Sleep om te ordenen">⋮⋮</span>
                     <div class="proj-row-cover" ${cover ? `style="background-image:url('${esc(cover)}')"` : ''}>
                         ${!cover ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="1.5"/><path d="m21 17-4-4-9 9"/></svg>` : ''}
                         ${p.photos.length ? `<span class="proj-row-count">${p.photos.length} foto${p.photos.length === 1 ? '' : '\'s'}</span>` : ''}
@@ -384,6 +388,56 @@
                     </div>
                 </div>`;
         }).join('');
+
+        wireProjectDnD();
+    }
+
+    /* Drag-and-drop reorder of project rows. Persists the new sort_order to Supabase. */
+    function wireProjectDnD() {
+        const rows = el.projectsList.querySelectorAll('.proj-row');
+        rows.forEach((row) => {
+            row.addEventListener('dragstart', (e) => {
+                row.classList.add('dragging');
+                e.dataTransfer.effectAllowed = 'move';
+                e.dataTransfer.setData('text/plain', row.dataset.id);
+            });
+            row.addEventListener('dragend', () => {
+                row.classList.remove('dragging');
+                rows.forEach((r) => r.classList.remove('dragover'));
+            });
+            row.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                if (!row.classList.contains('dragging')) row.classList.add('dragover');
+            });
+            row.addEventListener('dragleave', () => row.classList.remove('dragover'));
+            row.addEventListener('drop', async (e) => {
+                e.preventDefault();
+                row.classList.remove('dragover');
+                const fromId = e.dataTransfer.getData('text/plain');
+                const toId   = row.dataset.id;
+                if (!fromId || fromId === toId) return;
+
+                const fromIdx = projects.findIndex((p) => p.id === fromId);
+                const toIdx   = projects.findIndex((p) => p.id === toId);
+                if (fromIdx < 0 || toIdx < 0) return;
+
+                const moved = projects.splice(fromIdx, 1)[0];
+                projects.splice(toIdx, 0, moved);
+
+                // Rewrite sort_order in memory + DB
+                projects.forEach((p, i) => { p.sort_order = i; });
+                renderProjects();
+                try {
+                    await Promise.all(projects.map((p) =>
+                        supabase.from('projects').update({ sort_order: p.sort_order }).eq('id', p.id)
+                    ));
+                    toast('Volgorde opgeslagen.');
+                } catch (err) {
+                    console.error(err);
+                    toast('Volgorde opslaan mislukt.');
+                }
+            });
+        });
     }
 
     el.projectsList.addEventListener('click', (e) => {

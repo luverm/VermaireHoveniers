@@ -263,7 +263,7 @@
     }
 
     /* Lazy image fade-in */
-    const lazyImages = document.querySelectorAll('img[loading="lazy"]');
+    const lazyImages = document.querySelectorAll('img.lazy-fade');
     if ('IntersectionObserver' in window) {
         const imgObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
