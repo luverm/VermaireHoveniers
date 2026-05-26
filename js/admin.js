@@ -50,7 +50,7 @@
         drawer: $('drawer'), drawerOverlay: $('drawerOverlay'), drawerClose: $('drawerClose'),
         dName: $('dName'), dPill: $('dPill'), dEmail: $('dEmail'), dPhone: $('dPhone'),
         dService: $('dService'), dDate: $('dDate'), dMessage: $('dMessage'),
-        dMailto: $('dMailto'), dArchive: $('dArchive'),
+        dMailto: $('dMailto'), dArchive: $('dArchive'), dDelete: $('dDelete'),
         // projects
         newProjectBtn: $('newProjectBtn'),
         projectsState: $('projectsState'), projectsList: $('projectsList'),
@@ -331,6 +331,26 @@
         const sel = el.tbody.querySelector(`.status-select[data-id="${activeRequestId}"]`);
         if (sel) sel.value = 'gearchiveerd';
         closeRequestDrawer();
+    });
+
+    el.dDelete.addEventListener('click', async () => {
+        if (!activeRequestId) return;
+        const row = rows.find((r) => r.id === activeRequestId);
+        if (!row) return;
+        if (!confirm(`Aanvraag van "${row.name}" verwijderen? Dit kan niet ongedaan worden gemaakt.`)) return;
+
+        const { error } = await supabase
+            .from('contact_requests')
+            .delete()
+            .eq('id', activeRequestId);
+
+        if (error) { toast('Verwijderen mislukt.'); return; }
+
+        rows = rows.filter((r) => r.id !== activeRequestId);
+        updateStats();
+        renderRequests();
+        closeRequestDrawer();
+        toast('Aanvraag verwijderd.');
     });
 
     /* ==========================================================================
