@@ -43,6 +43,11 @@
             const v = settings[key];
             if (v != null && v !== '') el.setAttribute('data-counter', String(v));
         });
+        document.querySelectorAll('[data-cms-src]').forEach((el) => {
+            const key = el.getAttribute('data-cms-src');
+            const v = settings[key];
+            if (v) el.setAttribute('src', v);
+        });
     }
 
     applySettings(await loadSettings());
