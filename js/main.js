@@ -262,6 +262,38 @@
         });
     }
 
+    /* Floating action menu (WhatsApp + Instagram) */
+    const fab = document.getElementById('fab');
+    const fabToggle = document.getElementById('fabToggle');
+    if (fab && fabToggle) {
+        const openFab = () => {
+            fab.classList.add('open');
+            fabToggle.setAttribute('aria-expanded', 'true');
+            fabToggle.setAttribute('aria-label', 'Sluit contact opties');
+            fab.querySelectorAll('.fab-action').forEach((a) => a.setAttribute('tabindex', '0'));
+        };
+        const closeFab = () => {
+            fab.classList.remove('open');
+            fabToggle.setAttribute('aria-expanded', 'false');
+            fabToggle.setAttribute('aria-label', 'Open contact opties');
+            fab.querySelectorAll('.fab-action').forEach((a) => a.setAttribute('tabindex', '-1'));
+        };
+        fabToggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (fab.classList.contains('open')) closeFab(); else openFab();
+        });
+        document.addEventListener('click', (e) => {
+            if (!fab.contains(e.target) && fab.classList.contains('open')) closeFab();
+        });
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && fab.classList.contains('open')) closeFab();
+        });
+        // close after picking an action so the FAB resets
+        fab.querySelectorAll('.fab-action').forEach((a) => {
+            a.addEventListener('click', () => setTimeout(closeFab, 100));
+        });
+    }
+
     /* Lazy image fade-in */
     const lazyImages = document.querySelectorAll('img.lazy-fade');
     if ('IntersectionObserver' in window) {

@@ -40,6 +40,7 @@ alter table public.contact_requests enable row level security;
 
 drop policy if exists "authenticated_read"   on public.contact_requests;
 drop policy if exists "authenticated_update" on public.contact_requests;
+drop policy if exists "authenticated_delete" on public.contact_requests;
 
 create policy "authenticated_read"
     on public.contact_requests
@@ -53,6 +54,12 @@ create policy "authenticated_update"
     to authenticated
     using (true)
     with check (true);
+
+create policy "authenticated_delete"
+    on public.contact_requests
+    for delete
+    to authenticated
+    using (true);
 
 -- ----------------------------------------------------------------------------
 -- Admin account
