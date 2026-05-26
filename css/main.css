@@ -773,7 +773,6 @@ body.menu-open {
    SECTION DIVIDERS — subtle horizontal rule with a small centered accent
    ========================================================================== */
 
-.intro,
 .services,
 .process,
 .home-projects,
@@ -784,7 +783,6 @@ body.menu-open {
     border-top: 1px solid rgba(13, 40, 24, 0.08);
 }
 
-.intro::before,
 .services::before,
 .process::before,
 .home-projects::before,
@@ -800,128 +798,6 @@ body.menu-open {
     height: 1px;
     background: var(--accent);
     z-index: 1;
-}
-
-/* ==========================================================================
-   INTRO
-   ========================================================================== */
-
-.intro {
-    padding: var(--section) 0;
-    background: var(--bg);
-}
-
-/* Welcome quote on team photo */
-.welcome-quote {
-    position: relative;
-    margin: 0;
-    border-radius: 22px;
-    overflow: hidden;
-    aspect-ratio: 16 / 9;
-    min-height: 380px;
-    box-shadow: 0 30px 60px -25px rgba(13, 40, 24, 0.35);
-}
-
-.welcome-image {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center 40%;
-}
-
-.welcome-quote::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background:
-        linear-gradient(110deg,
-            rgba(13, 40, 24, 0.82) 0%,
-            rgba(13, 40, 24, 0.65) 40%,
-            rgba(13, 40, 24, 0.2) 75%,
-            rgba(13, 40, 24, 0) 100%);
-}
-
-.welcome-overlay {
-    position: absolute;
-    inset: 0;
-    z-index: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding: clamp(1.5rem, 5vw, 3.5rem);
-    color: #ffffff;
-    max-width: 640px;
-}
-
-.welcome-label {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.75rem;
-    font-family: var(--font-display);
-    font-size: 0.7rem;
-    font-weight: 600;
-    letter-spacing: 0.25em;
-    text-transform: uppercase;
-    color: var(--green-300);
-    margin-bottom: var(--space-md);
-}
-.welcome-label .label-line {
-    width: 28px;
-    height: 1px;
-    background: currentColor;
-}
-
-.welcome-mark {
-    font-family: var(--font-display);
-    font-size: clamp(4rem, 8vw, 6rem);
-    line-height: 0.4;
-    color: var(--green-300);
-    display: block;
-    margin-bottom: 0.4rem;
-    user-select: none;
-}
-
-.welcome-text {
-    margin: 0;
-    padding: 0;
-    font-family: var(--font-display);
-    font-size: clamp(1.2rem, 2.4vw, 1.7rem);
-    font-weight: 400;
-    line-height: 1.4;
-    letter-spacing: -0.01em;
-    color: #ffffff;
-    text-wrap: balance;
-}
-
-.welcome-text em {
-    color: var(--green-300);
-    font-style: normal;
-    font-weight: 500;
-}
-
-.welcome-attribution {
-    margin-top: var(--space-md);
-    font-family: var(--font-display);
-    font-size: 0.72rem;
-    font-weight: 600;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.7);
-}
-
-@media (max-width: 720px) {
-    .welcome-quote {
-        aspect-ratio: auto;
-        min-height: 460px;
-    }
-    .welcome-quote::after {
-        background:
-            linear-gradient(180deg,
-                rgba(13, 40, 24, 0.55) 0%,
-                rgba(13, 40, 24, 0.8) 100%);
-    }
 }
 
 /* ==========================================================================
