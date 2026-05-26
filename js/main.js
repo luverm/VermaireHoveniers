@@ -5,6 +5,46 @@
 (async function() {
     'use strict';
 
+    /* ----------------------------------------------------------------------
+       Loading screen
+       Hides when window 'load' fires (all images/styles ready) AND a small
+       minimum delay has passed — but never sticks around longer than 4 s.
+       ---------------------------------------------------------------------- */
+    (function setupLoader() {
+        const loader = document.getElementById('loader');
+        if (!loader) {
+            document.body.classList.remove('loading');
+            return;
+        }
+
+        const MIN_MS = 700;   // never flash for less than this
+        const MAX_MS = 4000;  // never hang past this
+
+        let ready = false;
+        let minPassed = false;
+        let hidden = false;
+
+        const hide = () => {
+            if (hidden) return;
+            hidden = true;
+            loader.classList.add('done');
+            document.body.classList.remove('loading');
+            loader.addEventListener('transitionend', () => loader.remove(), { once: true });
+            setTimeout(() => loader.remove(), 1200); // safety net
+        };
+
+        const maybeHide = () => { if (ready && minPassed) hide(); };
+
+        setTimeout(() => { minPassed = true; maybeHide(); }, MIN_MS);
+        setTimeout(hide, MAX_MS); // hard cap
+
+        if (document.readyState === 'complete') {
+            ready = true; maybeHide();
+        } else {
+            window.addEventListener('load', () => { ready = true; maybeHide(); });
+        }
+    })();
+
     /* Loaded class for hero entrance */
     window.addEventListener('load', () => {
         requestAnimationFrame(() => document.body.classList.add('loaded'));
