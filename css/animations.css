@@ -75,18 +75,6 @@ body.loaded .hero-description { opacity: 1; transform: translateY(0); transition
 body.loaded .hero-actions { opacity: 1; transform: translateY(0); transition-delay: 0.5s; }
 body.loaded .hero-stats { opacity: 1; transform: translateY(0); transition-delay: 0.65s; }
 
-/* Portrait fades in + gently lifts */
-.hero-portrait {
-    opacity: 0;
-    transform: scale(0.96);
-    transition: opacity 1s var(--ease), transform 1s var(--ease);
-}
-body.loaded .hero-portrait {
-    opacity: 1;
-    transform: scale(1);
-    transition-delay: 0.2s;
-}
-
 /* Lazy image fade */
 /* Opt-in fade-in for images. Add class="lazy-fade" to use. */
 img.lazy-fade {
