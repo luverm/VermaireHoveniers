@@ -88,6 +88,11 @@
             const v = settings[key];
             if (v) el.setAttribute('src', v);
         });
+        document.querySelectorAll('[data-cms-bg]').forEach((el) => {
+            const key = el.getAttribute('data-cms-bg');
+            const v = settings[key];
+            if (v) el.style.backgroundImage = `url("${v.replace(/"/g, '\\"')}")`;
+        });
 
         // Sync tel: + wa.me links to the configured phone number
         if (settings.contact_phone) {
