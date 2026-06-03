@@ -30,6 +30,11 @@
     --gray-400: #99a39b;
     --gray-600: #5a6b5f;
 
+    /* Warm accent — used sparingly for highlights, hover glow, stat suffixes */
+    --earth:        #c48a4d;
+    --earth-light:  #d8a872;
+    --earth-soft:   rgba(196, 138, 77, 0.12);
+
     /* Semantic */
     --bg: var(--white);
     --bg-alt: var(--green-50);
@@ -705,7 +710,7 @@ body.menu-open {
 }
 
 .stat-suffix {
-    color: var(--accent);
+    color: var(--earth);
     margin-left: 2px;
 }
 
@@ -796,7 +801,7 @@ body.menu-open {
     transform: translateX(-50%);
     width: 56px;
     height: 1px;
-    background: var(--accent);
+    background: var(--earth);
     z-index: 1;
 }
 
@@ -840,7 +845,10 @@ body.menu-open {
     position: absolute;
     inset: 0;
     border-radius: inherit;
-    box-shadow: 0 16px 40px rgba(13, 40, 24, 0.1);
+    /* dark green base shadow with a subtle warm earth glow */
+    box-shadow:
+        0 16px 40px rgba(13, 40, 24, 0.12),
+        0 8px 24px rgba(196, 138, 77, 0.18);
     opacity: 0;
     transition: opacity 0.3s var(--ease);
     z-index: -1;
@@ -949,7 +957,7 @@ body.menu-open {
 
 .process-step {
     padding-top: var(--space-md);
-    border-top: 2px solid var(--accent);
+    border-top: 2px solid var(--earth);
 }
 
 .process-step-number {
@@ -957,7 +965,7 @@ body.menu-open {
     font-size: 0.75rem;
     font-weight: 600;
     letter-spacing: 0.2em;
-    color: var(--accent);
+    color: var(--earth);
     margin-bottom: var(--space-md);
 }
 
@@ -1045,6 +1053,24 @@ body.menu-open {
     text-transform: uppercase;
     letter-spacing: 0.05em;
     z-index: 3;
+}
+
+/* Mobile: no overlapping composition, no badge — just one clean photo */
+@media (max-width: 768px) {
+    .about-images {
+        position: relative;
+        aspect-ratio: 4 / 3;
+    }
+    .about-image-main {
+        position: relative;
+        top: auto; left: auto;
+        width: 100%;
+        height: 100%;
+    }
+    .about-image-secondary,
+    .about-badge {
+        display: none;
+    }
 }
 
 .about-text {
