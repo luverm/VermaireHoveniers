@@ -257,7 +257,41 @@ tbody td { padding: 0.9rem 1rem; font-size: 0.88rem; vertical-align: middle; }
 .cell-date { color: var(--gray-600); font-size: 0.82rem; white-space: nowrap; }
 
 .col-hide-sm { }
-@media (max-width: 700px) { .col-hide-sm { display: none; } }
+
+/* Row accent for fresh requests */
+tr[data-status="nieuw"] { box-shadow: inset 3px 0 0 var(--green-600); }
+tr[data-status="nieuw"] .cell-name { color: var(--green-700); }
+
+/* ≤700px: the table becomes a stack of cards */
+@media (max-width: 700px) {
+    #table thead { display: none; }
+    #table, #table tbody { display: block; width: 100%; }
+    #table tr {
+        display: block;
+        padding: 0.9rem 1rem;
+        border-bottom: 1px solid var(--gray-200);
+    }
+    #table tr:last-child { border-bottom: none; }
+    #table td {
+        display: block;
+        padding: 0;
+        border: none;
+    }
+    /* dienst + datum side by side as meta line */
+    #table td:nth-child(2),
+    #table td:nth-child(3) {
+        display: inline-block;
+        font-size: 0.78rem;
+        color: var(--gray-600);
+        margin: 0.3rem 0.9rem 0 0;
+    }
+    #table td:last-child { margin-top: 0.6rem; }
+    .status-select {
+        width: 100%;
+        padding: 0.65rem 1.8rem 0.65rem 0.8rem;
+        font-size: 16px; /* prevents iOS focus zoom */
+    }
+}
 
 .pill {
     display: inline-flex;
@@ -435,7 +469,28 @@ tbody td { padding: 0.9rem 1rem; font-size: 0.88rem; vertical-align: middle; }
     display: flex;
     gap: 0.25rem;
     border-top: 1px solid var(--gray-200);
+    overflow-x: auto;
+    scrollbar-width: none;
 }
+.tabs::-webkit-scrollbar { display: none; }
+
+.tab-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 19px;
+    height: 19px;
+    padding: 0 5px;
+    margin-left: 0.35rem;
+    border-radius: 999px;
+    background: var(--green-600);
+    color: #fff;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0;
+    vertical-align: middle;
+}
+.tab-badge.hidden { display: none; }
 
 .tab {
     background: transparent;
@@ -467,6 +522,57 @@ tbody td { padding: 0.9rem 1rem; font-size: 0.88rem; vertical-align: middle; }
     justify-content: space-between;
     flex-wrap: wrap;
     gap: 1rem;
+}
+
+.page-head-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.refresh-btn svg {
+    width: 14px;
+    height: 14px;
+    margin-right: 0.35rem;
+}
+
+.refresh-btn.spinning svg {
+    animation: spin 0.7s linear infinite;
+}
+
+/* ==========================================================================
+   MOBILE POLISH — bigger touch targets, no iOS focus-zoom
+   ========================================================================== */
+
+@media (max-width: 700px) {
+    .wrap { padding: 1.25rem 1rem 3rem; }
+
+    .search {
+        min-width: 0;
+        width: 100%;
+        font-size: 16px; /* prevents iOS focus zoom */
+        padding: 0.7rem 1rem;
+    }
+
+    .toolbar { flex-direction: column; align-items: stretch; }
+    .filters { justify-content: flex-start; }
+    .filter { padding: 0.55rem 1rem; }
+
+    .field input,
+    .settings-field input[type="text"],
+    .settings-field input[type="email"],
+    .settings-field input[type="tel"],
+    .settings-field textarea {
+        font-size: 16px; /* prevents iOS focus zoom */
+        padding: 0.75rem 0.9rem;
+    }
+
+    .drawer-actions .btn { padding: 0.85rem 1rem; }
+
+    .stats { gap: 0.6rem; }
+    .stat { padding: 0.9rem 1rem; }
+    .stat-num { font-size: 1.6rem; }
 }
 
 /* ==========================================================================
