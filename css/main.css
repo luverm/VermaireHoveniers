@@ -874,6 +874,33 @@ body.menu-open {
     background: var(--accent);
 }
 
+.service-card-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    margin-top: var(--space-md);
+    padding-top: var(--space-md);
+    width: 100%;
+    border-top: 1px solid var(--border);
+    font-family: var(--font-display);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    text-decoration: none;
+    transition: gap var(--t), color var(--t);
+}
+
+.service-card-cta svg {
+    width: 15px;
+    height: 15px;
+    transition: transform var(--t);
+}
+
+.service-card-cta:hover { gap: 0.7rem; color: var(--green-700); }
+.service-card-cta:hover svg { transform: translateX(2px); }
+
 .services-cta {
     margin-top: var(--space-2xl);
     text-align: center;

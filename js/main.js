@@ -105,7 +105,9 @@
                     el.setAttribute('href', 'tel:+' + digits);
                 });
                 document.querySelectorAll('[data-cms-wa]').forEach((el) => {
-                    el.setAttribute('href', 'https://wa.me/' + digits);
+                    // Preserve an existing ?text= prefill when swapping the number
+                    const query = (el.getAttribute('href') || '').split('?')[1];
+                    el.setAttribute('href', 'https://wa.me/' + digits + (query ? '?' + query : ''));
                 });
             }
         }
@@ -227,6 +229,15 @@
                     behavior: 'smooth'
                 });
             }
+        });
+    });
+
+    /* Service-card CTA: pre-select the service in the contact form */
+    document.querySelectorAll('[data-preselect-service]').forEach((link) => {
+        link.addEventListener('click', () => {
+            const select = document.getElementById('service');
+            const value = link.getAttribute('data-preselect-service');
+            if (select && value) select.value = value;
         });
     });
 
