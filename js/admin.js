@@ -195,10 +195,12 @@
     /* ==========================================================================
        AANVRAGEN
        ========================================================================== */
-    async function loadRequests() {
-        el.tableState.classList.remove('hidden');
-        el.table.classList.add('hidden');
-        el.tableState.innerHTML = '<div class="spinner"></div>Aanvragen laden…';
+    async function loadRequests(silent = false) {
+        if (!silent) {
+            el.tableState.classList.remove('hidden');
+            el.table.classList.add('hidden');
+            el.tableState.innerHTML = '<div class="spinner"></div>Aanvragen laden…';
+        }
 
         const { data, error } = await supabase
             .from('contact_requests')
@@ -206,9 +208,11 @@
             .order('created_at', { ascending: false });
 
         if (error) {
-            el.tableState.innerHTML =
-                '<div class="empty"><h3>Kon de aanvragen niet laden</h3><p>' +
-                esc(error.message) + '</p></div>';
+            if (!silent) {
+                el.tableState.innerHTML =
+                    '<div class="empty"><h3>Kon de aanvragen niet laden</h3><p>' +
+                    esc(error.message) + '</p></div>';
+            }
             return;
         }
 
@@ -224,6 +228,26 @@
         el.statContacted.textContent = c.gecontacteerd;
         el.statDone.textContent = c.afgerond;
         el.statTotal.textContent = rows.length;
+
+        // Tab badge with the number of unhandled (nieuw) requests
+        const badge = document.getElementById('tabBadgeNieuw');
+        if (badge) {
+            badge.textContent = String(c.nieuw);
+            badge.classList.toggle('hidden', c.nieuw === 0);
+        }
+    }
+
+    /* "5 min. geleden" for fresh items, full date for older ones */
+    function relTime(iso) {
+        const ms = Date.now() - new Date(iso).getTime();
+        const min = Math.floor(ms / 60000);
+        if (min < 1) return 'zojuist';
+        if (min < 60) return `${min} min. geleden`;
+        const hrs = Math.floor(min / 60);
+        if (hrs < 24) return `${hrs} uur geleden`;
+        const days = Math.floor(hrs / 24);
+        if (days < 7) return days === 1 ? 'gisteren' : `${days} dagen geleden`;
+        return fmtDate(iso);
     }
 
     function visibleRows() {
@@ -251,13 +275,13 @@
         }
 
         el.tbody.innerHTML = list.map((r) => `
-            <tr data-id="${r.id}">
+            <tr data-id="${r.id}" data-status="${esc(r.status)}">
                 <td>
                     <div class="cell-name">${esc(r.name)}</div>
                     <div class="cell-sub">${esc(r.email)}</div>
                 </td>
                 <td class="col-hide-sm">${esc(serviceLabel(r.service))}</td>
-                <td class="col-hide-sm"><span class="cell-date">${esc(fmtDate(r.created_at))}</span></td>
+                <td class="col-hide-sm"><span class="cell-date" title="${esc(fmtDate(r.created_at))}">${esc(relTime(r.created_at))}</span></td>
                 <td>
                     <select class="status-select" data-id="${r.id}">
                         ${STATUSES.map((s) =>
@@ -301,6 +325,8 @@
         if (error) return toast('Bijwerken mislukt.');
         const row = rows.find((r) => r.id === id);
         if (row) row.status = status;
+        // keep the row accent in sync without a full re-render
+        el.tbody.querySelector(`tr[data-id="${id}"]`)?.setAttribute('data-status', status);
         updateStats();
         if (activeRequestId === id) paintRequestPill(status);
         if (filter !== 'all') renderRequests();
@@ -984,6 +1010,31 @@
         if (error) { toast('Herstellen mislukt.'); return; }
         el.heroPhotoPreview.src = '../assets/hero.jpg';
         toast('Hero foto teruggezet naar standaard.');
+    });
+
+    /* ---------- refresh buttons + auto-refresh on return ---------- */
+    async function withSpin(btn, fn) {
+        btn.classList.add('spinning');
+        btn.disabled = true;
+        try { await fn(); } finally {
+            btn.classList.remove('spinning');
+            btn.disabled = false;
+        }
+    }
+
+    document.getElementById('refreshRequests')?.addEventListener('click', (e) => {
+        withSpin(e.currentTarget, () => loadRequests());
+    });
+
+    document.getElementById('refreshProjects')?.addEventListener('click', (e) => {
+        withSpin(e.currentTarget, () => loadProjects());
+    });
+
+    // When Thijmen returns to the tab/app, silently pull fresh aanvragen
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden) return;
+        if (el.appView.classList.contains('hidden')) return; // not logged in
+        loadRequests(true);
     });
 
     /* ---------- global keyboard ---------- */

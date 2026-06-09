@@ -59,7 +59,7 @@
                 </div>
             </div>
             <nav class="tabs" role="tablist">
-                <button class="tab active" data-view="aanvragen" role="tab">Aanvragen</button>
+                <button class="tab active" data-view="aanvragen" role="tab">Aanvragen <span class="tab-badge hidden" id="tabBadgeNieuw"></span></button>
                 <button class="tab" data-view="projecten" role="tab">Projecten</button>
                 <button class="tab" data-view="settings" role="tab">Site Info</button>
             </nav>
@@ -68,9 +68,15 @@
         <main class="wrap">
             <!-- AANVRAGEN VIEW -->
             <section class="view active" data-view-content="aanvragen">
-                <div class="page-head">
-                    <h1>Aanvragen &amp; contactpogingen</h1>
-                    <p>Alle berichten die via de website binnenkomen.</p>
+                <div class="page-head row">
+                    <div>
+                        <h1>Aanvragen &amp; contactpogingen</h1>
+                        <p>Alle berichten die via de website binnenkomen.</p>
+                    </div>
+                    <button class="btn btn-ghost btn-sm refresh-btn" id="refreshRequests" aria-label="Vernieuw aanvragen">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12a9 9 0 1 1-2.64-6.36M21 3v6h-6"/></svg>
+                        <span>Vernieuwen</span>
+                    </button>
                 </div>
 
                 <div class="stats" id="stats">
@@ -117,9 +123,15 @@
                         <h1>Projecten</h1>
                         <p>Voeg projecten toe, beheer foto's en zichtbaarheid.</p>
                     </div>
-                    <button class="btn" id="newProjectBtn">
-                        <span>+ Nieuw project</span>
-                    </button>
+                    <div class="page-head-actions">
+                        <button class="btn btn-ghost btn-sm refresh-btn" id="refreshProjects" aria-label="Vernieuw projecten">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12a9 9 0 1 1-2.64-6.36M21 3v6h-6"/></svg>
+                            <span>Vernieuwen</span>
+                        </button>
+                        <button class="btn" id="newProjectBtn">
+                            <span>+ Nieuw project</span>
+                        </button>
+                    </div>
                 </div>
 
                 <div id="projectsState" class="loading">
