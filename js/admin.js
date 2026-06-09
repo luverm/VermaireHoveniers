@@ -252,6 +252,8 @@
 
     function visibleRows() {
         return rows.filter((r) => {
+            // "Alle" hides archived requests — only the Gearchiveerd filter shows them
+            if (filter === 'all' && r.status === 'gearchiveerd') return false;
             if (filter !== 'all' && r.status !== filter) return false;
             if (query) {
                 const hay = (r.name + ' ' + r.email + ' ' + (r.message || '') + ' ' + (r.phone || '')).toLowerCase();
@@ -283,11 +285,16 @@
                 <td class="col-hide-sm">${esc(serviceLabel(r.service))}</td>
                 <td class="col-hide-sm"><span class="cell-date" title="${esc(fmtDate(r.created_at))}">${esc(relTime(r.created_at))}</span></td>
                 <td>
-                    <select class="status-select" data-id="${r.id}">
-                        ${STATUSES.map((s) =>
-                            `<option value="${s}" ${s === r.status ? 'selected' : ''}>${STATUS_LABEL[s]}</option>`
-                        ).join('')}
-                    </select>
+                    <div class="row-actions">
+                        <select class="status-select" data-id="${r.id}">
+                            ${STATUSES.map((s) =>
+                                `<option value="${s}" ${s === r.status ? 'selected' : ''}>${STATUS_LABEL[s]}</option>`
+                            ).join('')}
+                        </select>
+                        <button type="button" class="row-delete" data-id="${r.id}" aria-label="Verwijder aanvraag" title="Verwijderen">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M3 6h18M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6h14ZM10 11v6M14 11v6"/></svg>
+                        </button>
+                    </div>
                 </td>
             </tr>
         `).join('');
@@ -308,10 +315,35 @@
     });
 
     el.tbody.addEventListener('click', (e) => {
+        const del = e.target.closest('.row-delete');
+        if (del) {
+            e.stopPropagation();
+            deleteRequest(del.dataset.id);
+            return;
+        }
         if (e.target.closest('.status-select')) return;
         const tr = e.target.closest('tr');
         if (tr) openRequestDrawer(tr.dataset.id);
     });
+
+    async function deleteRequest(id) {
+        const row = rows.find((r) => r.id === id);
+        if (!row) return;
+        if (!confirm(`Aanvraag van "${row.name}" verwijderen? Dit kan niet ongedaan worden gemaakt.`)) return;
+
+        const { error } = await supabase
+            .from('contact_requests')
+            .delete()
+            .eq('id', id);
+
+        if (error) { toast('Verwijderen mislukt.'); return; }
+
+        rows = rows.filter((r) => r.id !== id);
+        updateStats();
+        renderRequests();
+        if (activeRequestId === id) closeRequestDrawer();
+        toast('Aanvraag verwijderd.');
+    }
 
     el.tbody.addEventListener('change', async (e) => {
         const sel = e.target.closest('.status-select');
@@ -374,24 +406,8 @@
         closeRequestDrawer();
     });
 
-    el.dDelete.addEventListener('click', async () => {
-        if (!activeRequestId) return;
-        const row = rows.find((r) => r.id === activeRequestId);
-        if (!row) return;
-        if (!confirm(`Aanvraag van "${row.name}" verwijderen? Dit kan niet ongedaan worden gemaakt.`)) return;
-
-        const { error } = await supabase
-            .from('contact_requests')
-            .delete()
-            .eq('id', activeRequestId);
-
-        if (error) { toast('Verwijderen mislukt.'); return; }
-
-        rows = rows.filter((r) => r.id !== activeRequestId);
-        updateStats();
-        renderRequests();
-        closeRequestDrawer();
-        toast('Aanvraag verwijderd.');
+    el.dDelete.addEventListener('click', () => {
+        if (activeRequestId) deleteRequest(activeRequestId);
     });
 
     /* ==========================================================================
