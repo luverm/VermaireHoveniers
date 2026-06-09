@@ -324,6 +324,37 @@ tr[data-status="nieuw"] .cell-name { color: var(--green-700); }
 }
 .status-select:focus { border-color: var(--green-600); }
 
+.row-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.row-actions .status-select { flex: 1; min-width: 0; }
+
+.row-delete {
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+    border: 1px solid var(--gray-200);
+    border-radius: 8px;
+    background: var(--white);
+    color: var(--gray-600);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: color var(--t), border-color var(--t), background var(--t);
+}
+
+.row-delete svg { width: 15px; height: 15px; }
+
+.row-delete:hover {
+    color: var(--red);
+    border-color: rgba(192, 57, 43, 0.4);
+    background: #fdecea;
+}
+
 .empty {
     text-align: center;
     padding: 4rem 1.5rem;
