@@ -85,6 +85,23 @@
         const prev = card.querySelector('.proj-arrow.prev');
         const next = card.querySelector('.proj-arrow.next');
 
+        // Keyboard navigation when the slider has focus
+        const slider = card.querySelector('.proj-slider');
+        if (slider) {
+            slider.setAttribute('tabindex', '0');
+            slider.setAttribute('role', 'group');
+            slider.setAttribute('aria-label', 'Fotogalerij — gebruik de pijltjestoetsen');
+            slider.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowRight') {
+                    e.preventDefault();
+                    track.scrollBy({ left: track.clientWidth, behavior: 'smooth' });
+                } else if (e.key === 'ArrowLeft') {
+                    e.preventDefault();
+                    track.scrollBy({ left: -track.clientWidth, behavior: 'smooth' });
+                }
+            });
+        }
+
         function update() {
             const idx = Math.round(track.scrollLeft / track.clientWidth);
             const i = Math.max(0, Math.min(slides.length - 1, idx));

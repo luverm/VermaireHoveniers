@@ -1823,3 +1823,100 @@ body.loading { overflow: hidden; }
     0%, 100% { opacity: 1;   transform: scale(1); }
     50%      { opacity: 0.55; transform: scale(0.92); }
 }
+
+/* ==========================================================================
+   ANCHOR OFFSET — direct hash navigation lands below the fixed nav
+   ========================================================================== */
+
+section[id] { scroll-margin-top: 84px; }
+
+/* ==========================================================================
+   SKIP LINK (keyboard accessibility)
+   ========================================================================== */
+
+.skip-link {
+    position: fixed;
+    top: -100px;
+    left: 1rem;
+    z-index: 10000;
+    background: var(--green-900);
+    color: #ffffff;
+    padding: 0.7rem 1.2rem;
+    border-radius: 0 0 10px 10px;
+    font-family: var(--font-display);
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: top 0.2s ease;
+}
+
+.skip-link:focus { top: 0; }
+
+/* ==========================================================================
+   MOBILE QUICK-ACTION BAR
+   ========================================================================== */
+
+.quickbar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 60;
+    display: none;
+    gap: 0.5rem;
+    padding: 0.6rem 1rem calc(0.6rem + env(safe-area-inset-bottom, 0px));
+    background: rgba(255, 255, 255, 0.97);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.quickbar .btn {
+    flex: 1;
+    justify-content: center;
+    padding: 0.85rem 1rem;
+    font-size: 0.85rem;
+    white-space: nowrap;
+}
+
+.quickbar .btn svg { width: 16px; height: 16px; flex-shrink: 0; }
+
+@media (max-width: 768px) {
+    .quickbar { display: flex; }
+
+    /* lift the FAB above the bar */
+    .fab { bottom: calc(4.9rem + env(safe-area-inset-bottom, 0px)); }
+
+    /* keep the footer's last content clear of the bar */
+    .footer { padding-bottom: 5.5rem; }
+}
+
+/* drawer (z 200) covers the bar; no extra handling needed */
+
+/* ==========================================================================
+   FORM VALIDATION (inline errors)
+   ========================================================================== */
+
+.form-field.error input,
+.form-field.error textarea,
+.form-field.error select {
+    border-color: #c0392b;
+}
+
+.field-error {
+    color: #c0392b;
+    font-size: 0.78rem;
+    margin-top: 0.35rem;
+    line-height: 1.4;
+}
+
+.form-alert {
+    background: #fdecea;
+    color: #c0392b;
+    border: 1px solid #f5c6c0;
+    border-radius: 9px;
+    padding: 0.7rem 0.9rem;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    margin-bottom: 1rem;
+}

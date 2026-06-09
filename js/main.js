@@ -300,17 +300,56 @@
         });
     });
 
-    /* Contact form */
+    /* Contact form — inline validation, no alert() popups */
     const contactForm = document.getElementById('contactForm');
     const formSuccess = document.getElementById('formSuccess');
+    const formAlert = document.getElementById('formAlert');
+
+    function setFieldError(id, msg) {
+        const input = document.getElementById(id);
+        const field = input?.closest('.form-field');
+        if (!field) return;
+        field.classList.add('error');
+        if (!field.querySelector('.field-error')) {
+            const p = document.createElement('p');
+            p.className = 'field-error';
+            p.textContent = msg;
+            field.appendChild(p);
+        }
+    }
+
+    function clearFieldErrors() {
+        contactForm.querySelectorAll('.form-field.error').forEach((f) => f.classList.remove('error'));
+        contactForm.querySelectorAll('.field-error').forEach((p) => p.remove());
+        if (formAlert) { formAlert.hidden = true; formAlert.textContent = ''; }
+    }
 
     if (contactForm) {
+        // clear a field's error as soon as the user starts fixing it
+        contactForm.addEventListener('input', (e) => {
+            const field = e.target.closest('.form-field');
+            if (field?.classList.contains('error')) {
+                field.classList.remove('error');
+                field.querySelector('.field-error')?.remove();
+            }
+        });
+
         contactForm.addEventListener('submit', async (e) => {
             e.preventDefault();
+            clearFieldErrors();
             const data = Object.fromEntries(new FormData(contactForm));
 
-            if (!data.name || !data.email) {
-                alert('Vul alstublieft uw naam en e-mailadres in.');
+            const errors = [];
+            if (!data.name?.trim()) errors.push(['name', 'Vul uw naam in.']);
+            if (!data.email?.trim()) {
+                errors.push(['email', 'Vul uw e-mailadres in.']);
+            } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
+                errors.push(['email', 'Voer een geldig e-mailadres in.']);
+            }
+
+            if (errors.length) {
+                errors.forEach(([id, msg]) => setFieldError(id, msg));
+                document.getElementById(errors[0][0])?.focus();
                 return;
             }
 
@@ -336,7 +375,11 @@
                 contactForm.reset();
                 setTimeout(() => formSuccess.classList.remove('active'), 6000);
             } catch (err) {
-                alert(err.message + ' U kunt ons ook direct bellen op +31 6 23 29 32 74.');
+                if (formAlert) {
+                    formAlert.textContent = err.message + ' U kunt ons ook direct bellen of WhatsAppen.';
+                    formAlert.hidden = false;
+                    formAlert.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
             } finally {
                 span.textContent = orig;
                 btn.disabled = false;
