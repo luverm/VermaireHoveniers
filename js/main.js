@@ -283,6 +283,11 @@
         requestAnimationFrame(step);
     }
 
+    /* Footer year */
+    document.querySelectorAll('[data-year]').forEach((el) => {
+        el.textContent = String(new Date().getFullYear());
+    });
+
     /* FAQ — close others when opening */
     const faqItems = document.querySelectorAll('.faq-item');
     faqItems.forEach(item => {
