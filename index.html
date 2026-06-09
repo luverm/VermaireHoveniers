@@ -19,6 +19,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="preload" as="image" href="assets/hero.jpg" fetchpriority="high">
     <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" href="css/animations.css">
     <link rel="stylesheet" href="css/projecten.css">
@@ -55,8 +56,60 @@
         "knowsAbout": ["Beplanting", "Groenadvies", "Tuinonderhoud"]
     }
     </script>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+            {
+                "@type": "Question",
+                "name": "Doen jullie ook tuinaanleg?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Nee. Wij richten ons volledig op beplanting, groenadvies en onderhoud. Zo kunnen wij u daarin de beste kwaliteit en aandacht bieden."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "Hoe vaak is tuinonderhoud nodig?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Dat hangt af van uw tuin en het seizoen. Wij stellen samen met u een onderhoudsritme op dat bij uw tuin past."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "Werken jullie ook in mijn omgeving?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Wij zijn gevestigd in Wemeldinge en werken in heel Zeeland."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "Kunnen jullie duurzaam advies geven?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Zeker. Wij adviseren u graag over inheemse beplanting en groen dat goed is voor uw tuin én voor de natuur."
+                }
+            }
+        ]
+    }
+    </script>
 </head>
 <body class="loading">
+    <noscript>
+        <style>
+            /* Without JS: hide the loader, unlock scrolling, show all reveal-animated content */
+            .loader { display: none !important; }
+            body.loading { overflow: auto !important; }
+            [data-reveal], [data-reveal-card],
+            .hero-tagline, .hero-title, .hero-description, .hero-actions, .hero-stats {
+                opacity: 1 !important;
+                transform: none !important;
+            }
+        </style>
+    </noscript>
     <!-- Loading screen -->
     <div class="loader" id="loader" aria-hidden="true">
         <img src="assets/logo.png" alt="" class="loader-logo">
@@ -717,7 +770,7 @@
             </div>
 
             <div class="footer-bottom">
-                <p class="footer-copy">© 2026 Vermaire Hoveniers · Alle rechten voorbehouden</p>
+                <p class="footer-copy">© <span data-year>2026</span> Vermaire Hoveniers · Alle rechten voorbehouden</p>
                 <div class="footer-legal">
                     <a href="#">Privacybeleid</a>
                     <a href="#">Algemene Voorwaarden</a>

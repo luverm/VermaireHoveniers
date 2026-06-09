@@ -127,6 +127,13 @@
         target.querySelectorAll('.proj-card').forEach(initSlider);
     }
 
+    // On the homepage, an empty/failed projects feed hides the whole section
+    // (customers shouldn't see an empty teaser); the /projecten page keeps
+    // its visible empty state.
+    function hideHomeSection() {
+        homeGrid?.closest('.home-projects')?.style.setProperty('display', 'none');
+    }
+
     async function load() {
         try {
             const res = await fetch('/api/projects');
@@ -134,7 +141,8 @@
             const { projects } = await res.json();
 
             if (!projects || projects.length === 0) {
-                grids.forEach((g) => renderEmpty(g, 'Nog geen projecten'));
+                if (fullGrid) renderEmpty(fullGrid, 'Nog geen projecten');
+                hideHomeSection();
                 return;
             }
 
@@ -142,7 +150,8 @@
             if (homeGrid) renderInto(homeGrid, projects.slice(0, 3)); // recent 3 op de home
         } catch (err) {
             console.error('[projecten] load failed:', err);
-            grids.forEach((g) => renderEmpty(g, 'Projecten konden niet geladen worden'));
+            if (fullGrid) renderEmpty(fullGrid, 'Projecten konden niet geladen worden');
+            hideHomeSection();
         }
     }
 

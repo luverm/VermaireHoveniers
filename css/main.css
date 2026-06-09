@@ -1176,6 +1176,15 @@ body.menu-open {
     padding-right: var(--space-lg);
 }
 
+.faq-item[open] .faq-answer {
+    animation: faqOpen 0.3s var(--ease);
+}
+
+@keyframes faqOpen {
+    from { opacity: 0; transform: translateY(-6px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
 .faq-answer p {
     color: var(--text-muted);
     line-height: 1.65;
