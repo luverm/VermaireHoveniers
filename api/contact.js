@@ -1,7 +1,34 @@
 import { serviceClient } from './_lib/supabase.js';
+import { stuurMail, bevestigingAanKlant, meldingAanHovenier } from './_lib/mail.js';
 import { createHash } from 'node:crypto';
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+const SITE = (process.env.SITE_URL || 'https://www.vermairehoveniers.nl').replace(/\/$/, '');
+
+// Waar de melding heen gaat en welk telefoonnummer in de bevestiging staat.
+// Instelbaar in het portaal, zodat dat niet in Vercel hoeft.
+async function contactgegevens(sb) {
+    const standaard = {
+        meldAdres: 'info@vermairehoveniers.nl',
+        telefoon: '+31 6 23 29 32 74',
+    };
+
+    try {
+        const [site, admin] = await Promise.all([
+            sb.from('site_settings').select('key, value').in('key', ['contact_email', 'contact_phone']),
+            sb.from('admin_settings').select('value').eq('key', 'meld_email').maybeSingle(),
+        ]);
+
+        const map = Object.fromEntries((site.data || []).map((r) => [r.key, r.value]));
+        return {
+            meldAdres: (admin.data?.value || '').trim() || map.contact_email || standaard.meldAdres,
+            telefoon: map.contact_phone || standaard.telefoon,
+        };
+    } catch {
+        return standaard;
+    }
+}
 
 function clean(value, max) {
     if (value == null) return null;
@@ -39,7 +66,9 @@ export default async function handler(req, res) {
     const ipHash = fwd ? createHash('sha256').update(fwd).digest('hex').slice(0, 32) : null;
 
     try {
-        const { error } = await serviceClient()
+        const sb = serviceClient();
+
+        const { error } = await sb
             .from('contact_requests')
             .insert({
                 name,
@@ -56,6 +85,27 @@ export default async function handler(req, res) {
             console.error('[contact] insert error:', error);
             return res.status(500).json({ error: 'Er ging iets mis. Probeer het later opnieuw.' });
         }
+
+        // De aanvraag staat veilig opgeslagen. Vanaf hier mag er van alles
+        // misgaan met de mail zonder dat de bezoeker daar iets van merkt:
+        // een lead verliezen omdat de mailserver hapert is het ergste wat
+        // er kan gebeuren.
+        //
+        // Wel áfwachten en niet losjes wegsturen: op Vercel wordt de functie
+        // afgekapt zodra het antwoord de deur uit is, en dan vertrekt de mail
+        // soms wel en soms niet.
+        const { meldAdres, telefoon } = await contactgegevens(sb);
+
+        const [klant, hovenier] = await Promise.all([
+            stuurMail(bevestigingAanKlant({ naam: name, dienst: service, bericht: message, telefoon, email })),
+            stuurMail(meldingAanHovenier({
+                naam: name, email, telefoon: phone, dienst: service,
+                bericht: message, site: SITE, naarAdres: meldAdres,
+            })),
+        ]);
+
+        if (!klant.verstuurd) console.warn('[contact] bevestiging niet verstuurd:', klant.reden);
+        if (!hovenier.verstuurd) console.warn('[contact] melding niet verstuurd:', hovenier.reden);
 
         return res.status(200).json({ ok: true });
     } catch (err) {
