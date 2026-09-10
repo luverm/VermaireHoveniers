@@ -1646,7 +1646,10 @@
 
         await loadKlusMaterialen(editingKlusId);
         renderKlusMaterialen();
-        loadCatalogus();          // alvast op de achtergrond
+        // Stil voorladen; fouten pas tonen als de kiezer opengaat. Wel opnieuw
+        // tekenen als de uitslag binnen is, anders staat er "nog niets gekozen"
+        // terwijl de lijst in werkelijkheid niet geladen kón worden.
+        loadCatalogus(true).then(() => renderKlusMaterialen());
 
         // Weer kan nog onderweg zijn als de lade meteen na inloggen opengaat.
         syncWeer();
@@ -1833,7 +1836,14 @@
     let matCategorie = 'alle';
     let matZoek = '';
 
-    async function loadCatalogus() {
+    let catalogusFout = null;
+
+    /**
+     * @param {boolean} stil  true bij het voorladen op de achtergrond: dan mag
+     *                        een fout niet in beeld komen. De gebruiker heeft
+     *                        er niet om gevraagd en kan er niets mee.
+     */
+    async function loadCatalogus(stil = false) {
         if (catalogus.length) return catalogus;
 
         const { data, error } = await supabase
@@ -1842,7 +1852,17 @@
             .eq('actief', true)
             .order('sort_order', { ascending: true });
 
-        if (error) { toast('Kon de materiaallijst niet laden.'); return []; }
+        if (error) {
+            // Verreweg de meest waarschijnlijke oorzaak: het uitgebreide schema
+            // is nog niet in Supabase gedraaid. Zeg dat, in plaats van een
+            // Postgres-melding die niemand verder helpt.
+            catalogusFout = /does not exist|schema cache|relation/i.test(error.message || '')
+                ? 'ontbreekt'
+                : error.message;
+            return [];
+        }
+
+        catalogusFout = null;
         catalogus = data || [];
         return catalogus;
     }
@@ -1878,8 +1898,10 @@
         const verbruik = matRegels.filter((r) => r.soort !== 'gereedschap');
 
         if (!matRegels.length) {
-            el.jdMatLijst.innerHTML =
-                '<p class="mat-leeg">Nog niets gekozen. Voeg toe wat mee moet en wat er verbruikt wordt.</p>';
+            el.jdMatLijst.innerHTML = catalogusFout === 'ontbreekt'
+                ? '<p class="mat-leeg">Materiaallijst nog niet aangemaakt — draai ' +
+                  '<code>supabase/schema.sql</code> opnieuw in Supabase.</p>'
+                : '<p class="mat-leeg">Nog niets gekozen. Voeg toe wat mee moet en wat er verbruikt wordt.</p>';
             el.jdMatVoortgang.textContent = '';
             return;
         }
@@ -1965,6 +1987,17 @@
     }
 
     function renderMatKeuze() {
+        if (catalogusFout) {
+            el.matKeuzeLijst.innerHTML = catalogusFout === 'ontbreekt'
+                ? '<div class="mat-melding"><strong>Materiaallijst nog niet aangemaakt</strong>' +
+                  '<span>Draai <code>supabase/schema.sql</code> opnieuw in de Supabase SQL Editor. ' +
+                  'Daarna staat de hele lijst er — bestaande gegevens blijven staan.</span></div>'
+                : '<div class="mat-melding"><strong>Kon de lijst niet laden</strong>' +
+                  '<span>' + esc(catalogusFout) + '</span></div>';
+            el.matCategorieen.innerHTML = '';
+            return;
+        }
+
         const q = matZoek.trim().toLowerCase();
         const lijst = catalogus.filter((c) =>
             (matCategorie === 'alle' || c.categorie === matCategorie) &&
