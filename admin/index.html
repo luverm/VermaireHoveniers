@@ -654,6 +654,17 @@
             </button>
         </div>
         <div class="drawer-body">
+            <div class="reeks-banner hidden" id="jdReeksBanner">
+                <div>
+                    <strong>Onderdeel van een reeks</strong>
+                    <span id="jdReeksTekst"></span>
+                </div>
+                <div class="reeks-banner-acties">
+                    <button type="button" class="btn btn-ghost btn-sm" id="jdReeksBewerk">Hele reeks</button>
+                    <button type="button" class="btn btn-ghost btn-sm btn-danger" id="jdReeksStop">Stoppen</button>
+                </div>
+            </div>
+
             <form id="klusForm">
                 <div class="settings-field">
                     <label for="jf-titel">Titel *</label>
@@ -689,6 +700,31 @@
                         <input type="time" id="jf-eind" step="900" required>
                     </div>
                 </div>
+
+                <div class="field-row">
+                    <div class="settings-field">
+                        <label for="jf-herhaling">Herhaling</label>
+                        <select id="jf-herhaling">
+                            <option value="0">Eenmalig</option>
+                            <option value="1">Elke week</option>
+                            <option value="2">Elke 2 weken</option>
+                            <option value="3">Elke 3 weken</option>
+                            <option value="4">Elke 4 weken</option>
+                            <option value="6">Elke 6 weken</option>
+                            <option value="8">Elke 8 weken</option>
+                            <option value="12">Elk kwartaal</option>
+                            <option value="26">Elk half jaar</option>
+                            <option value="52">Elk jaar</option>
+                        </select>
+                    </div>
+                    <div class="settings-field hidden" id="jfTotWrap">
+                        <label for="jf-tot">
+                            Herhalen t/m <span class="label-hint">leeg = doorlopend</span>
+                        </label>
+                        <input type="date" id="jf-tot">
+                    </div>
+                </div>
+                <p class="reeks-uitleg hidden" id="jfReeksUitleg"></p>
 
                 <div class="weer-blok" id="jdWeer">
                     <h3>Weersverwachting</h3>

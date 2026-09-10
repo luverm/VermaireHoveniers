@@ -389,3 +389,68 @@ insert into public.admin_settings (key, value) values
     ('agenda_herinnering_minuten', '60'),
     ('weer_plaats',                'Wemeldinge')
 on conflict (key) do nothing;
+
+
+-- ============================================================================
+-- TERUGKERENDE KLUSSEN
+-- Onderhoud is herhaling: elke vier weken bij dezelfde tuin. Een reeks legt
+-- het patroon vast; de losse klussen worden er echt uit weggeschreven, zodat
+-- de agenda-feed, de weerwaarschuwingen en de facturatie er niets van hoeven
+-- te weten.
+-- ============================================================================
+
+create table if not exists public.klus_reeksen (
+    id              uuid primary key default gen_random_uuid(),
+    created_at      timestamptz not null default now(),
+    updated_at      timestamptz not null default now(),
+    klant_id        uuid references public.klanten(id) on delete set null,
+    titel           text not null,
+    soort           text not null default 'onderhoud'
+                      check (soort in ('beplanting','groenadvies','onderhoud','bezichtiging','anders')),
+
+    -- Het patroon. De weekdag volgt uit start_datum, dus die vragen we niet
+    -- apart: kiest hij dinsdag 14 april, dan is het elke dinsdag.
+    start_datum     date not null,
+    tot_datum       date,                       -- leeg = doorlopend
+    interval_weken  integer not null default 4
+                      check (interval_weken between 1 and 52),
+    start_tijd      time not null,
+    eind_tijd       time not null,
+
+    -- Wordt overgenomen in elke klus die eruit ontstaat.
+    adres           text,
+    omschrijving    text,
+    prijsmodel      text not null default 'uurtarief'
+                      check (prijsmodel in ('uurtarief','vast')),
+    uurtarief       numeric(10,2),
+    vast_bedrag     numeric(10,2),
+    weersgevoelig   boolean not null default false,
+
+    actief          boolean not null default true,
+    check (eind_tijd > start_tijd),
+    check (tot_datum is null or tot_datum >= start_datum)
+);
+
+create index if not exists klus_reeksen_actief_idx on public.klus_reeksen (actief, start_datum);
+
+drop trigger if exists klus_reeksen_touch on public.klus_reeksen;
+create trigger klus_reeksen_touch
+    before update on public.klus_reeksen
+    for each row execute function public.touch_updated_at();
+
+-- Koppeling vanuit een klus terug naar zijn reeks.
+--   reeks_id      — uit welke reeks deze klus komt (leeg = losse klus)
+--   losgekoppeld  — handmatig aangepast, dus bij het bijwerken van de reeks
+--                   met rust laten
+alter table public.klussen add column if not exists
+    reeks_id uuid references public.klus_reeksen(id) on delete set null;
+alter table public.klussen add column if not exists
+    losgekoppeld boolean not null default false;
+
+create index if not exists klussen_reeks_idx on public.klussen (reeks_id);
+
+alter table public.klus_reeksen enable row level security;
+
+drop policy if exists "admin_all_klus_reeksen" on public.klus_reeksen;
+create policy "admin_all_klus_reeksen" on public.klus_reeksen
+    for all to authenticated using (true) with check (true);

@@ -70,6 +70,10 @@
         jfUurtariefWrap: $('jfUurtariefWrap'), jfVastWrap: $('jfVastWrap'),
         jfTariefHint: $('jfTariefHint'),
         jfWeer: $('jf-weer'), jfGefactureerd: $('jf-gefactureerd'),
+        jfHerhaling: $('jf-herhaling'), jfTot: $('jf-tot'),
+        jfTotWrap: $('jfTotWrap'), jfReeksUitleg: $('jfReeksUitleg'),
+        jdReeksBanner: $('jdReeksBanner'), jdReeksTekst: $('jdReeksTekst'),
+        jdReeksBewerk: $('jdReeksBewerk'), jdReeksStop: $('jdReeksStop'),
         // agenda modal
         agendaModal: $('agendaModal'), agendaOverlay: $('agendaOverlay'),
         agendaClose: $('agendaClose'), agendaUrl: $('agendaUrl'),
@@ -141,6 +145,8 @@
     let weekStart = startOfWeek(new Date());
     let weekKlussen = [];
     let editingKlusId = null;
+    let bewerktReeks = null;       // de reeks waar de open klus bij hoort
+    let bewerktHeleReeks = false;  // opslaan werkt de hele reeks bij
     let planningLoaded = false;
     let uitCacheSinds = null;      // gevuld als de week uit de lokale kopie komt
     let adminSettings = {};
@@ -1331,7 +1337,8 @@
                         ${window.Weer && k.status !== 'geannuleerd'
                             ? window.Weer.klusMerkHTML(new Date(k.start_tijd), new Date(k.eind_tijd), k.soort)
                             : ''}
-                        <span class="cal-klus-time">${hm(new Date(k.start_tijd))}</span>
+                        <span class="cal-klus-time">${hm(new Date(k.start_tijd))}${
+                            k.reeks_id ? '<span class="cal-klus-reeks" aria-label="Terugkerend">⟳</span>' : ''}</span>
                         <span class="cal-klus-title">${esc(k.titel)}</span>
                         ${klant ? `<span class="cal-klus-klant">${esc(klant.naam)}</span>` : ''}
                     </button>`;
@@ -1551,7 +1558,12 @@
 
     async function openKlusDrawer(id, prefill = {}) {
         editingKlusId = id || null;
+        bewerktReeks = null;
+        bewerktHeleReeks = false;
         el.jdError.classList.add('hidden');
+        el.jdReeksBanner.classList.add('hidden');
+        el.jdReeksBanner.classList.remove('is-bewerken');
+        el.jdReeksBewerk.classList.remove('hidden');
 
         let klus = id ? weekKlussen.find((k) => k.id === id) : null;
 
@@ -1579,8 +1591,25 @@
             el.jfVast.value = klus.vast_bedrag ?? '';
             el.jfWeer.checked = !!klus.weersgevoelig;
             el.jfGefactureerd.checked = !!klus.gefactureerd;
+            el.jfHerhaling.value = '0';
+            el.jfTot.value = '';
             fillKlantSelect(klus.klant_id);
             el.jdDelete.classList.remove('hidden');
+
+            // Hoort deze klus bij een reeks? Dan het patroon erbij halen, zodat
+            // "Hele reeks" meteen de juiste instellingen laat zien.
+            if (klus.reeks_id) {
+                const { data: reeks } = await supabase
+                    .from('klus_reeksen').select('*').eq('id', klus.reeks_id).maybeSingle();
+                if (reeks) {
+                    bewerktReeks = reeks;
+                    el.jfHerhaling.value = String(reeks.interval_weken);
+                    el.jfTot.value = reeks.tot_datum || '';
+                    el.jdReeksTekst.textContent = reeksOmschrijving(reeks) +
+                        (klus.losgekoppeld ? ' · deze beurt is losgetrokken' : '');
+                    el.jdReeksBanner.classList.remove('hidden');
+                }
+            }
         } else {
             const datum = prefill.datum || ymd(new Date());
             const start = prefill.start || '09:00';
@@ -1600,12 +1629,15 @@
             el.jfVast.value = '';
             el.jfWeer.checked = false;
             el.jfGefactureerd.checked = false;
+            el.jfHerhaling.value = '0';
+            el.jfTot.value = '';
             fillKlantSelect(prefill.klantId || '');
             el.jdDelete.classList.add('hidden');
         }
 
         el.jfKlant.dispatchEvent(new Event('change'));
         syncPrijsmodel();
+        syncHerhaling();
 
         // Weer kan nog onderweg zijn als de lade meteen na inloggen opengaat.
         syncWeer();
@@ -1623,6 +1655,8 @@
 
     function closeKlusDrawer() {
         editingKlusId = null;
+        bewerktReeks = null;
+        bewerktHeleReeks = false;
         el.klusDrawer.classList.remove('open');
         el.klusDrawer.setAttribute('aria-hidden', 'true');
         el.klusOverlay.classList.remove('open');
@@ -1671,16 +1705,66 @@
         el.jdSave.disabled = true;
         el.jdSave.textContent = 'Opslaan…';
 
-        const q = editingKlusId
-            ? supabase.from('klussen').update(payload).eq('id', editingKlusId)
-            : supabase.from('klussen').insert(payload);
+        let melding = 'Klus opgeslagen. Apple Agenda werkt zichzelf zo bij.';
 
-        const { error } = await q;
+        try {
+            const interval = Number(el.jfHerhaling.value);
+            const reeksVeld = {
+                klant_id: payload.klant_id,
+                titel: payload.titel,
+                soort: payload.soort,
+                start_datum: el.jfDatum.value,
+                tot_datum: el.jfTot.value || null,
+                interval_weken: interval,
+                start_tijd: el.jfStart.value,
+                eind_tijd: el.jfEind.value,
+                adres: payload.adres,
+                omschrijving: payload.omschrijving,
+                prijsmodel: payload.prijsmodel,
+                uurtarief: payload.uurtarief,
+                vast_bedrag: payload.vast_bedrag,
+                weersgevoelig: payload.weersgevoelig,
+                actief: true,
+            };
+
+            if (interval > 0 && (!bewerktReeks || bewerktHeleReeks)) {
+                // Nieuwe reeks, of de hele reeks bijwerken.
+                const { data: reeks, error: reeksFout } = bewerktReeks
+                    ? await supabase.from('klus_reeksen').update(reeksVeld)
+                        .eq('id', bewerktReeks.id).select('*').maybeSingle()
+                    : await supabase.from('klus_reeksen').insert(reeksVeld)
+                        .select('*').maybeSingle();
+
+                if (reeksFout || !reeks) throw new Error(reeksFout?.message || 'reeks niet opgeslagen');
+
+                // Bij een nieuwe reeks vervangen de gegenereerde beurten deze
+                // ene klus; anders zou de eerste beurt dubbel staan.
+                if (!bewerktReeks && editingKlusId) {
+                    await supabase.from('klussen').delete().eq('id', editingKlusId);
+                }
+
+                const aantal = await genereerReeks(reeks);
+                melding = `Reeks opgeslagen — ${aantal} ${aantal === 1 ? 'beurt' : 'beurten'} ingepland.`;
+            } else {
+                // Eén losse klus. Zat hij in een reeks, dan trekken we hem los,
+                // zodat een latere reeksupdate deze aanpassing niet overschrijft.
+                if (bewerktReeks) payload.losgekoppeld = true;
+
+                const { error } = editingKlusId
+                    ? await supabase.from('klussen').update(payload).eq('id', editingKlusId)
+                    : await supabase.from('klussen').insert(payload);
+
+                if (error) throw new Error(error.message);
+                if (bewerktReeks) melding = 'Deze beurt is aangepast en losgetrokken van de reeks.';
+            }
+        } catch (err) {
+            el.jdSave.disabled = false;
+            el.jdSave.textContent = 'Opslaan';
+            return klusError('Opslaan mislukt: ' + err.message);
+        }
 
         el.jdSave.disabled = false;
         el.jdSave.textContent = 'Opslaan';
-
-        if (error) return klusError('Opslaan mislukt: ' + error.message);
 
         // Buiten de zichtbare week opgeslagen? Spring mee, anders lijkt hij weg.
         if (start < weekStart || start >= addDays(weekStart, 7)) {
@@ -1690,7 +1774,7 @@
         closeKlusDrawer();
         await loadPlanning(true);
         if (editingKlantId) refreshKlantKlussen(editingKlantId);
-        toast('Klus opgeslagen. Apple Agenda werkt zichzelf zo bij.');
+        toast(melding);
     });
 
     el.jdDelete.addEventListener('click', async () => {
@@ -1724,6 +1808,185 @@
         if (klus) return openKlusDrawer(klus);
         if (nieuw === 'klus') return openKlusDrawer(null);
     }
+
+    /* ==========================================================================
+       TERUGKERENDE KLUSSEN
+       Een reeks legt het patroon vast; de losse klussen worden er echt uit
+       weggeschreven. Zo hoeven de agenda-feed, de weerwaarschuwingen en straks
+       de facturatie niets van herhaling te weten.
+       ========================================================================== */
+
+    // Doorlopende reeksen moeten ergens ophouden. Een jaar vooruit is genoeg
+    // om een heel seizoen te plannen zonder de agenda vol te gooien.
+    const REEKS_HORIZON_MAANDEN = 12;
+
+    const HERHALING_TEKST = {
+        1: 'elke week', 2: 'elke 2 weken', 3: 'elke 3 weken', 4: 'elke 4 weken',
+        6: 'elke 6 weken', 8: 'elke 8 weken', 12: 'elk kwartaal',
+        26: 'elk half jaar', 52: 'elk jaar',
+    };
+
+    // Alle datums van een reeks, vanaf de startdatum met vaste tussenpozen.
+    // De weekdag volgt vanzelf uit de startdatum.
+    function reeksDatums(reeks) {
+        const eerste = new Date(`${reeks.start_datum}T00:00`);
+        const horizon = new Date();
+        horizon.setMonth(horizon.getMonth() + REEKS_HORIZON_MAANDEN);
+
+        const eind = reeks.tot_datum
+            ? new Date(Math.min(new Date(`${reeks.tot_datum}T23:59`), horizon))
+            : horizon;
+
+        const uit = [];
+        const loop = new Date(eerste);
+        // Bovengrens tegen een tikfout in het interval; 400 beurten is meer
+        // dan een jaar wekelijks.
+        while (loop <= eind && uit.length < 400) {
+            uit.push(ymd(loop));
+            loop.setDate(loop.getDate() + 7 * reeks.interval_weken);
+        }
+        return uit;
+    }
+
+    function klusUitReeks(reeks, datum) {
+        return {
+            reeks_id: reeks.id,
+            klant_id: reeks.klant_id,
+            titel: reeks.titel,
+            soort: reeks.soort,
+            start_tijd: new Date(`${datum}T${reeks.start_tijd}`).toISOString(),
+            eind_tijd: new Date(`${datum}T${reeks.eind_tijd}`).toISOString(),
+            adres: reeks.adres,
+            omschrijving: reeks.omschrijving,
+            status: 'gepland',
+            prijsmodel: reeks.prijsmodel,
+            uurtarief: reeks.uurtarief,
+            vast_bedrag: reeks.vast_bedrag,
+            weersgevoelig: reeks.weersgevoelig,
+            gefactureerd: false,
+        };
+    }
+
+    /**
+     * Schrijft de beurten van een reeks weg.
+     *
+     * Raakt uitsluitend toekomstige klussen die nog op 'gepland' staan en niet
+     * los zijn getrokken. Wat al bezig, afgerond, geannuleerd of gefactureerd
+     * is blijft staan — dat is geschiedenis, daar komen we niet aan.
+     */
+    async function genereerReeks(reeks) {
+        const vanaf = new Date();
+        vanaf.setHours(0, 0, 0, 0);
+
+        const { error: wisFout } = await supabase
+            .from('klussen')
+            .delete()
+            .eq('reeks_id', reeks.id)
+            .eq('status', 'gepland')
+            .eq('losgekoppeld', false)
+            .eq('gefactureerd', false)
+            .gte('start_tijd', vanaf.toISOString());
+
+        if (wisFout) throw new Error(wisFout.message);
+
+        // Wat er na het opschonen nog staat, niet dubbel aanmaken.
+        const { data: blijft } = await supabase
+            .from('klussen').select('start_tijd').eq('reeks_id', reeks.id);
+
+        const bezet = new Set((blijft || []).map((k) => ymd(new Date(k.start_tijd))));
+
+        const nieuw = reeksDatums(reeks)
+            .filter((d) => new Date(`${d}T23:59`) >= vanaf && !bezet.has(d))
+            .map((d) => klusUitReeks(reeks, d));
+
+        if (!nieuw.length) return 0;
+
+        const { error } = await supabase.from('klussen').insert(nieuw);
+        if (error) throw new Error(error.message);
+        return nieuw.length;
+    }
+
+    function reeksOmschrijving(reeks) {
+        const hoe = HERHALING_TEKST[reeks.interval_weken] || `elke ${reeks.interval_weken} weken`;
+        const dag = new Date(`${reeks.start_datum}T00:00`)
+            .toLocaleDateString('nl-NL', { weekday: 'long' });
+        const tot = reeks.tot_datum
+            ? ' t/m ' + new Date(`${reeks.tot_datum}T00:00`)
+                .toLocaleDateString('nl-NL', { day: 'numeric', month: 'long', year: 'numeric' })
+            : ' — doorlopend';
+        return `${hoe} op ${dag}${tot}`;
+    }
+
+    /* ---------- knoppen in de lade ---------- */
+
+    function syncHerhaling() {
+        const herhaalt = el.jfHerhaling.value !== '0';
+        el.jfTotWrap.classList.toggle('hidden', !herhaalt);
+        el.jfReeksUitleg.classList.toggle('hidden', !herhaalt);
+
+        if (!herhaalt || !el.jfDatum.value) return;
+
+        const proef = {
+            start_datum: el.jfDatum.value,
+            tot_datum: el.jfTot.value || null,
+            interval_weken: Number(el.jfHerhaling.value),
+        };
+        const vandaag = new Date();
+        vandaag.setHours(0, 0, 0, 0);
+
+        const datums = reeksDatums(proef);
+        // Beurten in het verleden worden niet aangemaakt; noem dus het aantal
+        // dat er straks écht komt te staan, niet het aantal in het patroon.
+        const komend = datums.filter((d) => new Date(`${d}T23:59`) >= vandaag);
+        const laatste = komend[komend.length - 1];
+        const voorbij = datums.length - komend.length;
+
+        el.jfReeksUitleg.textContent = komend.length
+            ? `${komend.length} ${komend.length === 1 ? 'beurt' : 'beurten'} — ` +
+              `${reeksOmschrijving(proef)}. Ingepland t/m ` +
+              new Date(`${laatste}T00:00`).toLocaleDateString('nl-NL',
+                  { day: 'numeric', month: 'long', year: 'numeric' }) + '.' +
+              (voorbij ? ` (${voorbij} in het verleden worden overgeslagen.)` : '')
+            : 'Deze reeks levert geen komende beurten op — controleer de datums.';
+    }
+
+    [el.jfHerhaling, el.jfTot, el.jfDatum].forEach((v) =>
+        v.addEventListener('change', syncHerhaling));
+
+    // "Hele reeks": de instellingen van de reeks overnemen in het formulier,
+    // zodat opslaan de hele reeks bijwerkt in plaats van deze ene beurt.
+    el.jdReeksBewerk.addEventListener('click', () => {
+        if (!bewerktReeks) return;
+        bewerktHeleReeks = true;
+        el.jdReeksBanner.classList.add('is-bewerken');
+        el.jdReeksTekst.textContent =
+            'U bewerkt nu de hele reeks. Opslaan vervangt alle toekomstige beurten ' +
+            'die nog op "gepland" staan.';
+        el.jdReeksBewerk.classList.add('hidden');
+        toast('U bewerkt nu de hele reeks.');
+    });
+
+    el.jdReeksStop.addEventListener('click', async () => {
+        if (!bewerktReeks) return;
+        if (!confirm('Deze reeks stoppen? Toekomstige beurten die nog op "gepland" ' +
+                     'staan worden verwijderd. Wat al is gedaan blijft staan.')) return;
+
+        const vanaf = new Date();
+        vanaf.setHours(0, 0, 0, 0);
+
+        const { error: wis } = await supabase.from('klussen').delete()
+            .eq('reeks_id', bewerktReeks.id).eq('status', 'gepland')
+            .eq('losgekoppeld', false).eq('gefactureerd', false)
+            .gte('start_tijd', vanaf.toISOString());
+
+        if (wis) return klusError('Stoppen mislukt: ' + wis.message);
+
+        await supabase.from('klus_reeksen').update({ actief: false }).eq('id', bewerktReeks.id);
+
+        closeKlusDrawer();
+        await loadPlanning(true);
+        toast('Reeks gestopt.');
+    });
 
     /* ==========================================================================
        AGENDA-FEED (Apple Agenda)
