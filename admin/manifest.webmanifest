@@ -1,0 +1,50 @@
+{
+  "name": "Vermaire Hoveniers — Portaal",
+  "short_name": "Vermaire",
+  "description": "Planning, klanten en aanvragen voor Vermaire Hoveniers.",
+  "lang": "nl-NL",
+  "dir": "ltr",
+  "start_url": "/admin",
+  "scope": "/admin",
+  "id": "/admin",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "portrait",
+  "background_color": "#f5faf6",
+  "theme_color": "#ffffff",
+  "categories": ["business", "productivity"],
+  "icons": [
+    {
+      "src": "/assets/app/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/assets/app/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/assets/app/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Nieuwe klus",
+      "short_name": "Nieuwe klus",
+      "url": "/admin?nieuw=klus",
+      "icons": [{ "src": "/assets/app/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Aanvragen",
+      "short_name": "Aanvragen",
+      "url": "/admin?tab=aanvragen",
+      "icons": [{ "src": "/assets/app/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}

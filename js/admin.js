@@ -142,6 +142,7 @@
     let weekKlussen = [];
     let editingKlusId = null;
     let planningLoaded = false;
+    let uitCacheSinds = null;      // gevuld als de week uit de lokale kopie komt
     let adminSettings = {};
 
     /* ---------- helpers ---------- */
@@ -173,6 +174,41 @@
     function publicUrl(path) {
         if (!supabase || !path) return '';
         return supabase.storage.from(BUCKET).getPublicUrl(path).data.publicUrl;
+    }
+
+    /* ---------- lokale kopie voor offline ---------- */
+
+    // Zonder bereik in een tuin moet de planning van vandaag gewoon in beeld
+    // staan. De service worker bewaart de schil; deze kopie bewaart de inhoud.
+    // Bewust op dit toestel en achter de login: het staat naast het
+    // sessietoken dat Supabase daar toch al neerzet, en gaat er bij uitloggen
+    // ook weer samen mee weg.
+    const CACHE_PREFIX = 'vh-cache-';
+
+    function bewaarLokaal(sleutel, waarde) {
+        try {
+            localStorage.setItem(CACHE_PREFIX + sleutel,
+                JSON.stringify({ op: Date.now(), waarde }));
+        } catch {
+            // vol of geweigerd (privémodus) — dan gewoon zonder kopie verder
+        }
+    }
+
+    function leesLokaal(sleutel) {
+        try {
+            const ruw = localStorage.getItem(CACHE_PREFIX + sleutel);
+            return ruw ? JSON.parse(ruw) : null;
+        } catch {
+            return null;
+        }
+    }
+
+    function wisLokaal() {
+        try {
+            Object.keys(localStorage)
+                .filter((k) => k.startsWith(CACHE_PREFIX))
+                .forEach((k) => localStorage.removeItem(k));
+        } catch {}
     }
 
     /* ---------- boot ---------- */
@@ -216,6 +252,8 @@
     });
 
     el.logoutBtn.addEventListener('click', async () => {
+        // De lokale kopie hoort bij deze gebruiker; die gaat mee de deur uit.
+        wisLokaal();
         await supabase.auth.signOut();
         location.reload();
     });
@@ -227,10 +265,14 @@
 
         loadRequests(true);      // stil op de achtergrond, voor de badge
 
+        // De app-schil wacht hierop met de tip om het portaal op het
+        // beginscherm te zetten — die hoort niet op het inlogscherm.
+        window.dispatchEvent(new Event('vh:ingelogd'));
+
         // Wachten voordat de diepe link opengaat: de lade heeft de klantenlijst
         // en het standaardtarief nodig om compleet te zijn.
         await Promise.all([loadAdminSettings(), loadPlanning()]);
-        openDeepLinkedKlus();    // ?klus=… vanuit een afspraak in Apple Agenda
+        volgStartLink();
     }
 
     /* ---------- view switching ---------- */
@@ -1166,7 +1208,22 @@
             .gt('eind_tijd', from)
             .order('start_tijd', { ascending: true });
 
+        const weekSleutel = 'klussen-' + ymd(weekStart);
+
         if (error) {
+            // Geen bereik? Toon de laatst opgehaalde week in plaats van een
+            // foutmelding — dat is precies waar deze kopie voor is.
+            const bewaard = leesLokaal(weekSleutel);
+            if (bewaard) {
+                weekKlussen = bewaard.waarde;
+                planningLoaded = true;
+                uitCacheSinds = bewaard.op;
+                renderCalendar();
+                return;
+            }
+
+            uitCacheSinds = null;
+
             // Meest waarschijnlijke oorzaak: het uitgebreide schema is nog niet
             // in Supabase gedraaid. Zeg dat, in plaats van een Postgres-foutcode.
             const missing = /does not exist|schema cache/i.test(error.message || '');
@@ -1181,6 +1238,8 @@
 
         weekKlussen = data || [];
         planningLoaded = true;
+        uitCacheSinds = null;
+        bewaarLokaal(weekSleutel, weekKlussen);
         renderCalendar();
 
         // Het weer mag de kalender niet ophouden: eerst tekenen, dan het weer
@@ -1387,14 +1446,17 @@
         }, 0);
 
         if (!actief.length) {
-            el.calSummary.innerHTML = 'Nog niets ingepland deze week.';
+            el.calSummary.innerHTML = uitCacheSinds
+                ? 'Geen verbinding — deze week stond niets ingepland.'
+                : 'Nog niets ingepland deze week.';
             return;
         }
 
         const n = actief.length;
         el.calSummary.innerHTML =
             `<strong>${n}</strong> ${n === 1 ? 'klus' : 'klussen'} · ` +
-            `<strong>${uren.toFixed(1).replace('.', ',')}</strong> uur ingepland`;
+            `<strong>${uren.toFixed(1).replace('.', ',')}</strong> uur ingepland` +
+            (uitCacheSinds ? ` · <span class="cal-oud">bijgewerkt ${relTime(new Date(uitCacheSinds).toISOString())}</span>` : '');
     }
 
     /* ---------- week-navigatie ---------- */
@@ -1646,12 +1708,21 @@
         return removed;
     });
 
-    // Een afspraak in Apple Agenda linkt naar /admin?klus=<id>.
-    async function openDeepLinkedKlus() {
-        const id = new URLSearchParams(location.search).get('klus');
-        if (!id) return;
+    // Waar moet de app op openen? Een afspraak in Apple Agenda linkt naar
+    // /admin?klus=<id>, en de snelkoppelingen op het beginscherm gebruiken
+    // ?tab= en ?nieuw=klus.
+    async function volgStartLink() {
+        const p = new URLSearchParams(location.search);
+        const klus = p.get('klus');
+        const tab = p.get('tab');
+        const nieuw = p.get('nieuw');
+
+        if (!klus && !tab && !nieuw) return;
         history.replaceState(null, '', location.pathname);
-        await openKlusDrawer(id);
+
+        if (tab) switchView(tab);
+        if (klus) return openKlusDrawer(klus);
+        if (nieuw === 'klus') return openKlusDrawer(null);
     }
 
     /* ==========================================================================
@@ -1733,6 +1804,15 @@
             .from('klanten').select('*').order('naam', { ascending: true });
 
         if (error) {
+            // Namen en adressen van de laatste keer, zodat de klusblokken
+            // offline niet ineens naamloos zijn.
+            const bewaard = leesLokaal('klanten');
+            if (bewaard) {
+                klanten = bewaard.waarde;
+                klantenLoaded = true;
+                if (!silent) renderKlanten();
+                return;
+            }
             if (!silent) {
                 el.klantenState.innerHTML =
                     '<div class="proj-empty"><h3>Kon de klanten niet laden</h3><p>' +
@@ -1743,6 +1823,7 @@
 
         klanten = data || [];
         klantenLoaded = true;
+        bewaarLokaal('klanten', klanten);
         await loadKlusCounts();
         if (!silent) renderKlanten();
     }
