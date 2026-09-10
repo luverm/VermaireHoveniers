@@ -2068,3 +2068,151 @@ html { -webkit-text-size-adjust: 100%; }
     opacity: 0.65;
     font-size: 0.7rem;
 }
+
+/* ==========================================================================
+   SPULLEN & MATERIALEN
+   ========================================================================== */
+
+.mat-blok {
+    margin: 0 0 1rem;
+    padding: 0.9rem 1rem 1rem;
+    border: 1px solid var(--gray-200);
+    border-radius: 12px;
+    background: #fcfdfc;
+}
+
+.mat-kop {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.6rem;
+    margin-bottom: 0.6rem;
+}
+.mat-kop h3 {
+    font-family: var(--font-display);
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gray-600);
+}
+.mat-voortgang { font-size: 0.76rem; color: var(--green-700); font-weight: 600; }
+
+.mat-leeg { font-size: 0.83rem; color: var(--gray-400); margin: 0.2rem 0 0.7rem; }
+.mat-hint { font-size: 0.75rem; color: var(--gray-400); margin-top: 0.6rem; }
+
+.mat-groep + .mat-groep { margin-top: 0.7rem; }
+.mat-groep-kop {
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gray-400);
+    margin-bottom: 0.25rem;
+}
+
+.mat-regel {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.3rem 0;
+    border-bottom: 1px solid var(--gray-200);
+    font-size: 0.87rem;
+}
+.mat-regel:last-child { border-bottom: none; }
+.mat-regel.is-af .mat-naam { color: var(--gray-400); text-decoration: line-through; }
+
+.mat-vink {
+    flex: none;
+    width: 26px;
+    font-size: 1.05rem;
+    line-height: 1;
+    color: var(--green-600);
+}
+.mat-naam { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.mat-eenheid { flex: none; width: 44px; font-size: 0.75rem; color: var(--gray-400); }
+.mat-weg { flex: none; width: 24px; color: var(--gray-400); font-size: 1.05rem; line-height: 1; }
+.mat-weg:hover { color: var(--red); }
+
+/* De stepper is de kern van dit scherm: hij moet met werkhandschoenen aan
+   te bedienen zijn, dus ruime raakvlakken. */
+.mat-stepper {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid var(--gray-200);
+    border-radius: 999px;
+    background: var(--white);
+    overflow: hidden;
+}
+.mat-stepper button {
+    width: 34px;
+    height: 32px;
+    font-size: 1.05rem;
+    line-height: 1;
+    color: var(--green-700);
+    transition: background var(--t);
+}
+.mat-stepper button:hover:not(:disabled) { background: var(--green-50); }
+.mat-stepper button:active:not(:disabled) { background: var(--green-100); }
+.mat-stepper button:disabled { color: var(--gray-200); cursor: default; }
+.mat-aantal {
+    min-width: 30px;
+    text-align: center;
+    font-weight: 600;
+    font-size: 0.85rem;
+    font-variant-numeric: tabular-nums;
+}
+
+.mat-toevoegen { width: 100%; margin-top: 0.6rem; }
+
+/* ---------- kiezer ---------- */
+
+.mat-modal { width: min(560px, calc(100vw - 2rem)); display: flex; flex-direction: column; }
+.mat-zoekbalk { padding: 0 1.5rem 0.7rem; }
+.mat-zoekbalk .search { width: 100%; min-width: 0; }
+
+.mat-filters {
+    padding: 0 1.5rem 0.8rem;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    scrollbar-width: none;
+}
+.mat-filters::-webkit-scrollbar { display: none; }
+.mat-filters .filter { white-space: nowrap; }
+
+.mat-modal-body {
+    flex: 1;
+    min-height: 0;
+    max-height: 46vh;
+    overflow-y: auto;
+    padding: 0 1.5rem;
+    border-top: 1px solid var(--gray-200);
+}
+
+.mat-keuze {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.45rem 0;
+    border-bottom: 1px solid var(--gray-200);
+    cursor: pointer;
+    transition: background var(--t);
+}
+.mat-keuze:last-child { border-bottom: none; }
+.mat-keuze:hover { background: var(--green-50); }
+.mat-keuze.is-gekozen .mat-keuze-naam { font-weight: 600; color: var(--green-700); }
+
+.mat-keuze-naam { flex: 1; min-width: 0; font-size: 0.88rem; }
+.mat-keuze-naam small {
+    display: block;
+    font-size: 0.72rem;
+    color: var(--gray-400);
+    font-weight: 400;
+}
+
+.mat-modal-actions { justify-content: space-between; }
+
+@media (max-width: 560px) {
+    .mat-modal-body { max-height: 42vh; }
+    .mat-eenheid { display: none; }
+}

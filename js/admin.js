@@ -74,6 +74,11 @@
         jfTotWrap: $('jfTotWrap'), jfReeksUitleg: $('jfReeksUitleg'),
         jdReeksBanner: $('jdReeksBanner'), jdReeksTekst: $('jdReeksTekst'),
         jdReeksBewerk: $('jdReeksBewerk'), jdReeksStop: $('jdReeksStop'),
+        jdMatLijst: $('jdMatLijst'), jdMatVoortgang: $('jdMatVoortgang'),
+        jdMatToevoegen: $('jdMatToevoegen'),
+        matModal: $('matModal'), matOverlay: $('matOverlay'), matSluit: $('matSluit'),
+        matZoek: $('matZoek'), matCategorieen: $('matCategorieen'),
+        matKeuzeLijst: $('matKeuzeLijst'), matEigen: $('matEigen'), matKlaar: $('matKlaar'),
         // agenda modal
         agendaModal: $('agendaModal'), agendaOverlay: $('agendaOverlay'),
         agendaClose: $('agendaClose'), agendaUrl: $('agendaUrl'),
@@ -1639,6 +1644,10 @@
         syncPrijsmodel();
         syncHerhaling();
 
+        await loadKlusMaterialen(editingKlusId);
+        renderKlusMaterialen();
+        loadCatalogus();          // alvast op de achtergrond
+
         // Weer kan nog onderweg zijn als de lade meteen na inloggen opengaat.
         syncWeer();
         if (window.Weer && !window.Weer.beschikbaar()) {
@@ -1750,11 +1759,14 @@
                 // zodat een latere reeksupdate deze aanpassing niet overschrijft.
                 if (bewerktReeks) payload.losgekoppeld = true;
 
-                const { error } = editingKlusId
+                const { data: bewaard, error } = editingKlusId
                     ? await supabase.from('klussen').update(payload).eq('id', editingKlusId)
-                    : await supabase.from('klussen').insert(payload);
+                        .select('id').maybeSingle()
+                    : await supabase.from('klussen').insert(payload).select('id').maybeSingle();
 
                 if (error) throw new Error(error.message);
+
+                await bewaarKlusMaterialen(editingKlusId || bewaard?.id);
                 if (bewerktReeks) melding = 'Deze beurt is aangepast en losgetrokken van de reeks.';
             }
         } catch (err) {
@@ -1807,6 +1819,284 @@
         if (tab) switchView(tab);
         if (klus) return openKlusDrawer(klus);
         if (nieuw === 'klus') return openKlusDrawer(null);
+    }
+
+    /* ==========================================================================
+       SPULLEN & MATERIALEN
+       Eén catalogus met twee soorten: gereedschap gaat mee en komt mee terug,
+       verbruik gaat op bij de klant. Beide belanden als afvinklijst in de
+       omschrijving van de agenda-afspraak.
+       ========================================================================== */
+
+    let catalogus = [];
+    let matRegels = [];          // wat er bij de open klus hoort
+    let matCategorie = 'alle';
+    let matZoek = '';
+
+    async function loadCatalogus() {
+        if (catalogus.length) return catalogus;
+
+        const { data, error } = await supabase
+            .from('materiaal_catalogus')
+            .select('*')
+            .eq('actief', true)
+            .order('sort_order', { ascending: true });
+
+        if (error) { toast('Kon de materiaallijst niet laden.'); return []; }
+        catalogus = data || [];
+        return catalogus;
+    }
+
+    // Regels van deze klus ophalen. Nieuwe klus = lege lijst.
+    async function loadKlusMaterialen(klusId) {
+        matRegels = [];
+        if (!klusId) return;
+
+        const { data } = await supabase
+            .from('materialen')
+            .select('*')
+            .eq('klus_id', klusId)
+            .order('sort_order', { ascending: true });
+
+        matRegels = (data || []).map((r) => ({
+            id: r.id,
+            catalogus_id: r.catalogus_id,
+            naam: r.omschrijving,
+            soort: r.soort || 'verbruik',
+            eenheid: r.eenheid || 'stuk',
+            aantal: Number(r.aantal) || 1,
+            afgevinkt: !!r.afgevinkt,
+        }));
+    }
+
+    // Hele hoeveelheden voor stuks, halven voor kuubs en meters.
+    const matStap = (eenheid) => (['m2', 'm3', 'kg', 'liter', 'm'].includes(eenheid) ? 0.5 : 1);
+    const matGetal = (n) => (Number.isInteger(n) ? String(n) : String(n).replace('.', ','));
+
+    function renderKlusMaterialen() {
+        const gereedschap = matRegels.filter((r) => r.soort === 'gereedschap');
+        const verbruik = matRegels.filter((r) => r.soort !== 'gereedschap');
+
+        if (!matRegels.length) {
+            el.jdMatLijst.innerHTML =
+                '<p class="mat-leeg">Nog niets gekozen. Voeg toe wat mee moet en wat er verbruikt wordt.</p>';
+            el.jdMatVoortgang.textContent = '';
+            return;
+        }
+
+        const groep = (titel, regels) => regels.length ? `
+            <div class="mat-groep">
+                <div class="mat-groep-kop">${titel}</div>
+                ${regels.map((r) => `
+                    <div class="mat-regel${r.afgevinkt ? ' is-af' : ''}" data-mat="${r.catalogus_id || r.naam}">
+                        <button type="button" class="mat-vink" data-actie="vink"
+                                aria-label="Afvinken">${r.afgevinkt ? '☑' : '☐'}</button>
+                        <span class="mat-naam">${esc(r.naam)}</span>
+                        <span class="mat-stepper">
+                            <button type="button" data-actie="min" aria-label="Minder">−</button>
+                            <span class="mat-aantal">${matGetal(r.aantal)}</span>
+                            <button type="button" data-actie="plus" aria-label="Meer">+</button>
+                        </span>
+                        <span class="mat-eenheid">${esc(r.eenheid)}</span>
+                        <button type="button" class="mat-weg" data-actie="weg" aria-label="Verwijderen">×</button>
+                    </div>`).join('')}
+            </div>` : '';
+
+        el.jdMatLijst.innerHTML =
+            groep('Meenemen', gereedschap) + groep('Verbruik', verbruik);
+
+        const af = matRegels.filter((r) => r.afgevinkt).length;
+        el.jdMatVoortgang.textContent = af
+            ? `${af} van ${matRegels.length} ingeladen`
+            : `${matRegels.length} ${matRegels.length === 1 ? 'regel' : 'regels'}`;
+    }
+
+    const matSleutel = (r) => r.catalogus_id || r.naam;
+
+    el.jdMatLijst.addEventListener('click', (e) => {
+        const knop = e.target.closest('[data-actie]');
+        if (!knop) return;
+        const regel = matRegels.find((r) => matSleutel(r) === knop.closest('.mat-regel').dataset.mat);
+        if (!regel) return;
+
+        const actie = knop.dataset.actie;
+        if (actie === 'plus') regel.aantal = Math.round((regel.aantal + matStap(regel.eenheid)) * 10) / 10;
+        if (actie === 'min') regel.aantal = Math.max(matStap(regel.eenheid),
+            Math.round((regel.aantal - matStap(regel.eenheid)) * 10) / 10);
+        if (actie === 'vink') regel.afgevinkt = !regel.afgevinkt;
+        if (actie === 'weg') matRegels = matRegels.filter((r) => r !== regel);
+
+        renderKlusMaterialen();
+    });
+
+    /* ---------- kiezer ---------- */
+
+    async function openMatModal() {
+        await loadCatalogus();
+        matCategorie = 'alle';
+        matZoek = '';
+        el.matZoek.value = '';
+        renderMatCategorieen();
+        renderMatKeuze();
+
+        el.matModal.hidden = false;
+        el.matOverlay.hidden = false;
+        requestAnimationFrame(() => {
+            el.matModal.classList.add('open');
+            el.matOverlay.classList.add('open');
+            el.matModal.setAttribute('aria-hidden', 'false');
+        });
+    }
+
+    function closeMatModal() {
+        el.matModal.classList.remove('open');
+        el.matOverlay.classList.remove('open');
+        el.matModal.setAttribute('aria-hidden', 'true');
+        setTimeout(() => { el.matModal.hidden = true; el.matOverlay.hidden = true; }, 200);
+    }
+
+    function renderMatCategorieen() {
+        const cats = [...new Set(catalogus.map((c) => c.categorie))];
+        el.matCategorieen.innerHTML =
+            `<button type="button" class="filter${matCategorie === 'alle' ? ' active' : ''}"
+                     data-cat="alle">Alle</button>` +
+            cats.map((c) => `<button type="button" class="filter${matCategorie === c ? ' active' : ''}"
+                     data-cat="${esc(c)}">${esc(c)}</button>`).join('');
+    }
+
+    function renderMatKeuze() {
+        const q = matZoek.trim().toLowerCase();
+        const lijst = catalogus.filter((c) =>
+            (matCategorie === 'alle' || c.categorie === matCategorie) &&
+            (!q || c.naam.toLowerCase().includes(q)));
+
+        if (!lijst.length) {
+            el.matKeuzeLijst.innerHTML =
+                '<p class="mat-leeg">Niets gevonden. Voeg het onderaan toe als eigen materiaal.</p>';
+            return;
+        }
+
+        el.matKeuzeLijst.innerHTML = lijst.map((c) => {
+            const gekozen = matRegels.find((r) => r.catalogus_id === c.id);
+            return `
+                <div class="mat-keuze${gekozen ? ' is-gekozen' : ''}" data-cat-id="${c.id}">
+                    <span class="mat-keuze-naam">
+                        ${esc(c.naam)}
+                        <small>${esc(c.categorie)} · ${esc(c.eenheid)}${
+                            c.soort === 'gereedschap' ? ' · meenemen' : ''}</small>
+                    </span>
+                    <span class="mat-stepper">
+                        <button type="button" data-actie="min" aria-label="Minder"
+                                ${gekozen ? '' : 'disabled'}>−</button>
+                        <span class="mat-aantal">${gekozen ? matGetal(gekozen.aantal) : '0'}</span>
+                        <button type="button" data-actie="plus" aria-label="Meer">+</button>
+                    </span>
+                </div>`;
+        }).join('');
+    }
+
+    el.matKeuzeLijst.addEventListener('click', (e) => {
+        const knop = e.target.closest('[data-actie]');
+        const rij = e.target.closest('.mat-keuze');
+        if (!rij) return;
+
+        const item = catalogus.find((c) => c.id === rij.dataset.catId);
+        if (!item) return;
+
+        const bestaat = matRegels.find((r) => r.catalogus_id === item.id);
+        // Op de rij tikken telt als toevoegen; dat scheelt mikken op een
+        // klein plusje met werkhandschoenen aan.
+        const actie = knop?.dataset.actie || 'plus';
+
+        if (actie === 'plus') {
+            if (bestaat) bestaat.aantal = Math.round((bestaat.aantal + matStap(item.eenheid)) * 10) / 10;
+            else matRegels.push({
+                catalogus_id: item.id, naam: item.naam, soort: item.soort,
+                eenheid: item.eenheid, aantal: matStap(item.eenheid) === 0.5 ? 1 : 1,
+                afgevinkt: false,
+            });
+        } else if (actie === 'min' && bestaat) {
+            const nieuw = Math.round((bestaat.aantal - matStap(item.eenheid)) * 10) / 10;
+            if (nieuw <= 0) matRegels = matRegels.filter((r) => r !== bestaat);
+            else bestaat.aantal = nieuw;
+        }
+
+        renderMatKeuze();
+        renderKlusMaterialen();
+    });
+
+    el.matCategorieen.addEventListener('click', (e) => {
+        const knop = e.target.closest('.filter');
+        if (!knop) return;
+        matCategorie = knop.dataset.cat;
+        renderMatCategorieen();
+        renderMatKeuze();
+    });
+
+    el.matZoek.addEventListener('input', (e) => { matZoek = e.target.value; renderMatKeuze(); });
+    el.jdMatToevoegen.addEventListener('click', openMatModal);
+    el.matSluit.addEventListener('click', closeMatModal);
+    el.matKlaar.addEventListener('click', closeMatModal);
+    el.matOverlay.addEventListener('click', closeMatModal);
+
+    el.matEigen.addEventListener('click', async () => {
+        const naam = prompt('Naam van het materiaal of gereedschap:');
+        if (!naam || !naam.trim()) return;
+
+        const meenemen = confirm('Is dit gereedschap dat meegaat en weer meekomt?\n\n' +
+                                 'OK = gereedschap · Annuleren = verbruik');
+        const eenheid = (prompt('Eenheid (stuk, m2, m3, zak, kg, liter, rol, m):', 'stuk') || 'stuk').trim();
+
+        const { data, error } = await supabase.from('materiaal_catalogus').insert({
+            naam: naam.trim(),
+            categorie: 'Eigen',
+            soort: meenemen ? 'gereedschap' : 'verbruik',
+            eenheid,
+            sort_order: 900,
+            eigen: true,
+        }).select('*').maybeSingle();
+
+        if (error) return toast(/duplicate|unique/i.test(error.message)
+            ? 'Die naam staat al in de lijst.' : 'Toevoegen mislukt.');
+
+        catalogus.push(data);
+        catalogus.sort((a, b) => a.sort_order - b.sort_order);
+        matRegels.push({
+            catalogus_id: data.id, naam: data.naam, soort: data.soort,
+            eenheid: data.eenheid, aantal: 1, afgevinkt: false,
+        });
+
+        matCategorie = 'Eigen';
+        renderMatCategorieen();
+        renderMatKeuze();
+        renderKlusMaterialen();
+        toast('Toegevoegd aan de lijst.');
+    });
+
+    // Materialen horen bij een klus die al bestaat, dus wegschrijven kan pas
+    // als het id bekend is. Alles vervangen is simpeler en veiliger dan
+    // per regel bijhouden wat er is veranderd.
+    async function bewaarKlusMaterialen(klusId) {
+        if (!klusId) return;
+
+        const { error: wis } = await supabase.from('materialen').delete().eq('klus_id', klusId);
+        if (wis) throw new Error(wis.message);
+        if (!matRegels.length) return;
+
+        const rijen = matRegels.map((r, i) => ({
+            klus_id: klusId,
+            catalogus_id: r.catalogus_id || null,
+            omschrijving: r.naam,
+            soort: r.soort,
+            eenheid: r.eenheid,
+            aantal: r.aantal,
+            afgevinkt: r.afgevinkt,
+            sort_order: i,
+            bedrag: 0,
+        }));
+
+        const { error } = await supabase.from('materialen').insert(rijen);
+        if (error) throw new Error(error.message);
     }
 
     /* ==========================================================================
@@ -1901,8 +2191,14 @@
 
         if (!nieuw.length) return 0;
 
-        const { error } = await supabase.from('klussen').insert(nieuw);
+        const { data: gemaakt, error } = await supabase
+            .from('klussen').insert(nieuw).select('id');
         if (error) throw new Error(error.message);
+
+        // Elke beurt krijgt dezelfde spullenlijst mee: bij onderhoud neem je
+        // elke keer hetzelfde gereedschap mee.
+        for (const k of gemaakt || []) await bewaarKlusMaterialen(k.id);
+
         return nieuw.length;
     }
 
@@ -2396,6 +2692,7 @@
         if (el.klusDrawer.classList.contains('open')) closeKlusDrawer();
         if (el.cropModal.classList.contains('open')) closeCropModal();
         if (el.agendaModal.classList.contains('open')) closeAgendaModal();
+        if (el.matModal.classList.contains('open')) closeMatModal();
     });
 
     /* Enter in een tekstveld van de klus- of klantlade = opslaan, niet
