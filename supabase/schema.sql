@@ -215,3 +215,176 @@ insert into public.site_settings (key, value) values
     ('contact_area',     'Wemeldinge & heel Zeeland'),
     ('footer_tagline',   'Uw tuin, onze passie.')
 on conflict (key) do nothing;
+
+
+-- ============================================================================
+-- PLANNING — klanten, klussen, uren, materialen, agenda-feed
+-- Let op: dit is bedrijfsdata. Anon krijgt NERGENS leesrechten.
+-- ============================================================================
+
+-- ----------------------------------------------------------------------------
+-- Table: klanten
+-- ----------------------------------------------------------------------------
+create table if not exists public.klanten (
+    id          uuid primary key default gen_random_uuid(),
+    created_at  timestamptz not null default now(),
+    updated_at  timestamptz not null default now(),
+    naam        text not null,
+    bedrijf     text,
+    email       text,
+    telefoon    text,
+    adres       text,
+    postcode    text,
+    plaats      text,
+    notities    text,
+    uurtarief   numeric(10,2),
+    archived    boolean not null default false
+);
+
+create index if not exists klanten_naam_idx on public.klanten (naam);
+
+drop trigger if exists klanten_touch on public.klanten;
+create trigger klanten_touch
+    before update on public.klanten
+    for each row execute function public.touch_updated_at();
+
+-- ----------------------------------------------------------------------------
+-- Table: klussen
+-- ----------------------------------------------------------------------------
+create table if not exists public.klussen (
+    id             uuid primary key default gen_random_uuid(),
+    created_at     timestamptz not null default now(),
+    updated_at     timestamptz not null default now(),
+    klant_id       uuid references public.klanten(id) on delete set null,
+    titel          text not null,
+    soort          text not null default 'onderhoud'
+                     check (soort in ('beplanting','groenadvies','onderhoud','bezichtiging','anders')),
+    start_tijd     timestamptz not null,
+    eind_tijd      timestamptz not null,
+    adres          text,
+    omschrijving   text,
+    status         text not null default 'gepland'
+                     check (status in ('gepland','bezig','afgerond','geannuleerd')),
+    prijsmodel     text not null default 'uurtarief'
+                     check (prijsmodel in ('uurtarief','vast')),
+    uurtarief      numeric(10,2),
+    vast_bedrag    numeric(10,2),
+    weersgevoelig  boolean not null default false,
+    gefactureerd   boolean not null default false,
+    check (eind_tijd > start_tijd)
+);
+
+create index if not exists klussen_start_idx        on public.klussen (start_tijd);
+create index if not exists klussen_klant_idx        on public.klussen (klant_id);
+create index if not exists klussen_gefactureerd_idx on public.klussen (gefactureerd, status);
+
+drop trigger if exists klussen_touch on public.klussen;
+create trigger klussen_touch
+    before update on public.klussen
+    for each row execute function public.touch_updated_at();
+
+-- ----------------------------------------------------------------------------
+-- Table: uren  (fase 2 UI, tabel nu al aangemaakt zodat je het schema maar
+--               één keer hoeft te draaien)
+-- ----------------------------------------------------------------------------
+create table if not exists public.uren (
+    id            uuid primary key default gen_random_uuid(),
+    created_at    timestamptz not null default now(),
+    klus_id       uuid not null references public.klussen(id) on delete cascade,
+    datum         date not null default current_date,
+    aantal        numeric(6,2) not null,
+    omschrijving  text
+);
+
+create index if not exists uren_klus_idx on public.uren (klus_id);
+
+-- ----------------------------------------------------------------------------
+-- Table: materialen  (fase 2 UI)
+-- ----------------------------------------------------------------------------
+create table if not exists public.materialen (
+    id            uuid primary key default gen_random_uuid(),
+    created_at    timestamptz not null default now(),
+    klus_id       uuid not null references public.klussen(id) on delete cascade,
+    omschrijving  text not null,
+    aantal        numeric(10,2) not null default 1,
+    inkoopprijs   numeric(10,2),
+    bedrag        numeric(10,2) not null default 0
+);
+
+create index if not exists materialen_klus_idx on public.materialen (klus_id);
+
+-- ----------------------------------------------------------------------------
+-- Table: agenda_feed — één rij met het geheime token voor de ICS-feed.
+-- Staat bewust NIET in site_settings, want die tabel is publiek leesbaar.
+-- ----------------------------------------------------------------------------
+create table if not exists public.agenda_feed (
+    id          boolean primary key default true check (id),
+    token       text not null default encode(gen_random_bytes(24), 'hex'),
+    updated_at  timestamptz not null default now()
+);
+
+insert into public.agenda_feed (id) values (true) on conflict (id) do nothing;
+
+drop trigger if exists agenda_feed_touch on public.agenda_feed;
+create trigger agenda_feed_touch
+    before update on public.agenda_feed
+    for each row execute function public.touch_updated_at();
+
+-- ----------------------------------------------------------------------------
+-- Row Level Security — uitsluitend authenticated (de admin). Geen anon-toegang.
+-- De ICS-feed draait server-side op de service role en omzeilt RLS bewust.
+-- ----------------------------------------------------------------------------
+alter table public.klanten     enable row level security;
+alter table public.klussen     enable row level security;
+alter table public.uren        enable row level security;
+alter table public.materialen  enable row level security;
+alter table public.agenda_feed enable row level security;
+
+drop policy if exists "admin_all_klanten"     on public.klanten;
+drop policy if exists "admin_all_klussen"     on public.klussen;
+drop policy if exists "admin_all_uren"        on public.uren;
+drop policy if exists "admin_all_materialen"  on public.materialen;
+drop policy if exists "admin_all_agenda_feed" on public.agenda_feed;
+
+create policy "admin_all_klanten"     on public.klanten
+    for all to authenticated using (true) with check (true);
+
+create policy "admin_all_klussen"     on public.klussen
+    for all to authenticated using (true) with check (true);
+
+create policy "admin_all_uren"        on public.uren
+    for all to authenticated using (true) with check (true);
+
+create policy "admin_all_materialen"  on public.materialen
+    for all to authenticated using (true) with check (true);
+
+create policy "admin_all_agenda_feed" on public.agenda_feed
+    for all to authenticated using (true) with check (true);
+
+-- ----------------------------------------------------------------------------
+-- Table: admin_settings — interne instellingen (tarieven, btw, SnelStart-link).
+-- Bewust apart van site_settings: die tabel is publiek leesbaar, deze niet.
+-- ----------------------------------------------------------------------------
+create table if not exists public.admin_settings (
+    key         text primary key,
+    value       text,
+    updated_at  timestamptz not null default now()
+);
+
+drop trigger if exists admin_settings_touch on public.admin_settings;
+create trigger admin_settings_touch
+    before update on public.admin_settings
+    for each row execute function public.touch_updated_at();
+
+alter table public.admin_settings enable row level security;
+
+drop policy if exists "admin_all_admin_settings" on public.admin_settings;
+create policy "admin_all_admin_settings" on public.admin_settings
+    for all to authenticated using (true) with check (true);
+
+insert into public.admin_settings (key, value) values
+    ('standaard_uurtarief',        '55.00'),
+    ('btw_percentage',             '21'),
+    ('snelstart_url',              'https://web.snelstart.nl/'),
+    ('agenda_herinnering_minuten', '60')
+on conflict (key) do nothing;
