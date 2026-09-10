@@ -386,5 +386,6 @@ insert into public.admin_settings (key, value) values
     ('standaard_uurtarief',        '55.00'),
     ('btw_percentage',             '21'),
     ('snelstart_url',              'https://web.snelstart.nl/'),
-    ('agenda_herinnering_minuten', '60')
+    ('agenda_herinnering_minuten', '60'),
+    ('weer_plaats',                'Wemeldinge')
 on conflict (key) do nothing;

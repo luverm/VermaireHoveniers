@@ -1613,3 +1613,176 @@ tr[data-status="nieuw"] .cell-name { color: var(--green-700); }
     font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
     font-size: 0.78rem;
 }
+
+/* ==========================================================================
+   WEER
+   ========================================================================== */
+
+/* ---------- balk boven de kalender ---------- */
+
+.weer-nu {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.5rem 1rem;
+    margin-bottom: 0.9rem;
+    padding: 0.6rem 0.9rem;
+    background: var(--white);
+    border: 1px solid var(--gray-200);
+    border-radius: 10px;
+    font-size: 0.84rem;
+    color: var(--gray-600);
+}
+.weer-nu strong { color: var(--green-900); font-weight: 600; }
+.weer-nu small { color: var(--gray-400); }
+.weer-nu-regen { color: var(--blue); font-weight: 600; }
+
+.weer-nu-bron { font-size: 0.72rem; color: var(--gray-400); }
+.weer-nu-bron a { color: var(--gray-400); text-decoration: underline; }
+.weer-nu-bron a:hover { color: var(--green-600); }
+
+/* ---------- strook in de dagkop ---------- */
+
+.cal-weer {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 0.3rem;
+    margin-top: 0.2rem;
+    font-size: 0.7rem;
+    color: var(--gray-600);
+    line-height: 1.3;
+    white-space: nowrap;
+}
+.cal-weer-icoon { font-size: 0.85rem; }
+.cal-weer-temp { font-weight: 600; color: var(--green-900); font-variant-numeric: tabular-nums; }
+/* Ruimte tussen max en min is geen opsmuk: zonder gat leest "1°-3°" als
+   een aftreksom in plaats van als één tot min drie graden. */
+.cal-weer-temp small { color: var(--gray-400); font-weight: 400; margin-left: 0.35em; }
+.cal-weer-regen { font-variant-numeric: tabular-nums; }
+.cal-weer-regen.is-nat { color: var(--blue); font-weight: 600; }
+.cal-weer-wind { color: var(--amber); font-weight: 600; }
+
+/* Een streepje onder de strook zegt hoe eensgezind de bronnen zijn.
+   Doorgetrokken = eens, streepjes = verdeeld. */
+.cal-weer::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: 3px;
+    transform: translateX(-50%);
+    width: 22px;
+    height: 2px;
+    border-radius: 2px;
+}
+.cal-head-cell { position: relative; padding-bottom: 0.85rem; }
+.cal-weer.zeker-hoog::after     { background: var(--green-500); }
+.cal-weer.zeker-redelijk::after { background: var(--amber); opacity: 0.55; }
+.cal-weer.zeker-laag::after {
+    background: repeating-linear-gradient(to right,
+        var(--gray-400) 0 3px, transparent 3px 6px);
+}
+
+/* ---------- merkje op een klusblok ---------- */
+
+.klus-weer {
+    position: absolute;
+    top: 2px;
+    right: 3px;
+    font-size: 0.72rem;
+    line-height: 1;
+    z-index: 1;
+}
+.klus-weer.niveau-ernstig { filter: drop-shadow(0 0 2px rgba(192, 57, 43, 0.55)); }
+
+/* Klusblok krijgt een rand mee als het weer echt tegenzit. */
+.cal-klus:has(.klus-weer.niveau-ernstig) { outline: 1.5px solid var(--red); outline-offset: -1.5px; }
+
+/* ---------- blok in de klus-lade ---------- */
+
+/* Zit midden in het formulier, direct onder datum en tijd — daar wordt de
+   beslissing genomen. Dus een eigen kaartje, geen sectiescheiding. */
+.weer-blok {
+    margin: 0 0 0.9rem;
+    padding: 0.9rem 1rem 1rem;
+    border: 1px solid var(--gray-200);
+    border-radius: 12px;
+    background: #fcfdfc;
+}
+.weer-blok h3 {
+    font-family: var(--font-display);
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gray-600);
+    margin-bottom: 0.6rem;
+}
+
+.weer-kop {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.8rem 0.9rem;
+    border-radius: 10px;
+    background: var(--green-50);
+    border: 1px solid var(--gray-200);
+    border-left: 3px solid var(--green-500);
+}
+.weer-kop.niveau-waarschuwing { border-left-color: var(--amber); background: #fdf9f0; }
+.weer-kop.niveau-ernstig      { border-left-color: var(--red);   background: #fdf1ef; }
+
+.weer-kop-icoon { font-size: 1.6rem; line-height: 1; }
+.weer-kop strong { display: block; font-family: var(--font-display); font-size: 1rem; }
+.weer-kop span { font-size: 0.8rem; color: var(--gray-600); }
+
+.weer-punten { list-style: none; margin: 0.7rem 0 0; padding: 0; }
+.weer-punten li {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    padding: 0.35rem 0;
+    font-size: 0.85rem;
+}
+.weer-punten li.niveau-ernstig      { color: var(--red); font-weight: 500; }
+.weer-punten li.niveau-waarschuwing { color: var(--amber); }
+.weer-punten li.niveau-info         { color: var(--gray-600); }
+
+.weer-goed { margin-top: 0.7rem; font-size: 0.85rem; color: var(--green-700); }
+.weer-leeg { font-size: 0.85rem; color: var(--gray-400); }
+
+/* Uurstrook: even breed, scrolt als een klus lang duurt. */
+.weer-uren {
+    display: flex;
+    gap: 0.3rem;
+    margin-top: 0.9rem;
+    overflow-x: auto;
+    padding-bottom: 0.3rem;
+    scrollbar-width: thin;
+}
+.weer-uur {
+    flex: 0 0 auto;
+    min-width: 52px;
+    display: grid;
+    justify-items: center;
+    gap: 1px;
+    padding: 0.45rem 0.35rem;
+    border: 1px solid var(--gray-200);
+    border-radius: 8px;
+    background: var(--white);
+    font-size: 0.7rem;
+    font-variant-numeric: tabular-nums;
+}
+.weer-uur-tijd  { color: var(--gray-400); }
+.weer-uur-icoon { font-size: 1rem; }
+.weer-uur-temp  { font-weight: 600; }
+.weer-uur-regen { color: var(--gray-400); }
+.weer-uur-regen.is-nat { color: var(--blue); font-weight: 600; }
+.weer-uur.zeker-laag { border-style: dashed; }
+
+.weer-bron {
+    margin-top: 0.6rem;
+    font-size: 0.72rem;
+    color: var(--gray-400);
+}
