@@ -55,6 +55,36 @@ function formatAddress(klus, klant) {
     return [street, city].filter(Boolean).join(', ');
 }
 
+// Hele aantallen zonder komma, halven met een Nederlandse komma.
+function hoeveelheid(aantal, eenheid) {
+    const n = Number(aantal);
+    if (!Number.isFinite(n)) return '';
+    const tekst = Number.isInteger(n) ? String(n) : String(n).replace('.', ',');
+    return `${tekst} ${eenheid || 'stuk'}`;
+}
+
+// Afvinklijst voor in de agenda. Apple toont platte tekst, dus een vakje is
+// een teken en geen aankruisvakje: aanvinken doe je in het portaal.
+function checklist(materialen) {
+    if (!materialen || !materialen.length) return [];
+
+    const regels = [...materialen].sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
+    const groepen = [
+        ['Meenemen', regels.filter((m) => m.soort === 'gereedschap')],
+        ['Verbruik', regels.filter((m) => m.soort !== 'gereedschap')],
+    ];
+
+    const uit = [];
+    for (const [titel, lijst] of groepen) {
+        if (!lijst.length) continue;
+        uit.push('', `${titel}:`);
+        for (const m of lijst) {
+            uit.push(`${m.afgevinkt ? '☑' : '☐'} ${m.omschrijving} — ${hoeveelheid(m.aantal, m.eenheid)}`);
+        }
+    }
+    return uit;
+}
+
 function buildDescription(klus, klant) {
     const parts = [];
 
@@ -74,6 +104,8 @@ function buildDescription(klus, klant) {
     if (klus.omschrijving) {
         parts.push('', klus.omschrijving);
     }
+
+    parts.push(...checklist(klus.materialen));
 
     parts.push('', `Openen in het portaal: ${SITE}/admin?klus=${klus.id}`);
 
@@ -123,7 +155,8 @@ export default async function handler(req, res) {
                 .select(
                     'id, titel, soort, start_tijd, eind_tijd, adres, omschrijving, status, ' +
                     'weersgevoelig, created_at, updated_at, ' +
-                    'klanten(naam, bedrijf, telefoon, adres, postcode, plaats)',
+                    'klanten(naam, bedrijf, telefoon, adres, postcode, plaats), ' +
+                    'materialen(omschrijving, aantal, eenheid, soort, afgevinkt, sort_order)',
                 )
                 .gte('eind_tijd', from)
                 .lte('start_tijd', until)

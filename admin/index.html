@@ -736,7 +736,19 @@
                 </div>
                 <div class="settings-field">
                     <label for="jf-omschrijving">Omschrijving</label>
-                    <textarea id="jf-omschrijving" rows="4" placeholder="Wat moet er gebeuren? Welk gereedschap mee?"></textarea>
+                    <textarea id="jf-omschrijving" rows="4" placeholder="Wat moet er gebeuren?"></textarea>
+                </div>
+
+                <div class="mat-blok">
+                    <div class="mat-kop">
+                        <h3>Spullen &amp; materialen</h3>
+                        <span class="mat-voortgang" id="jdMatVoortgang"></span>
+                    </div>
+                    <div id="jdMatLijst"></div>
+                    <button type="button" class="btn btn-ghost btn-sm mat-toevoegen" id="jdMatToevoegen">
+                        + Toevoegen
+                    </button>
+                    <p class="mat-hint">Deze lijst komt als afvinklijst in de omschrijving van de agenda-afspraak.</p>
                 </div>
 
                 <div class="field-row">
@@ -821,6 +833,26 @@
         <div class="crop-modal-actions">
             <button type="button" class="btn btn-ghost btn-danger" id="agendaRotate">Nieuwe link maken</button>
             <a class="btn" id="agendaOpen" href="#">Openen in Agenda</a>
+        </div>
+    </div>
+
+    <!-- MATERIAALKIEZER -->
+    <div class="crop-modal-overlay" id="matOverlay" hidden></div>
+    <div class="crop-modal mat-modal" id="matModal" aria-hidden="true" role="dialog" hidden>
+        <div class="crop-modal-head">
+            <h3>Spullen &amp; materialen</h3>
+            <button type="button" class="crop-close" id="matSluit" aria-label="Sluiten">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+            </button>
+        </div>
+        <div class="mat-zoekbalk">
+            <input type="search" id="matZoek" class="search" placeholder="Zoek gereedschap of materiaal…">
+        </div>
+        <div class="filters mat-filters" id="matCategorieen"></div>
+        <div class="mat-modal-body" id="matKeuzeLijst"></div>
+        <div class="crop-modal-actions mat-modal-actions">
+            <button type="button" class="btn btn-ghost btn-sm" id="matEigen">+ Eigen materiaal</button>
+            <button type="button" class="btn" id="matKlaar">Klaar</button>
         </div>
     </div>
 

@@ -454,3 +454,156 @@ alter table public.klus_reeksen enable row level security;
 drop policy if exists "admin_all_klus_reeksen" on public.klus_reeksen;
 create policy "admin_all_klus_reeksen" on public.klus_reeksen
     for all to authenticated using (true) with check (true);
+
+
+-- ============================================================================
+-- MATERIALEN EN GEREEDSCHAP
+-- Twee soorten in één catalogus:
+--   gereedschap — gaat mee en komt weer mee terug, niet doorbelast
+--   verbruik    — gaat op bij de klant en kan doorbelast worden
+-- Beide komen als afvinklijst in de omschrijving van de agenda-afspraak.
+--
+-- Let op: geen aanleg-materiaal (bestrating, schuttingen). Vermaire doet
+-- beplanting, groenadvies en onderhoud.
+-- ============================================================================
+
+create table if not exists public.materiaal_catalogus (
+    id          uuid primary key default gen_random_uuid(),
+    created_at  timestamptz not null default now(),
+    naam        text not null unique,
+    categorie   text not null default 'Overig',
+    soort       text not null default 'verbruik'
+                  check (soort in ('gereedschap','verbruik')),
+    eenheid     text not null default 'stuk',
+    sort_order  integer not null default 0,
+    actief      boolean not null default true,
+    eigen       boolean not null default false   -- zelf toegevoegd, geen standaardlijst
+);
+
+create index if not exists materiaal_catalogus_idx
+    on public.materiaal_catalogus (actief, categorie, sort_order);
+
+alter table public.materiaal_catalogus enable row level security;
+
+drop policy if exists "admin_all_materiaal_catalogus" on public.materiaal_catalogus;
+create policy "admin_all_materiaal_catalogus" on public.materiaal_catalogus
+    for all to authenticated using (true) with check (true);
+
+-- De regels per klus hangen aan de bestaande tabel materialen. omschrijving
+-- blijft de naam; die wordt gekopieerd zodat het hernoemen van een
+-- catalogusregel de geschiedenis van een oude klus niet verandert.
+alter table public.materialen add column if not exists
+    catalogus_id uuid references public.materiaal_catalogus(id) on delete set null;
+alter table public.materialen add column if not exists
+    soort text not null default 'verbruik' check (soort in ('gereedschap','verbruik'));
+alter table public.materialen add column if not exists
+    eenheid text not null default 'stuk';
+alter table public.materialen add column if not exists
+    afgevinkt boolean not null default false;
+alter table public.materialen add column if not exists
+    sort_order integer not null default 0;
+
+-- ----------------------------------------------------------------------------
+-- Standaardlijst. Eenmalig gevuld; eigen aanvullingen blijven staan omdat
+-- er op naam niets wordt overschreven.
+-- ----------------------------------------------------------------------------
+insert into public.materiaal_catalogus (naam, categorie, soort, eenheid, sort_order) values
+    -- Handgereedschap
+    ('Snoeischaar',            'Handgereedschap', 'gereedschap', 'stuk',  10),
+    ('Takkenschaar',           'Handgereedschap', 'gereedschap', 'stuk',  11),
+    ('Handheggenschaar',       'Handgereedschap', 'gereedschap', 'stuk',  12),
+    ('Snoeizaag',              'Handgereedschap', 'gereedschap', 'stuk',  13),
+    ('Telescoopsnoeier',       'Handgereedschap', 'gereedschap', 'stuk',  14),
+    ('Spade',                  'Handgereedschap', 'gereedschap', 'stuk',  15),
+    ('Schep',                  'Handgereedschap', 'gereedschap', 'stuk',  16),
+    ('Spitvork',               'Handgereedschap', 'gereedschap', 'stuk',  17),
+    ('Bladhark',               'Handgereedschap', 'gereedschap', 'stuk',  18),
+    ('Grondhark',              'Handgereedschap', 'gereedschap', 'stuk',  19),
+    ('Schoffel',               'Handgereedschap', 'gereedschap', 'stuk',  20),
+    ('Onkruidkrabber',         'Handgereedschap', 'gereedschap', 'stuk',  21),
+    ('Plantschep',             'Handgereedschap', 'gereedschap', 'stuk',  22),
+    ('Grondboor',              'Handgereedschap', 'gereedschap', 'stuk',  23),
+    ('Straatbezem',            'Handgereedschap', 'gereedschap', 'stuk',  24),
+    ('Kruiwagen',              'Handgereedschap', 'gereedschap', 'stuk',  25),
+    ('Emmer',                  'Handgereedschap', 'gereedschap', 'stuk',  26),
+    ('Gieter',                 'Handgereedschap', 'gereedschap', 'stuk',  27),
+    ('Tuinslang',              'Handgereedschap', 'gereedschap', 'stuk',  28),
+    ('Rolmaat',                'Handgereedschap', 'gereedschap', 'stuk',  29),
+    ('Waterpas',               'Handgereedschap', 'gereedschap', 'stuk',  30),
+
+    -- Machines
+    ('Accuheggenschaar',       'Machines', 'gereedschap', 'stuk',  40),
+    ('Bosmaaier',              'Machines', 'gereedschap', 'stuk',  41),
+    ('Grasmaaier',             'Machines', 'gereedschap', 'stuk',  42),
+    ('Kantensteker',           'Machines', 'gereedschap', 'stuk',  43),
+    ('Bladblazer',             'Machines', 'gereedschap', 'stuk',  44),
+    ('Kettingzaag',            'Machines', 'gereedschap', 'stuk',  45),
+    ('Hakselaar',              'Machines', 'gereedschap', 'stuk',  46),
+    ('Verticuteermachine',     'Machines', 'gereedschap', 'stuk',  47),
+    ('Accu en lader',          'Machines', 'gereedschap', 'stuk',  48),
+    ('Mengsmering',            'Machines', 'verbruik',    'liter', 49),
+    ('Benzine',                'Machines', 'verbruik',    'liter', 50),
+    ('Kettingzaagolie',        'Machines', 'verbruik',    'liter', 51),
+    ('Maaidraad',              'Machines', 'verbruik',    'rol',   52),
+    ('Verlengsnoer',           'Machines', 'gereedschap', 'stuk',  53),
+    ('Aggregaat',              'Machines', 'gereedschap', 'stuk',  54),
+
+    -- Grond en bodem
+    ('Potgrond',               'Grond en bodem', 'verbruik', 'zak', 60),
+    ('Tuinaarde',              'Grond en bodem', 'verbruik', 'm3',  61),
+    ('Compost',                'Grond en bodem', 'verbruik', 'm3',  62),
+    ('Boomschors',             'Grond en bodem', 'verbruik', 'm3',  63),
+    ('Houtsnippers',           'Grond en bodem', 'verbruik', 'm3',  64),
+    ('Cacaodoppen',            'Grond en bodem', 'verbruik', 'zak', 65),
+    ('Ophoogzand',             'Grond en bodem', 'verbruik', 'm3',  66),
+    ('Split',                  'Grond en bodem', 'verbruik', 'm3',  67),
+    ('Organische mest',        'Grond en bodem', 'verbruik', 'zak', 68),
+    ('Korrelmest',             'Grond en bodem', 'verbruik', 'kg',  69),
+    ('Kalk',                   'Grond en bodem', 'verbruik', 'zak', 70),
+    ('Bodemverbeteraar',       'Grond en bodem', 'verbruik', 'zak', 71),
+
+    -- Beplanting
+    ('Worteldoek',             'Beplanting', 'verbruik', 'm2',   80),
+    ('Gronddoekpennen',        'Beplanting', 'verbruik', 'stuk', 81),
+    ('Vaste planten',          'Beplanting', 'verbruik', 'stuk', 82),
+    ('Heesters',               'Beplanting', 'verbruik', 'stuk', 83),
+    ('Haagplanten',            'Beplanting', 'verbruik', 'stuk', 84),
+    ('Bomen',                  'Beplanting', 'verbruik', 'stuk', 85),
+    ('Bloembollen',            'Beplanting', 'verbruik', 'stuk', 86),
+    ('Graszaad',               'Beplanting', 'verbruik', 'kg',   87),
+    ('Graszoden',              'Beplanting', 'verbruik', 'm2',   88),
+    ('Boompaal',               'Beplanting', 'verbruik', 'stuk', 89),
+    ('Boomband',               'Beplanting', 'verbruik', 'stuk', 90),
+    ('Bindtouw',               'Beplanting', 'verbruik', 'rol',  91),
+    ('Bamboestokken',          'Beplanting', 'verbruik', 'stuk', 92),
+    ('Plantenvoeding',         'Beplanting', 'verbruik', 'stuk', 93),
+    ('Druppelslang',           'Beplanting', 'verbruik', 'm',    94),
+
+    -- Afvoer
+    ('Bigbag leeg',            'Afvoer', 'verbruik',    'stuk', 100),
+    ('Groenafval afvoeren',    'Afvoer', 'verbruik',    'm3',   101),
+    ('Snoeiafval afvoeren',    'Afvoer', 'verbruik',    'm3',   102),
+    ('Aanhanger',              'Afvoer', 'gereedschap', 'stuk', 103),
+    ('Dekkleed',               'Afvoer', 'gereedschap', 'stuk', 104),
+    ('Spanbanden',             'Afvoer', 'gereedschap', 'stuk', 105),
+    ('Vuilniszakken',          'Afvoer', 'verbruik',    'stuk', 106),
+
+    -- Veiligheid
+    ('Werkhandschoenen',       'Veiligheid', 'gereedschap', 'paar', 110),
+    ('Veiligheidsbril',        'Veiligheid', 'gereedschap', 'stuk', 111),
+    ('Gehoorbescherming',      'Veiligheid', 'gereedschap', 'stuk', 112),
+    ('Veiligheidsschoenen',    'Veiligheid', 'gereedschap', 'paar', 113),
+    ('Zaagbroek',              'Veiligheid', 'gereedschap', 'stuk', 114),
+    ('Helm met vizier',        'Veiligheid', 'gereedschap', 'stuk', 115),
+    ('Kniebeschermers',        'Veiligheid', 'gereedschap', 'paar', 116),
+    ('EHBO-koffer',            'Veiligheid', 'gereedschap', 'stuk', 117),
+    ('Pionnen',                'Veiligheid', 'gereedschap', 'stuk', 118),
+    ('Afzetlint',              'Veiligheid', 'gereedschap', 'rol',  119),
+
+    -- Overig
+    ('Ladder',                 'Overig', 'gereedschap', 'stuk', 130),
+    ('Trap',                   'Overig', 'gereedschap', 'stuk', 131),
+    ('Zeil',                   'Overig', 'gereedschap', 'stuk', 132),
+    ('Verlichting',            'Overig', 'gereedschap', 'stuk', 133),
+    ('Drinkwater',             'Overig', 'gereedschap', 'stuk', 134)
+on conflict (naam) do nothing;
