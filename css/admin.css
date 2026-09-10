@@ -2216,3 +2216,22 @@ html { -webkit-text-size-adjust: 100%; }
     .mat-modal-body { max-height: 42vh; }
     .mat-eenheid { display: none; }
 }
+
+.mat-melding {
+    padding: 1.4rem 0.2rem;
+    text-align: center;
+}
+.mat-melding strong {
+    display: block;
+    font-family: var(--font-display);
+    font-size: 0.95rem;
+    margin-bottom: 0.3rem;
+}
+.mat-melding span { font-size: 0.83rem; color: var(--gray-600); }
+.mat-melding code, .mat-leeg code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.9em;
+    background: var(--green-50);
+    padding: 1px 5px;
+    border-radius: 4px;
+}
