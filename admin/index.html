@@ -59,15 +59,67 @@
                 </div>
             </div>
             <nav class="tabs" role="tablist">
-                <button class="tab active" data-view="aanvragen" role="tab">Aanvragen <span class="tab-badge hidden" id="tabBadgeNieuw"></span></button>
+                <button class="tab active" data-view="planning" role="tab">Planning</button>
+                <button class="tab" data-view="aanvragen" role="tab">Aanvragen <span class="tab-badge hidden" id="tabBadgeNieuw"></span></button>
+                <button class="tab" data-view="klanten" role="tab">Klanten</button>
                 <button class="tab" data-view="projecten" role="tab">Projecten</button>
                 <button class="tab" data-view="settings" role="tab">Site Info</button>
             </nav>
         </header>
 
         <main class="wrap">
+            <!-- PLANNING VIEW -->
+            <section class="view active" data-view-content="planning">
+                <div class="page-head row">
+                    <div>
+                        <h1>Planning</h1>
+                        <p>Uw week in één oogopslag. Klik op een dag om een klus in te plannen.</p>
+                    </div>
+                    <div class="page-head-actions">
+                        <button class="btn btn-ghost btn-sm" id="agendaBtn">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z"/></svg>
+                            <span>Apple Agenda</span>
+                        </button>
+                        <button class="btn" id="newKlusBtn"><span>+ Nieuwe klus</span></button>
+                    </div>
+                </div>
+
+                <div class="cal-toolbar">
+                    <div class="cal-nav">
+                        <button class="cal-arrow" id="calPrev" aria-label="Vorige week">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m15 18-6-6 6-6"/></svg>
+                        </button>
+                        <button class="btn btn-ghost btn-sm" id="calToday">Vandaag</button>
+                        <button class="cal-arrow" id="calNext" aria-label="Volgende week">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m9 18 6-6-6-6"/></svg>
+                        </button>
+                        <h2 class="cal-title" id="calTitle">—</h2>
+                    </div>
+                    <div class="cal-summary" id="calSummary"></div>
+                </div>
+
+                <div class="cal-card">
+                    <div id="calState" class="loading">
+                        <div class="spinner"></div>
+                        Planning laden…
+                    </div>
+                    <div class="calendar hidden" id="calendar">
+                        <div class="cal-head" id="calHead"></div>
+                        <div class="cal-body" id="calBody"></div>
+                    </div>
+                </div>
+
+                <div class="cal-legend">
+                    <span><i class="dot soort-beplanting"></i> Beplanting</span>
+                    <span><i class="dot soort-groenadvies"></i> Groenadvies</span>
+                    <span><i class="dot soort-onderhoud"></i> Onderhoud</span>
+                    <span><i class="dot soort-bezichtiging"></i> Bezichtiging</span>
+                    <span><i class="dot soort-anders"></i> Overig</span>
+                </div>
+            </section>
+
             <!-- AANVRAGEN VIEW -->
-            <section class="view active" data-view-content="aanvragen">
+            <section class="view" data-view-content="aanvragen">
                 <div class="page-head row">
                     <div>
                         <h1>Aanvragen &amp; contactpogingen</h1>
@@ -114,6 +166,38 @@
                         <tbody id="tbody"></tbody>
                     </table>
                 </div>
+            </section>
+
+            <!-- KLANTEN VIEW -->
+            <section class="view" data-view-content="klanten">
+                <div class="page-head row">
+                    <div>
+                        <h1>Klanten</h1>
+                        <p>Uw klantenbestand — adressen, tarieven en notities.</p>
+                    </div>
+                    <div class="page-head-actions">
+                        <button class="btn btn-ghost btn-sm refresh-btn" id="refreshKlanten" aria-label="Vernieuw klanten">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12a9 9 0 1 1-2.64-6.36M21 3v6h-6"/></svg>
+                            <span>Vernieuwen</span>
+                        </button>
+                        <button class="btn" id="newKlantBtn"><span>+ Nieuwe klant</span></button>
+                    </div>
+                </div>
+
+                <div class="toolbar">
+                    <div class="filters" id="klantFilters">
+                        <button class="filter active" data-kfilter="actief">Actief</button>
+                        <button class="filter" data-kfilter="archief">Archief</button>
+                        <button class="filter" data-kfilter="alle">Alle</button>
+                    </div>
+                    <input type="search" class="search" id="klantSearch" placeholder="Zoek op naam, plaats, e-mail…">
+                </div>
+
+                <div id="klantenState" class="loading">
+                    <div class="spinner"></div>
+                    Klanten laden…
+                </div>
+                <div id="klantenList" class="klant-grid hidden"></div>
             </section>
 
             <!-- PROJECTEN VIEW -->
@@ -269,6 +353,40 @@
                             </div>
                         </fieldset>
 
+                        <fieldset class="settings-group">
+                            <legend>Planning &amp; facturatie</legend>
+                            <p class="settings-note">
+                                Deze gegevens staan alléén in het portaal — ze zijn niet zichtbaar
+                                op de website.
+                            </p>
+                            <div class="field-row">
+                                <div class="settings-field">
+                                    <label for="adm-standaard_uurtarief">Standaard uurtarief (€)</label>
+                                    <input type="number" step="0.01" min="0"
+                                           id="adm-standaard_uurtarief" data-adminkey="standaard_uurtarief">
+                                </div>
+                                <div class="settings-field">
+                                    <label for="adm-btw_percentage">Btw-percentage</label>
+                                    <input type="number" step="1" min="0" max="100"
+                                           id="adm-btw_percentage" data-adminkey="btw_percentage">
+                                </div>
+                            </div>
+                            <div class="settings-field">
+                                <label for="adm-agenda_herinnering_minuten">
+                                    Herinnering vooraf <span class="label-hint">in minuten · 0 = geen herinnering</span>
+                                </label>
+                                <input type="number" step="5" min="0" max="1440"
+                                       id="adm-agenda_herinnering_minuten" data-adminkey="agenda_herinnering_minuten">
+                            </div>
+                            <div class="settings-field">
+                                <label for="adm-snelstart_url">
+                                    SnelStart-link <span class="label-hint">knop in de klus-lade</span>
+                                </label>
+                                <input type="text" id="adm-snelstart_url" data-adminkey="snelstart_url"
+                                       placeholder="https://web.snelstart.nl/">
+                            </div>
+                        </fieldset>
+
                         <div class="settings-actions">
                             <button type="submit" class="btn" id="saveSettingsBtn">Opslaan</button>
                             <span class="settings-saved hidden" id="settingsSaved">Opgeslagen ✓</span>
@@ -315,6 +433,7 @@
         </div>
         <div class="drawer-actions">
             <a class="btn" id="dMailto" href="#">Beantwoorden</a>
+            <button class="btn btn-ghost" id="dToKlant">Klant maken</button>
             <button class="btn btn-ghost" id="dArchive">Archiveren</button>
             <button class="btn btn-ghost btn-danger" id="dDelete">Verwijderen</button>
         </div>
@@ -374,6 +493,224 @@
             <button class="btn btn-ghost btn-danger" id="pdDelete">Verwijderen</button>
         </div>
     </aside>
+
+    <!-- KLANT DRAWER -->
+    <div class="drawer-overlay" id="klantOverlay"></div>
+    <aside class="drawer drawer-wide" id="klantDrawer" aria-hidden="true">
+        <div class="drawer-head">
+            <div>
+                <span class="drawer-eyebrow">Klant</span>
+                <h2 id="kdHeading">Nieuwe klant</h2>
+            </div>
+            <button class="drawer-close" id="kdClose" aria-label="Sluiten">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+            </button>
+        </div>
+        <div class="drawer-body">
+            <form id="klantForm">
+                <div class="settings-field">
+                    <label for="kf-naam">Naam *</label>
+                    <input type="text" id="kf-naam" required autocomplete="off">
+                </div>
+                <div class="field-row">
+                    <div class="settings-field">
+                        <label for="kf-bedrijf">Bedrijf</label>
+                        <input type="text" id="kf-bedrijf" autocomplete="off">
+                    </div>
+                    <div class="settings-field">
+                        <label for="kf-telefoon">Telefoon</label>
+                        <input type="tel" id="kf-telefoon" autocomplete="off">
+                    </div>
+                </div>
+                <div class="settings-field">
+                    <label for="kf-email">E-mail</label>
+                    <input type="email" id="kf-email" autocomplete="off">
+                </div>
+                <div class="settings-field">
+                    <label for="kf-adres">Adres</label>
+                    <input type="text" id="kf-adres" placeholder="Straat en huisnummer" autocomplete="off">
+                </div>
+                <div class="field-row">
+                    <div class="settings-field">
+                        <label for="kf-postcode">Postcode</label>
+                        <input type="text" id="kf-postcode" placeholder="4424 AA" autocomplete="off">
+                    </div>
+                    <div class="settings-field">
+                        <label for="kf-plaats">Plaats</label>
+                        <input type="text" id="kf-plaats" autocomplete="off">
+                    </div>
+                </div>
+                <div class="settings-field">
+                    <label for="kf-uurtarief">Afwijkend uurtarief (€)</label>
+                    <input type="number" id="kf-uurtarief" step="0.01" min="0" placeholder="Leeg = standaardtarief">
+                </div>
+                <div class="settings-field">
+                    <label for="kf-notities">Notities</label>
+                    <textarea id="kf-notities" rows="4" placeholder="Poortcode, hond in de tuin, voorkeuren…"></textarea>
+                </div>
+                <div class="settings-field">
+                    <label class="check-label">
+                        <input type="checkbox" id="kf-archived">
+                        <span>Archiveren (verbergen uit de actieve lijst)</span>
+                    </label>
+                </div>
+
+                <div class="alert hidden" id="kdError"></div>
+            </form>
+
+            <div class="klant-klussen hidden" id="kdKlussenWrap">
+                <h3>Klussen</h3>
+                <div id="kdKlussen"></div>
+            </div>
+        </div>
+        <div class="drawer-actions">
+            <button class="btn" id="kdSave">Opslaan</button>
+            <button class="btn btn-ghost" id="kdPlan">Klus inplannen</button>
+            <button class="btn btn-ghost btn-danger" id="kdDelete">Verwijderen</button>
+        </div>
+    </aside>
+
+    <!-- KLUS DRAWER -->
+    <div class="drawer-overlay" id="klusOverlay"></div>
+    <aside class="drawer drawer-wide" id="klusDrawer" aria-hidden="true">
+        <div class="drawer-head">
+            <div>
+                <span class="drawer-eyebrow">Klus</span>
+                <h2 id="jdHeading">Nieuwe klus</h2>
+            </div>
+            <button class="drawer-close" id="jdClose" aria-label="Sluiten">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+            </button>
+        </div>
+        <div class="drawer-body">
+            <form id="klusForm">
+                <div class="settings-field">
+                    <label for="jf-titel">Titel *</label>
+                    <input type="text" id="jf-titel" required placeholder="Bv. Voorjaarsbeurt achtertuin" autocomplete="off">
+                </div>
+                <div class="field-row">
+                    <div class="settings-field">
+                        <label for="jf-klant">Klant</label>
+                        <select id="jf-klant"><option value="">— Geen klant —</option></select>
+                    </div>
+                    <div class="settings-field">
+                        <label for="jf-soort">Soort</label>
+                        <select id="jf-soort">
+                            <option value="onderhoud">Onderhoud</option>
+                            <option value="beplanting">Beplanting</option>
+                            <option value="groenadvies">Groenadvies</option>
+                            <option value="bezichtiging">Bezichtiging</option>
+                            <option value="anders">Overig</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="field-row field-row-3">
+                    <div class="settings-field">
+                        <label for="jf-datum">Datum *</label>
+                        <input type="date" id="jf-datum" required>
+                    </div>
+                    <div class="settings-field">
+                        <label for="jf-start">Van *</label>
+                        <input type="time" id="jf-start" step="900" required>
+                    </div>
+                    <div class="settings-field">
+                        <label for="jf-eind">Tot *</label>
+                        <input type="time" id="jf-eind" step="900" required>
+                    </div>
+                </div>
+                <div class="settings-field">
+                    <label for="jf-adres">Adres <span class="label-hint">leeg = adres van de klant</span></label>
+                    <input type="text" id="jf-adres" autocomplete="off">
+                </div>
+                <div class="settings-field">
+                    <label for="jf-omschrijving">Omschrijving</label>
+                    <textarea id="jf-omschrijving" rows="4" placeholder="Wat moet er gebeuren? Welk gereedschap mee?"></textarea>
+                </div>
+
+                <div class="field-row">
+                    <div class="settings-field">
+                        <label for="jf-status">Status</label>
+                        <select id="jf-status">
+                            <option value="gepland">Gepland</option>
+                            <option value="bezig">Bezig</option>
+                            <option value="afgerond">Afgerond</option>
+                            <option value="geannuleerd">Geannuleerd</option>
+                        </select>
+                    </div>
+                    <div class="settings-field">
+                        <label for="jf-prijsmodel">Prijs</label>
+                        <select id="jf-prijsmodel">
+                            <option value="uurtarief">Op uurtarief</option>
+                            <option value="vast">Vaste prijs</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="settings-field" id="jfUurtariefWrap">
+                    <label for="jf-uurtarief">Uurtarief (€) <span class="label-hint" id="jfTariefHint"></span></label>
+                    <input type="number" id="jf-uurtarief" step="0.01" min="0">
+                </div>
+                <div class="settings-field hidden" id="jfVastWrap">
+                    <label for="jf-vast">Vast bedrag (€, excl. btw)</label>
+                    <input type="number" id="jf-vast" step="0.01" min="0">
+                </div>
+
+                <div class="settings-field">
+                    <label class="check-label">
+                        <input type="checkbox" id="jf-weer">
+                        <span>Weersgevoelig — waarschuw mij bij slecht weer</span>
+                    </label>
+                </div>
+                <div class="settings-field">
+                    <label class="check-label">
+                        <input type="checkbox" id="jf-gefactureerd">
+                        <span>Gefactureerd in SnelStart</span>
+                    </label>
+                </div>
+
+                <div class="alert hidden" id="jdError"></div>
+            </form>
+        </div>
+        <div class="drawer-actions">
+            <button class="btn" id="jdSave">Opslaan</button>
+            <a class="btn btn-ghost" id="jdSnelstart" href="https://web.snelstart.nl/" target="_blank" rel="noopener">SnelStart</a>
+            <button class="btn btn-ghost btn-danger" id="jdDelete">Verwijderen</button>
+        </div>
+    </aside>
+
+    <!-- AGENDA MODAL -->
+    <div class="crop-modal-overlay" id="agendaOverlay" hidden></div>
+    <div class="crop-modal" id="agendaModal" aria-hidden="true" role="dialog" hidden>
+        <div class="crop-modal-head">
+            <h3>Apple Agenda koppelen</h3>
+            <button type="button" class="crop-close" id="agendaClose" aria-label="Sluiten">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+            </button>
+        </div>
+        <div class="crop-modal-body">
+            <p class="crop-hint">
+                Uw planning verschijnt automatisch in Apple Agenda. Op de iPhone:
+                <strong>Instellingen → Apps → Agenda → Accounts → Voeg account toe → Andere → Voeg agenda-abonnement toe</strong>
+                en plak onderstaande link. Op de Mac: <strong>Agenda → Bestand → Nieuw agenda-abonnement</strong>.
+            </p>
+            <div class="feed-url">
+                <input type="text" id="agendaUrl" readonly>
+                <button type="button" class="btn btn-sm" id="agendaCopy">Kopieer</button>
+            </div>
+            <p class="crop-hint">
+                De agenda is <strong>alleen-lezen</strong>: wijzigingen maakt u hier in het portaal, Apple haalt ze
+                daarna vanzelf op. Deel deze link met niemand — wie hem heeft, ziet uw hele planning.
+            </p>
+            <div class="alert alert-soft">
+                Link gelekt of per ongeluk gedeeld? Maak een nieuwe aan. De oude stopt dan direct met werken
+                en u moet het abonnement op uw telefoon opnieuw toevoegen.
+            </div>
+        </div>
+        <div class="crop-modal-actions">
+            <button type="button" class="btn btn-ghost btn-danger" id="agendaRotate">Nieuwe link maken</button>
+            <a class="btn" id="agendaOpen" href="#">Openen in Agenda</a>
+        </div>
+    </div>
 
     <!-- Image crop modal -->
     <div class="crop-modal-overlay" id="cropOverlay" hidden></div>
