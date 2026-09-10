@@ -98,6 +98,8 @@
                     <div class="cal-summary" id="calSummary"></div>
                 </div>
 
+                <div id="weerNu"></div>
+
                 <div class="cal-card">
                     <div id="calState" class="loading">
                         <div class="spinner"></div>
@@ -385,6 +387,13 @@
                                 <input type="text" id="adm-snelstart_url" data-adminkey="snelstart_url"
                                        placeholder="https://web.snelstart.nl/">
                             </div>
+                            <div class="settings-field">
+                                <label for="adm-weer_plaats">
+                                    Weerlocatie <span class="label-hint">plaatsnaam · leeg = Wemeldinge</span>
+                                </label>
+                                <input type="text" id="adm-weer_plaats" data-adminkey="weer_plaats"
+                                       placeholder="Wemeldinge">
+                            </div>
                         </fieldset>
 
                         <div class="settings-actions">
@@ -618,6 +627,11 @@
                         <input type="time" id="jf-eind" step="900" required>
                     </div>
                 </div>
+
+                <div class="weer-blok" id="jdWeer">
+                    <h3>Weersverwachting</h3>
+                    <div id="jdWeerBody"></div>
+                </div>
                 <div class="settings-field">
                     <label for="jf-adres">Adres <span class="label-hint">leeg = adres van de klant</span></label>
                     <input type="text" id="jf-adres" autocomplete="off">
@@ -743,6 +757,7 @@
     <p class="adminlink"><a href="../">← Terug naar website</a></p>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+    <script src="../js/weer.js"></script>
     <script src="../js/admin.js"></script>
 </body>
 </html>

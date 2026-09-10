@@ -56,7 +56,8 @@
         calPrev: $('calPrev'), calNext: $('calNext'), calToday: $('calToday'),
         calTitle: $('calTitle'), calSummary: $('calSummary'),
         calState: $('calState'), calendar: $('calendar'),
-        calHead: $('calHead'), calBody: $('calBody'),
+        calHead: $('calHead'), calBody: $('calBody'), weerNu: $('weerNu'),
+        jdWeer: $('jdWeer'), jdWeerBody: $('jdWeerBody'),
         newKlusBtn: $('newKlusBtn'), agendaBtn: $('agendaBtn'),
         klusDrawer: $('klusDrawer'), klusOverlay: $('klusOverlay'),
         jdClose: $('jdClose'), jdHeading: $('jdHeading'), jdError: $('jdError'),
@@ -1181,6 +1182,13 @@
         weekKlussen = data || [];
         planningLoaded = true;
         renderCalendar();
+
+        // Het weer mag de kalender niet ophouden: eerst tekenen, dan het weer
+        // erbij zodra het binnen is. Valt de weerdienst uit, dan mist alleen
+        // de weerstrook en werkt de planning gewoon door.
+        if (window.Weer) {
+            window.Weer.laden().then((w) => { if (w) renderCalendar(); });
+        }
     }
 
     function renderCalendar() {
@@ -1200,9 +1208,11 @@
                 <div class="cal-head-cell${sameDay(d, today) ? ' is-today' : ''}">
                     <div class="cal-dayname">${DAY_NAMES[i]}</div>
                     <div class="cal-daynum">${d.getDate()}</div>
+                    ${window.Weer ? window.Weer.dagkopHTML(ymd(d)) : ''}
                 </div>`;
         });
         el.calHead.innerHTML = head;
+        if (window.Weer) el.weerNu.innerHTML = window.Weer.nuHTML();
 
         /* --- zichtbaar urenvenster oprekken tot alles past --- */
         let minH = DAY_START;
@@ -1259,6 +1269,9 @@
                                    left:calc(${it.lane * width}% + 2px);
                                    width:calc(${width}% - 4px)"
                             title="${esc(tooltip(k, klant))}">
+                        ${window.Weer && k.status !== 'geannuleerd'
+                            ? window.Weer.klusMerkHTML(new Date(k.start_tijd), new Date(k.eind_tijd), k.soort)
+                            : ''}
                         <span class="cal-klus-time">${hm(new Date(k.start_tijd))}</span>
                         <span class="cal-klus-title">${esc(k.titel)}</span>
                         ${klant ? `<span class="cal-klus-klant">${esc(klant.naam)}</span>` : ''}
@@ -1428,6 +1441,32 @@
 
     el.jfPrijsmodel.addEventListener('change', syncPrijsmodel);
 
+    // Verwachting voor precies de uren die deze klus beslaat. Verschuift
+    // Thijmen de tijden, dan verschuift het weerbeeld mee.
+    function syncWeer() {
+        if (!window.Weer) return;
+
+        const { datum, start, eind } = el.jfDatum.value
+            ? { datum: el.jfDatum.value, start: el.jfStart.value, eind: el.jfEind.value }
+            : {};
+
+        if (!datum || !start || !eind) {
+            el.jdWeer.classList.add('hidden');
+            return;
+        }
+
+        const van = new Date(`${datum}T${start}`);
+        const tot = new Date(`${datum}T${eind}`);
+        if (!(tot > van)) { el.jdWeer.classList.add('hidden'); return; }
+
+        el.jdWeer.classList.remove('hidden');
+        el.jdWeerBody.innerHTML = window.Weer.ladeHTML(van, tot, el.jfSoort.value);
+    }
+
+    [el.jfDatum, el.jfStart, el.jfEind, el.jfSoort].forEach((input) => {
+        input.addEventListener('change', syncWeer);
+    });
+
     // Adres en tarief van de klant overnemen zolang de velden nog leeg zijn —
     // typt Thijmen zelf iets, dan blijft dat staan.
     el.jfKlant.addEventListener('change', () => {
@@ -1505,6 +1544,12 @@
 
         el.jfKlant.dispatchEvent(new Event('change'));
         syncPrijsmodel();
+
+        // Weer kan nog onderweg zijn als de lade meteen na inloggen opengaat.
+        syncWeer();
+        if (window.Weer && !window.Weer.beschikbaar()) {
+            window.Weer.laden().then(() => syncWeer());
+        }
 
         el.jdSnelstart.href = adminSettings.snelstart_url || 'https://web.snelstart.nl/';
 
