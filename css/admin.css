@@ -482,9 +482,18 @@ tr[data-status="nieuw"] .cell-name { color: var(--green-700); }
     border-radius: 999px;
     font-size: 0.85rem;
     z-index: 80;
-    transition: transform var(--t);
+    /* Leeg is de toast maar een paar pixels hoog, en dan schuift 120% hem
+       niet buiten beeld. Daarom óók echt onzichtbaar maken. */
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: transform var(--t), opacity var(--t), visibility var(--t);
 }
-.toast.show { transform: translateX(-50%) translateY(0); }
+.toast.show {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+    visibility: visible;
+}
 
 /* Stond vast onderin beeld, maar dekte daar de kalender af. Nu gewoon
    onderaan de pagina, waar hij niets in de weg zit. */
@@ -1786,3 +1795,236 @@ tr[data-status="nieuw"] .cell-name { color: var(--green-700); }
     font-size: 0.72rem;
     color: var(--gray-400);
 }
+
+/* ==========================================================================
+   APP-MODUS
+   Wat het portaal als app laat aanvoelen zodra het op het beginscherm staat.
+   [data-mode="app"] wordt door js/app.js gezet; dat is betrouwbaarder dan
+   @media (display-mode) omdat iOS zijn eigen vlag gebruikt.
+   ========================================================================== */
+
+/* ---------- basisgedrag op aanraakschermen ---------- */
+
+/* Grijze flits bij elke tik is het duidelijkste teken dat je in een browser
+   zit en niet in een app. */
+* { -webkit-tap-highlight-color: transparent; }
+
+/* iOS zoomt in zodra je een veld aantikt dat kleiner is dan 16px. Dat is
+   veruit het meest "dit is een website"-moment dat er bestaat. */
+[data-pointer="coarse"] input,
+[data-pointer="coarse"] select,
+[data-pointer="coarse"] textarea,
+[data-pointer="coarse"] .search {
+    font-size: 16px;
+}
+
+/* Bedieningselementen zijn geen tekst om te selecteren; inhoud wel. */
+.topbar, .tabs, .tab, .btn, .filter, .cal-head, .cal-klus,
+.cal-arrow, .klant-card, .drawer-head, .cal-legend, .weer-uur {
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+/* Geen wachttijd van 300 ms voor dubbeltik-zoom. */
+button, .tab, .filter, a, .cal-day, .cal-klus, .klant-card { touch-action: manipulation; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+/* Tikken moet voelbaar zijn. */
+.btn:active, .filter:active, .cal-arrow:active { transform: scale(0.97); }
+.klant-card:active { transform: scale(0.995); }
+
+/* ---------- veilige zones ---------- */
+
+.topbar { padding-top: env(safe-area-inset-top); }
+
+.wrap {
+    padding-left: max(1.5rem, env(safe-area-inset-left));
+    padding-right: max(1.5rem, env(safe-area-inset-right));
+}
+
+.drawer-actions { padding-bottom: max(1rem, env(safe-area-inset-bottom)); }
+.drawer         { padding-top: env(safe-area-inset-top); }
+.login          { padding-top: max(1.5rem, env(safe-area-inset-top)); }
+
+/* ---------- app-modus: onderbalk in plaats van tabs bovenin ---------- */
+
+[data-mode="app"] {
+    /* Geen doorveren van de hele pagina; dat verraadt de browser eronder. */
+    overscroll-behavior-y: none;
+}
+
+[data-mode="app"] body { overscroll-behavior-y: none; }
+
+/* De merkbalk mag in app-modus rustiger: de app-naam staat al op het icoon. */
+[data-mode="app"] .topbar-brand-sub { display: none; }
+
+@media (max-width: 900px) {
+    [data-mode="app"] .tabs {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 40;
+        max-width: none;
+        margin: 0;
+        padding: 0.3rem 0.25rem calc(0.3rem + env(safe-area-inset-bottom));
+        gap: 0;
+        background: rgba(255, 255, 255, 0.92);
+        -webkit-backdrop-filter: saturate(180%) blur(18px);
+        backdrop-filter: saturate(180%) blur(18px);
+        border-top: 1px solid var(--gray-200);
+        overflow: visible;
+    }
+
+    [data-mode="app"] .tab {
+        flex: 1 1 0;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.15rem;
+        padding: 0.35rem 0.15rem 0.2rem;
+        border-bottom: none;
+        margin-bottom: 0;
+        font-size: 0.6rem;
+        letter-spacing: 0.02em;
+        text-transform: none;
+        font-weight: 600;
+        position: relative;
+        transition: color var(--t);
+    }
+
+    [data-mode="app"] .tab.active { color: var(--green-600); }
+    [data-mode="app"] .tab.active .tab-icoon { transform: translateY(-1px) scale(1.06); }
+    [data-mode="app"] .tab:active .tab-icoon { transform: scale(0.9); }
+
+    [data-mode="app"] .tab-tekst {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        max-width: 100%;
+    }
+
+    /* Het telbolletje hangt op het icoon, niet achter de tekst. */
+    [data-mode="app"] .tab-badge {
+        position: absolute;
+        top: 0.1rem;
+        left: 50%;
+        margin-left: 3px;
+    }
+
+    /* Ruimte onder de inhoud, anders schuift de onderbalk eroverheen. */
+    [data-mode="app"] .wrap { padding-bottom: calc(5.5rem + env(safe-area-inset-bottom)); }
+
+    /* De lade moet boven de onderbalk uitkomen. */
+    [data-mode="app"] .drawer { z-index: 60; }
+    [data-mode="app"] .adminlink { display: none; }
+
+    /* De toast botst anders tegen de onderbalk. */
+    [data-mode="app"] .toast { bottom: calc(4.5rem + env(safe-area-inset-bottom)); }
+}
+
+.tab-icoon {
+    width: 21px;
+    height: 21px;
+    display: none;
+    transition: transform var(--t);
+}
+@media (max-width: 900px) {
+    [data-mode="app"] .tab-icoon { display: block; }
+}
+
+/* ---------- offline-melding ---------- */
+
+.offline-balk {
+    position: fixed;
+    left: 50%;
+    bottom: calc(1rem + env(safe-area-inset-bottom));
+    z-index: 90;
+    transform: translate(-50%, 150%);
+    max-width: calc(100vw - 2rem);
+    padding: 0.6rem 1rem;
+    border-radius: 999px;
+    background: var(--green-900);
+    color: #fff;
+    font-size: 0.8rem;
+    box-shadow: 0 8px 24px rgba(13, 40, 24, 0.25);
+    transition: transform var(--t);
+}
+.offline-balk.open { transform: translate(-50%, 0); }
+
+@media (max-width: 900px) {
+    [data-mode="app"] .offline-balk { bottom: calc(4.5rem + env(safe-area-inset-bottom)); }
+}
+
+/* ---------- nieuwe versie ---------- */
+
+.update-melding {
+    position: fixed;
+    left: 50%;
+    bottom: calc(1rem + env(safe-area-inset-bottom));
+    z-index: 95;
+    transform: translate(-50%, 150%);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.6rem 0.7rem 0.6rem 1.1rem;
+    border-radius: 999px;
+    background: var(--green-700);
+    color: #fff;
+    font-size: 0.82rem;
+    box-shadow: 0 8px 24px rgba(13, 40, 24, 0.28);
+    transition: transform var(--t), opacity var(--t);
+}
+.update-melding.open { transform: translate(-50%, 0); }
+.update-melding strong {
+    background: rgba(255, 255, 255, 0.16);
+    padding: 0.3rem 0.75rem;
+    border-radius: 999px;
+    font-weight: 600;
+}
+.update-melding:disabled { opacity: 0.6; }
+
+@media (max-width: 900px) {
+    [data-mode="app"] .update-melding { bottom: calc(4.5rem + env(safe-area-inset-bottom)); }
+}
+
+/* ---------- tip: zet op beginscherm ---------- */
+
+.install-tip {
+    position: fixed;
+    left: 50%;
+    bottom: calc(1rem + env(safe-area-inset-bottom));
+    z-index: 92;
+    width: min(420px, calc(100vw - 2rem));
+    transform: translate(-50%, 150%);
+    padding: 1rem 2.2rem 1.05rem 1.1rem;
+    border-radius: 16px;
+    background: var(--white);
+    border: 1px solid var(--gray-200);
+    box-shadow: 0 12px 34px rgba(13, 40, 24, 0.16);
+    transition: transform var(--t);
+}
+.install-tip.open { transform: translate(-50%, 0); }
+.install-tip strong {
+    display: block;
+    font-family: var(--font-display);
+    font-size: 0.95rem;
+    margin-bottom: 0.2rem;
+}
+.install-tip span { font-size: 0.82rem; color: var(--gray-600); }
+.install-tip b { color: var(--green-700); }
+.install-tip-sluit {
+    position: absolute;
+    top: 0.4rem;
+    right: 0.55rem;
+    width: 28px;
+    height: 28px;
+    font-size: 1.2rem;
+    line-height: 1;
+    color: var(--gray-400);
+}
+
+/* Merkteken dat de planning uit de lokale kopie komt in plaats van vers. */
+.cal-oud { color: var(--amber); font-weight: 600; }
